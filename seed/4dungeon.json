@@ -1,0 +1,475 @@
+[
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:0",
+  "rarity": "common",
+  "name": "a bag of loose screws",
+  "note": "Rattles like teeth.",
+  "alignment": "CHAOS",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:1",
+  "rarity": "common",
+  "name": "a spent battery",
+  "note": "Still faintly warm.",
+  "alignment": "NEUTRAL",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:2",
+  "rarity": "common",
+  "name": "a vending machine coin",
+  "note": "The machines down here still take it.",
+  "alignment": "LAW",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:3",
+  "rarity": "common",
+  "name": "a subway token",
+  "note": "For a line that was never built.",
+  "alignment": "LAW",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:4",
+  "rarity": "common",
+  "name": "a burned-out circuit board",
+  "note": "Smells of ozone and incense.",
+  "alignment": "NEUTRAL",
+  "nature": "both",
+  "extra": {
+   "both_name": "STRAY STATIC"
+  }
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:5",
+  "rarity": "common",
+  "name": "a neon tube fragment",
+  "note": "Flickers pink in the dark.",
+  "alignment": "CHAOS",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:6",
+  "rarity": "common",
+  "name": "a tangle of fiber cable",
+  "note": "It glows when nobody looks.",
+  "alignment": "NEUTRAL",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:7",
+  "rarity": "common",
+  "name": "a scratched data disc",
+  "note": "Labelled in a hand you almost know.",
+  "alignment": "LAW",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:8",
+  "rarity": "common",
+  "name": "an ID card, face scratched",
+  "note": "Clearance level: none.",
+  "alignment": "LAW",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:9",
+  "rarity": "common",
+  "name": "a moth-eaten glove",
+  "note": "Too small for any hand you know.",
+  "alignment": "NEUTRAL",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:10",
+  "rarity": "common",
+  "name": "a bead of smoky glass",
+  "note": "Something moves inside it.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "COMMON:11",
+  "rarity": "common",
+  "name": "a cracked hand mirror",
+  "note": "Shows a room that isn't here.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:0",
+  "rarity": "uncommon",
+  "name": "a vial of medicine",
+  "note": "Heals everyone by a third.",
+  "alignment": "LAW",
+  "nature": "spirit",
+  "extra": {
+   "has_use": true,
+   "use_text": "The party breathes easier."
+  }
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:1",
+  "rarity": "uncommon",
+  "name": "a strip of prayer cloth",
+  "note": "Raises fallen allies a little.",
+  "alignment": "LAW",
+  "nature": "spirit",
+  "extra": {
+   "has_use": true,
+   "use_text": "Fallen allies stir."
+  }
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:2",
+  "rarity": "uncommon",
+  "name": "a stub of black candle",
+  "note": "Burns for a while. Calms the room.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {
+   "has_use": true,
+   "use_text": "The room settles a little."
+  }
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:3",
+  "rarity": "uncommon",
+  "name": "a tin of old matches",
+  "note": "Half of them still strike.",
+  "alignment": "NEUTRAL",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:4",
+  "rarity": "uncommon",
+  "name": "a coil of copper wire",
+  "note": "Good for something. Probably.",
+  "alignment": "NEUTRAL",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:5",
+  "rarity": "uncommon",
+  "name": "a dead pager",
+  "note": "It buzzes once, every new moon.",
+  "alignment": "CHAOS",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:6",
+  "rarity": "uncommon",
+  "name": "a cracked phone",
+  "note": "The screen shows a map of somewhere else.",
+  "alignment": "CHAOS",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:7",
+  "rarity": "uncommon",
+  "name": "a cassette with no label",
+  "note": "Hiss, then breathing.",
+  "alignment": "NEUTRAL",
+  "nature": "both",
+  "extra": {
+   "both_name": "FERAL HUM"
+  }
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:8",
+  "rarity": "uncommon",
+  "name": "a VR visor, lens cracked",
+  "note": "Shows the room, but emptier.",
+  "alignment": "LAW",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:9",
+  "rarity": "uncommon",
+  "name": "a rusted iron key",
+  "note": "It opens nothing here.",
+  "alignment": "LAW",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:10",
+  "rarity": "uncommon",
+  "name": "a bent silver charm",
+  "note": "Warm to the touch at night.",
+  "alignment": "NEUTRAL",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "UNCOMMON:11",
+  "rarity": "uncommon",
+  "name": "a page of a burned book",
+  "note": "One line survives: \"down is not away.\"",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:0",
+  "rarity": "rare",
+  "name": "a rune scratched into a circuit board",
+  "note": "Nobody taught the scratcher to read either language. It still works.",
+  "alignment": "NEUTRAL",
+  "nature": "both",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:1",
+  "rarity": "rare",
+  "name": "a salt-crusted network cable",
+  "note": "Whatever it carried, it carried something else too.",
+  "alignment": "NEUTRAL",
+  "nature": "both",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:2",
+  "rarity": "rare",
+  "name": "a candle stub in a soda can",
+  "note": "Somebody's shrine, somebody's lunch.",
+  "alignment": "CHAOS",
+  "nature": "both",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:3",
+  "rarity": "rare",
+  "name": "a charm bracelet of old keycards",
+  "note": "Every card opened a door that isn't there now.",
+  "alignment": "LAW",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:4",
+  "rarity": "rare",
+  "name": "a rosary of fiber optic beads",
+  "note": "It lights up one bead per prayer.",
+  "alignment": "LAW",
+  "nature": "both",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:5",
+  "rarity": "rare",
+  "name": "a sealed jar, humming faintly",
+  "note": "The label peeled off years ago. The hum changes pitch when you lie.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:6",
+  "rarity": "rare",
+  "name": "a SIM card in red thread",
+  "note": "The number still rings. Nobody answers.",
+  "alignment": "CHAOS",
+  "nature": "both",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:7",
+  "rarity": "rare",
+  "name": "a graffiti-stained saint's medal",
+  "note": "Somebody tagged a saint. The saint didn't mind.",
+  "alignment": "NEUTRAL",
+  "nature": "both",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:8",
+  "rarity": "rare",
+  "name": "a bullet casing on a leather cord",
+  "note": "Worn by someone who knew what it stopped.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:9",
+  "rarity": "rare",
+  "name": "a keycard, one corner burned",
+  "note": "Level 9. There is no level 9.",
+  "alignment": "LAW",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:10",
+  "rarity": "rare",
+  "name": "an old COMP chip",
+  "note": "Its last program is still running, very slowly.",
+  "alignment": "LAW",
+  "nature": "tech",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "RARE:11",
+  "rarity": "rare",
+  "name": "a black pearl",
+  "note": "It reflects the wrong room.",
+  "alignment": "NEUTRAL",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MYTHIC:0",
+  "rarity": "mythic",
+  "name": "a jar of grave salt",
+  "note": "Spirits don't like it.",
+  "alignment": "LAW",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MYTHIC:1",
+  "rarity": "mythic",
+  "name": "a wax seal, unbroken",
+  "note": "Pressed with a sigil you don't know.",
+  "alignment": "LAW",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MYTHIC:2",
+  "rarity": "mythic",
+  "name": "a chipped bone die",
+  "note": "Always lands on six.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MYTHIC:3",
+  "rarity": "mythic",
+  "name": "a sealed reliquary",
+  "note": "Something inside knocks, politely.",
+  "alignment": "LAW",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MYTHIC:4",
+  "rarity": "mythic",
+  "name": "a ring of red gold",
+  "note": "Heavier than it should be.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MYTHIC:5",
+  "rarity": "mythic",
+  "name": "a sword in a rotted sheath",
+  "note": "The blade is clean. It always was.",
+  "alignment": "NEUTRAL",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MOON:0",
+  "rarity": "moon",
+  "name": "a moonstone",
+  "note": "Cold, and full of light that isn't from here.",
+  "alignment": "NEUTRAL",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MOON:1",
+  "rarity": "moon",
+  "name": "a shard of pale moonlight",
+  "note": "It casts a shadow of its own.",
+  "alignment": "LAW",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MOON:2",
+  "rarity": "moon",
+  "name": "a fang still warm",
+  "note": "Whatever it came from is still looking for it.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ },
+ {
+  "source": "4dungeon",
+  "source_key": "MOON:3",
+  "rarity": "moon",
+  "name": "a silver-veined horn",
+  "note": "Hums a note only the moon can hear.",
+  "alignment": "CHAOS",
+  "nature": "spirit",
+  "extra": {}
+ }
+]

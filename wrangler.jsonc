@@ -1,0 +1,10 @@
+{
+  // The Worker's name must match the one in the Cloudflare dashboard.
+  "name": "dungeon-items",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "d1_databases": [
+    // created with the Cloudflare tools on 2026-10-15 (HST), region OC.
+    { "binding": "DB", "database_name": "items-db", "database_id": "b39d9b77-fb44-4474-82b2-60252578f38a" }
+  ]
+}
