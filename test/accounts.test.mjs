@@ -93,6 +93,9 @@ test("one player per game per account, and a player is in one account", async ()
   assert.deepEqual(await A.playerFor(env.DB, b, "irl-dungeon"), { playerId: null });
   assert.deepEqual(await A.link(env.DB, a, "4dungeon", 5), { playerId: 5, linked: true });
   assert.equal((await A.link(env.DB, a, "Bad Game", 1)).error, "Bad link.");
+  assert.deepEqual(await A.unlink(env.DB, "4dungeon", 5), { ok: true, removed: 1 });
+  assert.deepEqual(await A.playerFor(env.DB, a, "4dungeon"), { playerId: null });
+  await A.link(env.DB, a, "4dungeon", 5);
   assert.deepEqual((await A.info(env.DB, a)).games, ["4dungeon", "irl-dungeon"]);
 });
 

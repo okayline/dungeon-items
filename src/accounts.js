@@ -111,6 +111,12 @@ export async function accountOf(db, game, playerId) {
   return { accountId: r ? r.account_id : null };
 }
 
+// A game deleted a player: forget the link (the account, its codes and its other games stay).
+export async function unlink(db, game, playerId) {
+  const r = await db.prepare("DELETE FROM account_players WHERE game = ? AND player_id = ?").bind(String(game), Number(playerId)).run();
+  return { ok: true, removed: r.meta.changes };
+}
+
 // ---------- passkeys ----------
 // Each takes the origin of the page that asked (the game passes its own request's origin).
 const guard = async (fn) => { try { return await fn(); } catch (e) { return bad(e.message || "Something went wrong with the passkey."); } };

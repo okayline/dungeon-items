@@ -34,6 +34,7 @@ export class Accounts extends WorkerEntrypoint {
   waysIn(accountId) { return A.waysIn(this.env.DB, accountId); }
   playerFor(accountId, game) { return A.playerFor(this.env.DB, accountId, game); }
   link(accountId, game, playerId) { return A.link(this.env.DB, accountId, game, playerId); }
+  unlink(game, playerId) { return A.unlink(this.env.DB, game, playerId); }
   accountOf(game, playerId) { return A.accountOf(this.env.DB, game, playerId); }
   passkeyRegisterOptions(args) { return A.passkeyRegisterOptions(this.env, args); }
   passkeyRegister(args) { return A.passkeyRegister(this.env, args); }

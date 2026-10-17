@@ -18,5 +18,7 @@ game's own address) can't carry over: players make a new one, and their save cod
 call the methods listed in `src/rpc.js` (irl-dungeon's `src/worker.js` "save codes and passkeys" section is the model),
 and import its old save-code hashes with `importCode` (same hashing, so they work as is).
 
-**Deploy order:** (1) run `migrations/003_accounts.sql` on the live `items-db`; (2) deploy dungeon-items; (3) deploy the games.
+**Games using it:** irl-dungeon, 88x31 (a Cloudflare Pages project; its `ACCOUNTS` binding needs `entrypoint` support in Pages, so check the first deploy). 88x31's three passkeys made on the bare `88x31.app` were imported with `scripts/import-passkeys.mjs`.
+
+**Deploy order:** (1) run `migrations/003_accounts.sql` on the live `items-db`; (2) deploy dungeon-items; (3) deploy the games (irl-dungeon, 88x31).
 irl-dungeon moves a player's old save codes into their account the first time it sees them; old passkey rows stay unused.
