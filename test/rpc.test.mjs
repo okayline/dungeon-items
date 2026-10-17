@@ -9,7 +9,7 @@ import { fakeD1 } from "./helpers.mjs";
 const stub = "export class WorkerEntrypoint { constructor(ctx, env) { this.ctx = ctx; this.env = env; } }";
 register("data:text/javascript," + encodeURIComponent(
   `export async function resolve(spec, ctx, next) { if (spec === "cloudflare:workers") return { url: "data:text/javascript," + encodeURIComponent(${JSON.stringify(stub)}), shortCircuit: true }; return next(spec, ctx); }`));
-const { Registry } = await import("../src/rpc.js");
+const { Registry, Accounts } = await import("../src/rpc.js");
 const index = await import("../src/index.js");
 
 const withItems = () => {
@@ -40,5 +40,14 @@ test("the entrypoint refuses what the registry refuses", async () => {
 
 test("the Worker's entry exports the public handler and the Registry", () => {
   assert.equal(typeof index.default.fetch, "function");
-  assert.equal(index.Registry, Registry);
+  assert.equal(index.Registry, Registry); assert.equal(index.Accounts, Accounts);
+});
+
+test("the Accounts entrypoint runs on the bound database", async () => {
+  const db = fakeD1(), acc = new Accounts({}, { DB: db });
+  const { accountId } = await acc.createAccount();
+  const { code } = await acc.addCode(accountId);
+  assert.deepEqual(await acc.loginCode({ code, ip: "1.2.3.4" }), { accountId });
+  assert.deepEqual(await acc.link(accountId, "irl-dungeon", 3), { playerId: 3, linked: true });
+  assert.deepEqual(await acc.playerFor(accountId, "irl-dungeon"), { playerId: 3 });
 });

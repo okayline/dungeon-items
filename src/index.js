@@ -2,4 +2,4 @@
 // the games call through a service binding. They're joined here so the tests can load worker.js without the
 // Cloudflare-only module that rpc.js needs.
 export { default } from "./worker.js";
-export { Registry } from "./rpc.js";
+export { Registry, Accounts } from "./rpc.js";
