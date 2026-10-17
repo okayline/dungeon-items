@@ -113,3 +113,18 @@ test("a passkey made on one game's address logs in from another; other sites are
   assert.deepEqual(await A.passkeyRemove(env.DB, accountId, 1), { ok: true });
   assert.equal(rows(env, "SELECT * FROM account_passkeys").length, 0);
 });
+
+test("importing a game's old passkeys and codes makes one account per player, once, and skips bad hashes", async () => {
+  const { importSql } = await import("../scripts/import-passkeys.mjs");
+  const env = envOf();
+  const jwk = await webcrypto.subtle.exportKey("jwk", (await webcrypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign"])).publicKey);
+  const h = "cd".repeat(32);
+  const data = { passkeys: [{ user_id: 7, cred_id: "cred'7", public_key: JSON.stringify(jwk), alg: -7, sign_count: 3, label: "old", created_at: 100 }], codes: [{ user_id: 7, code_hash: h }, { user_id: 8, code_hash: "bad" }] };
+  const sql = importSql("88x31", data, 500);
+  env.DB.raw.exec(sql); env.DB.raw.exec(sql);                             // twice: nothing doubles
+  assert.deepEqual(rows(env, "SELECT game, player_id FROM account_players"), [{ game: "88x31", player_id: 7 }]);
+  assert.equal(rows(env, "SELECT * FROM accounts").length, 1);
+  assert.deepEqual(rows(env, "SELECT cred_id, alg, sign_count, label FROM account_passkeys"), [{ cred_id: "cred'7", alg: -7, sign_count: 3, label: "old" }]);
+  const acct = rows(env, "SELECT account_id FROM account_players")[0].account_id;
+  assert.deepEqual(rows(env, "SELECT code_hash, account_id FROM account_codes"), [{ code_hash: h, account_id: acct }]);
+});
