@@ -25,7 +25,7 @@ test("the entrypoint runs the registry on the bound database: birth, move, heldB
   assert.deepEqual(await reg.birth({ itemId: 1, game: "irl-dungeon", playerId: 1, key: "k1" }), { itemId: 1, copy: 1, created: true });
   assert.deepEqual(q(db, "SELECT item_id, copy, holder_game, holder_id FROM copies"), [{ item_id: 1, copy: 1, holder_game: "irl-dungeon", holder_id: 1 }]);
   assert.deepEqual(await reg.moveCopy({ itemId: 1, copy: 1, from: { game: "irl-dungeon", playerId: 1 }, to: { game: "4dungeon", playerId: 2 } }), { ok: true, moves: 1 });
-  assert.deepEqual(await reg.heldBy("4dungeon", 2), [{ itemId: 1, copy: 1, moves: 1 }]);
+  assert.deepEqual((await reg.heldBy("4dungeon", 2)).map(({ itemId, copy, moves }) => ({ itemId, copy, moves })), [{ itemId: 1, copy: 1, moves: 1 }]);
   assert.deepEqual(await reg.heldBy("irl-dungeon", 1), []);
   const v = await reg.verify();
   assert.equal(v.ok, true); assert.equal(v.count, 2);

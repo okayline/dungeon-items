@@ -207,8 +207,9 @@ test("heldBy lists a player's copies, per game, and a copy leaves the hand it wa
   const db = setup();
   await birth(db, irl(1, "k1", 2)); await birth(db, irl(1, "k2", 1)); await birth(db, irl(1, "k3", 1)); await birth(db, irl(2, "k4", 1));
   await birth(db, { itemId: 1, game: "4dungeon", playerId: 1, key: "k5" });
-  assert.deepEqual(await heldBy(db, "irl-dungeon", 1), [{ itemId: 1, copy: 1, moves: 0 }, { itemId: 1, copy: 2, moves: 0 }, { itemId: 2, copy: 1, moves: 0 }]);
-  assert.deepEqual(await heldBy(db, "4dungeon", 1), [{ itemId: 1, copy: 4, moves: 0 }]);
+  const short = (l) => l.map(({ itemId, copy, moves }) => ({ itemId, copy, moves }));
+  assert.deepEqual(short(await heldBy(db, "irl-dungeon", 1)), [{ itemId: 1, copy: 1, moves: 0 }, { itemId: 1, copy: 2, moves: 0 }, { itemId: 2, copy: 1, moves: 0 }]);
+  assert.deepEqual(short(await heldBy(db, "4dungeon", 1)), [{ itemId: 1, copy: 4, moves: 0 }]);
   await moveCopy(db, { itemId: 1, copy: 1, from: { game: "irl-dungeon", playerId: 1 }, to: { game: "4dungeon", playerId: 1 } });
   assert.deepEqual((await heldBy(db, "irl-dungeon", 1)).map((c) => [c.itemId, c.copy]), [[1, 2], [2, 1]]);
   assert.deepEqual((await heldBy(db, "4dungeon", 1)).map((c) => [c.itemId, c.copy, c.moves]), [[1, 1, 1], [1, 4, 0]]);

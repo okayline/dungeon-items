@@ -4,7 +4,7 @@
 //
 // This door belongs to one game: HTTP_GAME. Every call acts as that game, whatever the arguments say, so the key can only
 // ever make, move, spend, add or retire what is that game's to touch. Other games use the Registry entrypoint (rpc.js).
-import { birth, moveCopy, spendCopy, heldBy, addItems, retireItems, itemIds } from "./registry.js";
+import { birth, moveCopy, spendCopy, heldBy, whereIs, addItems, retireItems, itemIds } from "./registry.js";
 
 const HTTP_GAME = "88x31";
 const sameKey = (a, b) => a.length === b.length && [...a].reduce((x, c, i) => x | (c.charCodeAt(0) ^ b.charCodeAt(i)), 0) === 0;
@@ -16,6 +16,11 @@ const CALLS = {
   moveCopy: (db, [a]) => (mine(a && a.from) ? moveCopy(db, a) : { error: "Only " + HTTP_GAME + " players' copies move from here." }),
   spendCopy: (db, [a]) => (mine(a && a.holder) ? spendCopy(db, a) : { error: "Only " + HTTP_GAME + " players' copies are spent from here." }),
   heldBy: (db, [playerId]) => heldBy(db, HTTP_GAME, playerId),
+  // where one of this game's own copies is now (88x31 notices a button coming home); other games' copies aren't its to look up
+  whereIs: async (db, [itemId, copy]) => {
+    const it = await db.prepare("SELECT source FROM items WHERE id = ?").bind(itemId).first();
+    return it && it.source === HTTP_GAME ? whereIs(db, itemId, copy) : null;
+  },
   addItems: (db, [items]) => addItems(db, HTTP_GAME, items),
   retireItems: (db, [keys]) => retireItems(db, HTTP_GAME, keys),
   itemIds: (db, [keys]) => itemIds(db, HTTP_GAME, keys),

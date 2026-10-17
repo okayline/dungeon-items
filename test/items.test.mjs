@@ -134,7 +134,12 @@ test("read only: POST, PUT and DELETE are refused and change nothing; OPTIONS wo
   assert.equal(o.status, 204); assert.equal(o.headers.get("access-control-allow-origin"), "*");
 });
 
-test("the committed seed matches 4Dungeon's rules.js", { skip: !process.env.RULES_JS && !(await import("node:fs")).existsSync("../daily-dungeon/rules.js") }, () => {
-  const live = extract(readFileSync(process.env.RULES_JS || "../daily-dungeon/rules.js", "utf8"));
-  assert.deepEqual(JSON.parse(readFileSync(new URL("../seed/4dungeon.json", import.meta.url), "utf8")), live);
+// Since 4Dungeon v1.14 this table is the master and 4Dungeon's items.js is generated from it (tools/sync-items.mjs there),
+// so the check runs the other way: the seed still matches what 4Dungeon ships (when that repo is checked out next door).
+test("4Dungeon's generated items.js matches the committed seed", { skip: !(await import("node:fs")).existsSync("../daily-dungeon/items.js") }, async () => {
+  const { createRequire } = await import("node:module");
+  const shipped = createRequire(import.meta.url)("../../daily-dungeon/items.js");
+  const seed = JSON.parse(readFileSync(new URL("../seed/4dungeon.json", import.meta.url), "utf8"));
+  assert.deepEqual(shipped.map((i) => [i.key, i.rarity.toLowerCase(), i.name, i.note, i.align, i.nature, i.both || null]),
+    seed.map((i) => [i.source_key, i.rarity, i.name, i.note, i.alignment, i.nature, i.extra.both_name || null]));
 });

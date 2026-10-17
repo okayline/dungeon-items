@@ -10,7 +10,7 @@
 // This file imports "cloudflare:workers", which only exists on Cloudflare, so nothing else imports it; the tests
 // load it with a stand-in for that module (test/rpc.test.mjs).
 import { WorkerEntrypoint } from "cloudflare:workers";
-import { birth, moveCopy, spendCopy, heldBy, verify } from "./registry.js";
+import { birth, moveCopy, spendCopy, heldBy, whereIs, verify } from "./registry.js";
 import * as A from "./accounts.js";
 
 export class Registry extends WorkerEntrypoint {
@@ -18,6 +18,7 @@ export class Registry extends WorkerEntrypoint {
   moveCopy(args) { return moveCopy(this.env.DB, args); }
   spendCopy(args) { return spendCopy(this.env.DB, args); }
   heldBy(game, playerId) { return heldBy(this.env.DB, game, playerId); }
+  whereIs(itemId, copy) { return whereIs(this.env.DB, itemId, copy); }
   verify() { return verify(this.env.DB); }
 }
 

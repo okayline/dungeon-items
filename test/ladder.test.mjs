@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { execSync } from "node:child_process";
 import { fakeD1 } from "./helpers.mjs";
-import { birth, moveCopy, spendCopy, heldBy, addItems, retireItems, verify } from "../src/registry.js";
+import { birth, moveCopy, spendCopy, heldBy, whereIs, addItems, retireItems, verify } from "../src/registry.js";
 import worker from "../src/worker.js";
 
 // items 1 88x31 ultra, 2 88x31 prototype, 3 88x31 common, 4 4dungeon relic
@@ -78,4 +78,17 @@ test("migration 004 runs on the old layout and keeps every item, copy and ledger
   assert.throws(() => db.exec("DELETE FROM items WHERE id = 1"), /never deleted/);
   db.exec("INSERT INTO items (source, source_key, rarity, name, created_at, updated_at) VALUES ('88x31', '9', 'ultra', 'u', 1, 1)");
   assert.equal(db.prepare("SELECT id FROM items WHERE source_key = '9'").get().id, 3);
+});
+
+test("heldBy carries each item's details; whereIs finds a copy; the HTTP door only looks up 88x31's own copies", async () => {
+  const db = setup(), env = { DB: db, ACCOUNTS_KEY: "k".repeat(20) };
+  await birth(db, b("88x31", 1, "w1", 3));                          // an 88x31 common
+  db.raw.prepare("INSERT INTO items (source, source_key, rarity, name, created_at, updated_at) VALUES ('4dungeon', 'C:9', 'common', 'a coin', 1, 1)").run();
+  await birth(db, b("4dungeon", 7, "w2", 5));                       // a 4dungeon item, held in 4dungeon
+  await moveCopy(db, { itemId: 3, copy: 1, from: { game: "88x31", playerId: 1 }, to: { game: "4dungeon", playerId: 7 } });
+  const held = await heldBy(db, "4dungeon", 7);
+  assert.deepEqual(held.map((c) => [c.itemId, c.item.source, c.item.name, c.born]), [[3, "88x31", "item 12", "88x31"], [5, "4dungeon", "a coin", "4dungeon"]]);
+  const call = async (m, args) => (await worker.fetch(new Request("https://x/rpc/registry/" + m, { method: "POST", headers: { "x-accounts-key": env.ACCOUNTS_KEY }, body: JSON.stringify(args) }), env)).json();
+  assert.deepEqual(await call("whereIs", [3, 1]), { game: "4dungeon", playerId: 7, spent: false });
+  assert.equal(await call("whereIs", [5, 1]), null);                // 4dungeon's copy: not 88x31's to look up
 });

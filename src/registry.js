@@ -9,7 +9,8 @@
 //        -> { ok: true, moves } or { error } (not the holder, no such copy, already theirs, bad argument).
 //   spendCopy(db, { itemId, copy, holder, t? })       the holder used it up in their game (an 88x31 fusion): it stays, never moves.
 //        -> { ok: true } or { error }. Spending one already spent by the same holder answers { ok: true, already: true }.
-//   heldBy(db, game, playerId)                        the copies a player holds now (not spent): [{ itemId, copy, moves }].
+//   heldBy(db, game, playerId)                        the copies a player holds now (not spent): [{ itemId, copy, moves, born, item }].
+//   whereIs(db, itemId, copy)                         who holds a copy now: { game, playerId, spent } or null.
 //   addItems(db, game, items)                         a game adds its own items (source = game); INSERT OR IGNORE, so an item
 //        already there is never changed. -> { added } . retireItems(db, game, keys) retires its own items by source_key.
 //
@@ -91,8 +92,12 @@ export async function moveCopy(db, { itemId, copy, from, to, t = now() } = {}) {
 
 export async function heldBy(db, game, playerId) {
   if (!isText(game, 40) || !isInt(playerId)) return [];
-  const { results } = await db.prepare("SELECT item_id, copy, moves FROM copies WHERE holder_game = ? AND holder_id = ? AND spent = 0 ORDER BY item_id, copy").bind(game, playerId).all();
-  return results.map((r) => ({ itemId: r.item_id, copy: r.copy, moves: r.moves }));
+  const { results } = await db.prepare(
+    `SELECT c.item_id, c.copy, c.moves, c.born_game, i.source, i.rarity, i.name, i.note, i.type, i.image, i.alignment, i.nature
+     FROM copies c JOIN items i ON i.id = c.item_id WHERE c.holder_game = ? AND c.holder_id = ? AND c.spent = 0 ORDER BY c.item_id, c.copy`).bind(game, playerId).all();
+  // (v004) each copy carries its item's details, so a game can show a visitor from another game without a second lookup
+  return results.map((r) => ({ itemId: r.item_id, copy: r.copy, moves: r.moves, born: r.born_game,
+    item: { source: r.source, rarity: r.rarity, name: r.name, note: r.note, type: r.type, image: r.image, alignment: r.alignment, nature: r.nature } }));
 }
 
 // Check the whole ledger (up to `limit` rows, oldest first). Keep the head it returns somewhere outside the database:
@@ -152,4 +157,10 @@ export async function itemIds(db, game, keys) {
   const { results } = await db.prepare("SELECT id, source_key FROM items WHERE source = ? AND source_key IN (SELECT value FROM json_each(?))")
     .bind(game, JSON.stringify(keys.map(String))).all();
   return Object.fromEntries(results.map((r) => [r.source_key, r.id]));
+}
+
+export async function whereIs(db, itemId, copy) {
+  if (!isInt(itemId) || !isInt(copy)) return null;
+  const r = await db.prepare("SELECT holder_game, holder_id, spent FROM copies WHERE item_id = ? AND copy = ?").bind(itemId, copy).first();
+  return r ? { game: r.holder_game, playerId: r.holder_id, spent: !!r.spent } : null;
 }
