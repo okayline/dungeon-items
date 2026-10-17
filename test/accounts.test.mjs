@@ -131,3 +131,16 @@ test("importing a game's old passkeys and codes makes one account per player, on
   const acct = rows(env, "SELECT account_id FROM account_players")[0].account_id;
   assert.deepEqual(rows(env, "SELECT code_hash, account_id FROM account_codes"), [{ code_hash: h, account_id: acct }]);
 });
+
+test("the HTTP route needs the key, answers like the entrypoint, and says nothing otherwise", async () => {
+  const worker = (await import("../src/worker.js")).default;
+  const env = { ...envOf(), ACCOUNTS_KEY: "k".repeat(24) };
+  const call = (name, args, key = env.ACCOUNTS_KEY) => worker.fetch(new Request("https://x/rpc/accounts/" + name, { method: "POST", headers: key ? { "x-accounts-key": key } : {}, body: JSON.stringify(args) }), env);
+  const { accountId } = await (await call("createAccount", [])).json();
+  assert.deepEqual(await (await call("link", [accountId, "88x31", 4])).json(), { playerId: 4, linked: true });
+  assert.deepEqual(await (await call("playerFor", [accountId, "88x31"])).json(), { playerId: 4 });
+  assert.equal((await call("createAccount", [], "wrong".padEnd(24, "x"))).status, 404);
+  assert.equal((await call("createAccount", [], "")).status, 404);
+  assert.equal((await call("nope", [])).status, 404);
+  assert.equal((await worker.fetch(new Request("https://x/rpc/accounts/createAccount", { method: "POST", headers: { "x-accounts-key": "" } }), { ...env, ACCOUNTS_KEY: "" })).status, 404);
+});

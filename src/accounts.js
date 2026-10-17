@@ -139,3 +139,28 @@ export async function passkeyRemove(db, accountId, id) {
   const r = await db.prepare("DELETE FROM account_passkeys WHERE id = ? AND account_id = ?").bind(Number(id), accountId).run();
   return r.meta.changes ? { ok: true } : bad("No such passkey.", 404);
 }
+
+// ---------- the same calls over HTTP, for callers that can't use a Worker entrypoint (Cloudflare Pages sites) ----------
+// POST /rpc/accounts/<method>  with  x-accounts-key: <ACCOUNTS_KEY secret>  and a JSON array of arguments as the body.
+// Answers with the method's result as JSON. Anything without the right key gets a plain 404, as if the route didn't exist.
+const CALLS = {
+  createAccount: (env) => createAccount(env.DB), addCode: (env, a) => addCode(env.DB, a[0]),
+  importCode: (env, a) => importCode(env.DB, a[0], a[1]), removeCode: (env, a) => removeCode(env.DB, a[0], a[1]),
+  loginCode: (env, a) => loginCode(env.DB, a[0]?.code, a[0]?.ip), info: (env, a) => info(env.DB, a[0]),
+  waysIn: (env, a) => waysIn(env.DB, a[0]), playerFor: (env, a) => playerFor(env.DB, a[0], a[1]),
+  link: (env, a) => link(env.DB, a[0], a[1], a[2]), unlink: (env, a) => unlink(env.DB, a[0], a[1]),
+  accountOf: (env, a) => accountOf(env.DB, a[0], a[1]),
+  passkeyRegisterOptions: (env, a) => passkeyRegisterOptions(env, a[0]), passkeyRegister: (env, a) => passkeyRegister(env, a[0]),
+  passkeyLoginOptions: (env, a) => passkeyLoginOptions(env, a[0]), passkeyLogin: (env, a) => passkeyLogin(env, a[0]),
+  passkeyRemove: (env, a) => passkeyRemove(env.DB, a[0], a[1]),
+};
+const sameKey = (a, b) => a.length === b.length && [...a].reduce((x, c, i) => x | (c.charCodeAt(0) ^ b.charCodeAt(i)), 0) === 0;
+
+export async function httpCall(req, env) {
+  const m = new URL(req.url).pathname.match(/^\/rpc\/accounts\/([A-Za-z]+)$/);
+  const key = req.headers.get("x-accounts-key") || "";
+  if (!m || req.method !== "POST" || !env.ACCOUNTS_KEY || env.ACCOUNTS_KEY.length < 16 || !sameKey(key, env.ACCOUNTS_KEY) || !CALLS[m[1]]) return null;
+  let args;
+  try { args = await req.json(); if (!Array.isArray(args)) throw 0; } catch { return Response.json({ error: "Send a JSON array." }, { status: 400 }); }
+  return Response.json((await CALLS[m[1]](env, args)) ?? null, { headers: { "cache-control": "no-store" } });
+}

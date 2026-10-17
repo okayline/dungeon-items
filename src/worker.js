@@ -2,6 +2,7 @@
 // scripts run by the owner). Public, GET only.
 //   GET /api/items            active items. ?source= ?rarity= filter; ?all=1 includes retired ones.
 //   GET /api/items/:id        one item by id (retired ones too, so an old find still resolves).
+import { httpCall } from "./accounts.js";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-methods": "GET, OPTIONS", "access-control-allow-headers": "if-none-match" };
 const RARITIES = ["common", "uncommon", "rare", "mythic", "moon"];
 const shape = (r) => ({
@@ -24,6 +25,7 @@ async function cached(req, data) {
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    if (url.pathname.startsWith("/rpc/accounts/")) return (await httpCall(req, env)) || json({ error: "Not found." }, 404);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (req.method !== "GET") return json({ error: "Read only." }, 405, { allow: "GET, OPTIONS" });
     if (url.pathname === "/api/items") {
