@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS items (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   source      TEXT NOT NULL CHECK (length(source) BETWEEN 1 AND 40),   -- where the item comes from: '4dungeon', 'irl-dungeon', '88x31'
   source_key  TEXT NOT NULL CHECK (length(source_key) BETWEEN 1 AND 80),   -- its key at home ('COMMON:3' for 4Dungeon, the design id for 88x31)
-  rarity      TEXT NOT NULL CHECK (rarity IN ('common', 'uncommon', 'rare', 'mythic', 'moon')),
+  rarity      TEXT NOT NULL CHECK (rarity IN ('common', 'uncommon', 'rare', 'prototype', 'relic', 'ultra', 'moon', 'mythic')),   -- the shared ladder (migration 004); 'mythic' is 4Dungeon's old top tier, kept on old items
   name        TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 200),
   note        TEXT CHECK (note IS NULL OR length(note) <= 500),         -- the one-line note, when there is one
   alignment   TEXT CHECK (alignment IS NULL OR alignment IN ('LAW', 'CHAOS', 'NEUTRAL')),
@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS copies (
   moves       INTEGER NOT NULL DEFAULT 0 CHECK (moves >= 0),
   born_at     INTEGER NOT NULL,
   moved_at    INTEGER NOT NULL,
+  spent       INTEGER NOT NULL DEFAULT 0 CHECK (spent IN (0, 1)),          -- used up in its game (migration 004): never moves again
   PRIMARY KEY (item_id, copy),
   UNIQUE (born_game, born_key)
 );
@@ -67,7 +68,7 @@ CREATE INDEX IF NOT EXISTS copies_by_holder ON copies (holder_game, holder_id, i
 -- no player ids, no keys. Who did it is in game + player_id, which nothing publishes.
 CREATE TABLE IF NOT EXISTS ledger (
   id          INTEGER PRIMARY KEY,
-  kind        TEXT NOT NULL,          -- 'copy' (born) or 'move'
+  kind        TEXT NOT NULL,          -- 'copy' (born), 'move' or 'spend'
   game        TEXT NOT NULL,          -- the game of whoever did it
   player_id   INTEGER NOT NULL,
   record      TEXT NOT NULL,          -- the sealed JSON record
@@ -88,9 +89,29 @@ BEGIN
 END;
 
 CREATE TRIGGER IF NOT EXISTS copies_one_move BEFORE UPDATE ON copies
-WHEN NEW.moves != OLD.moves + 1 OR (NEW.holder_game = OLD.holder_game AND NEW.holder_id = OLD.holder_id)
+WHEN NEW.spent = OLD.spent AND (NEW.moves != OLD.moves + 1 OR (NEW.holder_game = OLD.holder_game AND NEW.holder_id = OLD.holder_id))
 BEGIN
   SELECT RAISE(ABORT, 'a copy only changes hands, one move at a time');
+END;
+
+CREATE TRIGGER IF NOT EXISTS copies_spend_once BEFORE UPDATE ON copies
+WHEN OLD.spent = 1 OR (NEW.spent != OLD.spent AND (NEW.moves != OLD.moves OR NEW.holder_game != OLD.holder_game OR NEW.holder_id != OLD.holder_id))
+BEGIN
+  SELECT RAISE(ABORT, 'a spent copy never changes again; spending changes nothing else');
+END;
+
+-- Ultra is 1-of-1; prototype, relic and ultra are only born in their home game (migration 004).
+CREATE TRIGGER IF NOT EXISTS copies_ultra_one BEFORE INSERT ON copies
+WHEN NEW.copy > 1 AND (SELECT rarity FROM items WHERE id = NEW.item_id) = 'ultra'
+BEGIN
+  SELECT RAISE(ABORT, 'an ultra is 1-of-1');
+END;
+
+CREATE TRIGGER IF NOT EXISTS copies_home_only BEFORE INSERT ON copies
+WHEN (SELECT rarity FROM items WHERE id = NEW.item_id) IN ('prototype', 'relic', 'ultra')
+  AND NEW.born_game != (SELECT source FROM items WHERE id = NEW.item_id)
+BEGIN
+  SELECT RAISE(ABORT, 'only its home game makes this item');
 END;
 
 CREATE TRIGGER IF NOT EXISTS copies_count_up BEFORE INSERT ON copies

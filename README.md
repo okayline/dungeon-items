@@ -28,5 +28,19 @@ Every numbered copy of an item, across all the games, and who holds it. Copy num
 - **Limits.** The chain can't show that its newest entries were dropped; keep the `head` that `verify` returns somewhere else. A game names itself in each call and the entrypoint believes it. If more than eight writers race for the same head at the same instant, the last ones get "The registry is busy" and should try again.
 - **Going live.** Run `migrations/002_registry.sql` on `items-db`, then deploy this Worker (so the `Registry` entrypoint exists), and only then deploy a game that binds it.
 
+## The shared ladder (migration 004, 2026-10-17)
+**common · uncommon · rare · prototype · relic · ultra**, plus **moon** (event). The same names in every game; going
+forward only (4Dungeon's old `mythic` items keep `mythic`). Enforced by the database:
+- **Ultra is 1-of-1**: an ultra item only ever has copy #1.
+- **Home game only**: prototype, relic and ultra copies are only born in the item's own game (`source`); any copy can
+  still move to any game. Common, uncommon and rare can be born anywhere (irl-dungeon deals both games' items).
+- **Spent copies** (`copies.spent`): used up in their game (an 88x31 fusion). They stay, on the ledger (`spend`), and never move again.
+- A game's own **extra** rarities stay in that game (88x31's `special` quest rewards never come here).
+
+`Registry` gains `spendCopy`. **88x31 over HTTP** (it's a Pages site): `POST /rpc/registry/<method>` with the same
+`x-accounts-key` as the accounts route (`src/registry-http.js`): `birth`, `moveCopy`, `spendCopy`, `heldBy`, `addItems`,
+`retireItems`, `itemIds`. That door always acts as 88x31, whatever the arguments say, so the key can only touch 88x31's
+own items and its players' copies. 88x31 keeps its own ledger as the master and mirrors into this one.
+
 ## Not done yet
 - 4Dungeon doesn't read the table yet. A button that leaves 88x31's catalog isn't retired automatically.

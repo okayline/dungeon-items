@@ -7,7 +7,14 @@
 //        -> { error } when the item is unknown or retired, the key was used for a different item, or an argument is bad.
 //   moveCopy(db, { itemId, copy, from, to, t? })      hand a copy over: from and to are { game, playerId }.
 //        -> { ok: true, moves } or { error } (not the holder, no such copy, already theirs, bad argument).
-//   heldBy(db, game, playerId)                        the copies a player holds now: [{ itemId, copy, moves }].
+//   spendCopy(db, { itemId, copy, holder, t? })       the holder used it up in their game (an 88x31 fusion): it stays, never moves.
+//        -> { ok: true } or { error }. Spending one already spent by the same holder answers { ok: true, already: true }.
+//   heldBy(db, game, playerId)                        the copies a player holds now (not spent): [{ itemId, copy, moves }].
+//   addItems(db, game, items)                         a game adds its own items (source = game); INSERT OR IGNORE, so an item
+//        already there is never changed. -> { added } . retireItems(db, game, keys) retires its own items by source_key.
+//
+// The ladder (migration 004): common < uncommon < rare < prototype < relic < ultra, plus moon. Ultra is 1-of-1, and
+// prototype, relic and ultra are only born in their home game (items.source): triggers in schema.sql enforce both.
 //   verify(db)                                        checks the whole ledger: { ok, count, head } or { ok: false, at }.
 //
 // `key` is the game's own name for the moment the copy was made (irl-dungeon: its find, by player, cell, spot and day).
@@ -47,6 +54,8 @@ export async function birth(db, { itemId, game, playerId, key, t = now() } = {})
       return { itemId, copy: next, created: true };
     } catch (e) {
       if (/retired/.test(String(e && e.message))) return { error: "That item is retired and makes no new copies." };
+      if (/1-of-1/.test(String(e && e.message))) return { error: "That item is an ultra: there is only ever one." };
+      if (/home game/.test(String(e && e.message))) return { error: "Only that item's home game can make new copies of it." };
       if (isUnique(e) || /no gaps/.test(String(e && e.message))) continue;   // someone took that number, that key or that head: read again
       throw e;
     }
@@ -59,8 +68,9 @@ export async function moveCopy(db, { itemId, copy, from, to, t = now() } = {}) {
   if (!holderOk(from) || !holderOk(to)) return { error: "From whom, to whom? A game and a player id for each." };
   if (from.game === to.game && from.playerId === to.playerId) return { error: "That copy is already theirs." };
   for (let i = 0; i < TRIES; i++) {
-    const row = await db.prepare("SELECT holder_game, holder_id, moves FROM copies WHERE item_id = ? AND copy = ?").bind(itemId, copy).first();
+    const row = await db.prepare("SELECT holder_game, holder_id, moves, spent FROM copies WHERE item_id = ? AND copy = ?").bind(itemId, copy).first();
     if (!row) return { error: "No such copy." };
+    if (row.spent) return { error: "That copy was used up." };
     if (row.holder_game !== from.game || row.holder_id !== from.playerId) return { error: "That copy isn't theirs to hand over." };
     const record = JSON.stringify({ k: "move", item: itemId, copy, from: from.game, to: to.game });
     try {
@@ -81,7 +91,7 @@ export async function moveCopy(db, { itemId, copy, from, to, t = now() } = {}) {
 
 export async function heldBy(db, game, playerId) {
   if (!isText(game, 40) || !isInt(playerId)) return [];
-  const { results } = await db.prepare("SELECT item_id, copy, moves FROM copies WHERE holder_game = ? AND holder_id = ? ORDER BY item_id, copy").bind(game, playerId).all();
+  const { results } = await db.prepare("SELECT item_id, copy, moves FROM copies WHERE holder_game = ? AND holder_id = ? AND spent = 0 ORDER BY item_id, copy").bind(game, playerId).all();
   return results.map((r) => ({ itemId: r.item_id, copy: r.copy, moves: r.moves }));
 }
 
@@ -90,4 +100,56 @@ export async function heldBy(db, game, playerId) {
 export async function verify(db, limit = 10000) {
   const { results } = await db.prepare("SELECT id, record, prev_hash, hash FROM ledger ORDER BY id LIMIT ?").bind(limit).all();
   return verifyChain(results);
+}
+
+export async function spendCopy(db, { itemId, copy, holder, t = now() } = {}) {
+  if (!isInt(itemId) || !isInt(copy)) return { error: "Which copy?" };
+  if (!holderOk(holder)) return { error: "Whose copy? A game and a player id are needed." };
+  for (let i = 0; i < TRIES; i++) {
+    const row = await db.prepare("SELECT holder_game, holder_id, spent FROM copies WHERE item_id = ? AND copy = ?").bind(itemId, copy).first();
+    if (!row) return { error: "No such copy." };
+    if (row.holder_game !== holder.game || row.holder_id !== holder.playerId) return { error: "That copy isn't theirs to use up." };
+    if (row.spent) return { ok: true, already: true };
+    const record = JSON.stringify({ k: "spend", item: itemId, copy, game: holder.game });
+    try {
+      const out = await db.batch([
+        db.prepare("UPDATE copies SET spent = 1 WHERE item_id = ? AND copy = ? AND holder_game = ? AND holder_id = ? AND spent = 0")
+          .bind(itemId, copy, holder.game, holder.playerId),
+        await chainInsert(db, await head(db), { kind: "spend", game: holder.game, playerId: holder.playerId, record, t }, { ifChanged: true }),
+      ]);
+      if (out[0].meta.changes === 1) return { ok: true };
+    } catch (e) {
+      if (chainClash(e)) continue;
+      throw e;
+    }
+  }
+  throw busy();
+}
+
+// A game's own items. Only rarities on the ladder; an existing item (same source and key) is left exactly as it is.
+const LADDER = new Set(["common", "uncommon", "rare", "prototype", "relic", "ultra", "moon"]);
+export async function addItems(db, game, items, t = now()) {
+  if (!isText(game, 40) || !Array.isArray(items) || items.length > 500) return { error: "A game and up to 500 items, please." };
+  const ok = items.filter((i) => i && isText(String(i.source_key ?? ""), 80) && LADDER.has(i.rarity) && isText(i.name, 200)
+    && (i.type == null || isText(i.type, 40)) && (i.image == null || isText(i.image, 500)));
+  if (ok.length !== items.length) return { error: "Some items are missing a key, a name or a rarity on the ladder." };
+  if (!ok.length) return { added: 0 };
+  const out = await db.batch(ok.map((i) => db.prepare(
+    "INSERT OR IGNORE INTO items (source, source_key, rarity, name, note, type, image, extra, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)")
+    .bind(game, String(i.source_key), i.rarity, i.name, i.note ?? null, i.type ?? null, i.image ?? null, JSON.stringify(i.extra || {}), t, t)));
+  return { added: out.reduce((n, r) => n + r.meta.changes, 0) };
+}
+export async function retireItems(db, game, keys) {
+  if (!isText(game, 40) || !Array.isArray(keys) || keys.length > 500) return { error: "A game and up to 500 keys, please." };
+  if (!keys.length) return { retired: 0 };
+  const r = await db.prepare("UPDATE items SET retired = 1 WHERE source = ? AND retired = 0 AND source_key IN (SELECT value FROM json_each(?))")
+    .bind(game, JSON.stringify(keys.map(String))).run();
+  return { retired: r.meta.changes };
+}
+// item ids for a game's own keys: { "<source_key>": id }
+export async function itemIds(db, game, keys) {
+  if (!isText(game, 40) || !Array.isArray(keys) || keys.length > 1000) return {};
+  const { results } = await db.prepare("SELECT id, source_key FROM items WHERE source = ? AND source_key IN (SELECT value FROM json_each(?))")
+    .bind(game, JSON.stringify(keys.map(String))).all();
+  return Object.fromEntries(results.map((r) => [r.source_key, r.id]));
 }

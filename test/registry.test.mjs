@@ -78,8 +78,8 @@ test("unknown and retired items make no copies, and nothing is written", async (
   assert.match((await birth(db, irl(1, "k", 99))).error, /No such item/);
   assert.match((await birth(db, irl(1, "k", 4))).error, /retired/);
   assert.equal(copies(db).length, 0); assert.equal(ledger(db).length, 0);
-  assert.throws(() => db.raw.prepare("INSERT INTO copies VALUES (4, 1, 'g', 'k', 'g', 1, 0, 1, 1)").run(), /retired/);   // the database says no too
-  assert.throws(() => db.raw.prepare("INSERT INTO copies VALUES (99, 1, 'g', 'k', 'g', 1, 0, 1, 1)").run(), /FOREIGN KEY/);
+  assert.throws(() => db.raw.prepare("INSERT INTO copies VALUES (4, 1, 'g', 'k', 'g', 1, 0, 1, 1, 0)").run(), /retired/);   // the database says no too
+  assert.throws(() => db.raw.prepare("INSERT INTO copies VALUES (99, 1, 'g', 'k', 'g', 1, 0, 1, 1, 0)").run(), /FOREIGN KEY/);
 });
 
 test("bad arguments are refused and write nothing", async () => {
@@ -116,7 +116,7 @@ test("a birth is saved only with its ledger entry: if the ledger can't take it, 
 test("the database refuses to skip, reuse, rewrite or delete copies", async () => {
   const db = setup();
   await birth(db, irl(1, "k1")); await birth(db, irl(2, "k2"));
-  const ins = (n, key) => db.raw.prepare("INSERT INTO copies VALUES (1, ?, 'g', ?, 'g', 1, 0, 1, 1)").run(n, key);
+  const ins = (n, key) => db.raw.prepare("INSERT INTO copies VALUES (1, ?, 'g', ?, 'g', 1, 0, 1, 1, 0)").run(n, key);
   assert.throws(() => ins(5, "x"), /no gaps/);            // skipping ahead
   assert.throws(() => ins(2, "x"), /no gaps/);            // reusing a number
   assert.throws(() => ins(1, "x"), /no gaps/);

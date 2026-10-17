@@ -3,8 +3,9 @@
 //   GET /api/items            active items. ?source= ?rarity= filter; ?all=1 includes retired ones.
 //   GET /api/items/:id        one item by id (retired ones too, so an old find still resolves).
 import { httpCall } from "./accounts.js";
+import { registryCall } from "./registry-http.js";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-methods": "GET, OPTIONS", "access-control-allow-headers": "if-none-match" };
-const RARITIES = ["common", "uncommon", "rare", "mythic", "moon"];
+const RARITIES = ["common", "uncommon", "rare", "prototype", "relic", "ultra", "moon", "mythic"];
 const shape = (r) => ({
   id: r.id, source: r.source, source_key: r.source_key, rarity: r.rarity, name: r.name, note: r.note,
   alignment: r.alignment, nature: r.nature, type: r.type, image: r.image, extra: JSON.parse(r.extra || "{}"),
@@ -26,6 +27,7 @@ export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     if (url.pathname.startsWith("/rpc/accounts/")) return (await httpCall(req, env)) || json({ error: "Not found." }, 404);
+    if (url.pathname.startsWith("/rpc/registry/")) return (await registryCall(req, env)) || json({ error: "Not found." }, 404);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (req.method !== "GET") return json({ error: "Read only." }, 405, { allow: "GET, OPTIONS" });
     if (url.pathname === "/api/items") {
