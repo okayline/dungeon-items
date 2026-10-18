@@ -9,7 +9,8 @@
 //        -> { ok: true, moves } or { error } (not the holder, no such copy, already theirs, bad argument).
 //   spendCopy(db, { itemId, copy, holder, t? })       the holder used it up in their game (an 88x31 fusion): it stays, never moves.
 //        -> { ok: true } or { error }. Spending one already spent by the same holder answers { ok: true, already: true }.
-//   heldBy(db, game, playerId)                        the copies a player holds now (not spent): [{ itemId, copy, moves, born, item }].
+//   heldBy(db, game, playerId)                        the copies a player holds now (not spent): [{ itemId, copy, moves, born, item, marks }].
+//   addMark / marksOf                                 a copy's history (migration 005): see the bottom of this file.
 //   whereIs(db, itemId, copy)                         who holds a copy now: { game, playerId, spent } or null.
 //   addItems(db, game, items)                         a game adds its own items (source = game); INSERT OR IGNORE, so an item
 //        already there is never changed. -> { added } . retireItems(db, game, keys) retires its own items by source_key.
@@ -96,8 +97,19 @@ export async function heldBy(db, game, playerId) {
     `SELECT c.item_id, c.copy, c.moves, c.born_game, i.source, i.rarity, i.name, i.note, i.type, i.image, i.alignment, i.nature
      FROM copies c JOIN items i ON i.id = c.item_id WHERE c.holder_game = ? AND c.holder_id = ? AND c.spent = 0 ORDER BY c.item_id, c.copy`).bind(game, playerId).all();
   // (v004) each copy carries its item's details, so a game can show a visitor from another game without a second lookup
+  // (v005) and its marks, oldest first, in one more query
+  const m = await db.prepare(
+    `SELECT m.item_id, m.copy, m.kind, m.value, m.game, m.made_at FROM marks m JOIN copies c ON c.item_id = m.item_id AND c.copy = m.copy
+     WHERE c.holder_game = ? AND c.holder_id = ? AND c.spent = 0 ORDER BY m.item_id, m.copy, m.n`).bind(game, playerId).all();
+  const marks = new Map();
+  for (const r of m.results) {
+    const k = r.item_id + ":" + r.copy;
+    if (!marks.has(k)) marks.set(k, []);
+    marks.get(k).push({ kind: r.kind, value: r.value, game: r.game, at: r.made_at });
+  }
   return results.map((r) => ({ itemId: r.item_id, copy: r.copy, moves: r.moves, born: r.born_game,
-    item: { source: r.source, rarity: r.rarity, name: r.name, note: r.note, type: r.type, image: r.image, alignment: r.alignment, nature: r.nature } }));
+    item: { source: r.source, rarity: r.rarity, name: r.name, note: r.note, type: r.type, image: r.image, alignment: r.alignment, nature: r.nature },
+    marks: marks.get(r.item_id + ":" + r.copy) || [] }));
 }
 
 // Check the whole ledger (up to `limit` rows, oldest first). Keep the head it returns somewhere outside the database:
@@ -163,4 +175,54 @@ export async function whereIs(db, itemId, copy) {
   if (!isInt(itemId) || !isInt(copy)) return null;
   const r = await db.prepare("SELECT holder_game, holder_id, spent FROM copies WHERE item_id = ? AND copy = ?").bind(itemId, copy).first();
   return r ? { game: r.holder_game, playerId: r.holder_id, spent: !!r.spent } : null;
+}
+
+// Marks (migration 005): the history of a copy. Append-only, numbered per copy, each one sealed on the ledger.
+//   addMark(db, { itemId, copy, holder, kind, value, key, t? })   the holder's game stamps one thing that happened to it.
+//        -> { ok: true, n, created } (created is false when `key` already made this mark) or { error }.
+//   marksOf(db, itemId, copy)   -> [{ kind, value, game, at }] oldest first. Never names a player.
+// A 'moon' 'blessed' mark counts the copy one tier higher. Blessings stop at the top of the ladder a copy can climb:
+// common, uncommon and rare climb to mythic (common 3 times, uncommon 2, rare 1); anything else can't be blessed.
+const MARK_KINDS = new Set(["night", "deed", "moon"]);
+const CLIMB = { common: 3, uncommon: 2, rare: 1 };
+const markValue = (v) => typeof v === "string" && /^[a-z0-9_]{1,40}$/.test(v);
+
+export async function addMark(db, { itemId, copy, holder, kind, value, key, t = now() } = {}) {
+  if (!isInt(itemId) || !isInt(copy)) return { error: "Which copy?" };
+  if (!holderOk(holder)) return { error: "Whose copy? A game and a player id are needed." };
+  if (!MARK_KINDS.has(kind) || !markValue(value)) return { error: "A mark needs a kind (night, deed or moon) and a value." };
+  if (kind === "moon" && value !== "answered" && value !== "blessed") return { error: "The moon only answers or blesses." };
+  if (!isText(key, 200)) return { error: "A key is needed, so a retry makes no second mark." };
+  for (let i = 0; i < TRIES; i++) {
+    const have = await db.prepare("SELECT item_id, copy, n FROM marks WHERE game = ? AND mark_key = ?").bind(holder.game, key).first();
+    if (have) return have.item_id === itemId && have.copy === copy ? { ok: true, n: have.n, created: false } : { error: "That key already made a different mark." };
+    const row = await db.prepare("SELECT c.holder_game, c.holder_id, c.spent, i.rarity FROM copies c JOIN items i ON i.id = c.item_id WHERE c.item_id = ? AND c.copy = ?").bind(itemId, copy).first();
+    if (!row) return { error: "No such copy." };
+    if (row.spent) return { error: "That copy was used up." };
+    if (row.holder_game !== holder.game || row.holder_id !== holder.playerId) return { error: "That copy isn't theirs to mark." };
+    if (kind === "moon" && value === "blessed") {
+      const b = (await db.prepare("SELECT COUNT(*) AS b FROM marks WHERE item_id = ? AND copy = ? AND kind = 'moon' AND value = 'blessed'").bind(itemId, copy).first()).b;
+      if (b >= (CLIMB[row.rarity] || 0)) return { error: "That copy is already as high as a blessing can take it." };
+    }
+    const n = (await db.prepare("SELECT COALESCE(MAX(n), 0) + 1 AS n FROM marks WHERE item_id = ? AND copy = ?").bind(itemId, copy).first()).n;
+    const record = JSON.stringify({ k: "mark", item: itemId, copy, n, kind, value, game: holder.game });
+    try {
+      await db.batch([
+        db.prepare("INSERT INTO marks (item_id, copy, n, kind, value, game, mark_key, made_at) VALUES (?,?,?,?,?,?,?,?)")
+          .bind(itemId, copy, n, kind, value, holder.game, key, t),
+        await chainInsert(db, await head(db), { kind: "mark", game: holder.game, playerId: holder.playerId, record, t }),
+      ]);
+      return { ok: true, n, created: true };
+    } catch (e) {
+      if (isUnique(e) || /no gaps/.test(String(e && e.message))) continue;   // someone took that number, key or head: read again
+      throw e;
+    }
+  }
+  throw busy();
+}
+
+export async function marksOf(db, itemId, copy) {
+  if (!isInt(itemId) || !isInt(copy)) return [];
+  const { results } = await db.prepare("SELECT kind, value, game, made_at FROM marks WHERE item_id = ? AND copy = ? ORDER BY n").bind(itemId, copy).all();
+  return results.map((r) => ({ kind: r.kind, value: r.value, game: r.game, at: r.made_at }));
 }

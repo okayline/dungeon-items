@@ -42,5 +42,24 @@ forward only (4Dungeon's old `mythic` items keep `mythic`). Enforced by the data
 `retireItems`, `itemIds`. That door always acts as 88x31, whatever the arguments say, so the key can only touch 88x31's
 own items and its players' copies. 88x31 keeps its own ledger as the master and mirrors into this one.
 
+## Marks (migration 005, 2026-10-17)
+A copy's history (provenance): one thing that happened to one numbered copy, stamped by the game it happened in. The
+story belongs to the copy, so it follows the copy into any game.
+
+- **Table** `marks` (`migrations/005_marks.sql`, also in `schema.sql`): item, copy, `n` (1, 2, 3 per copy), `kind`,
+  `value`, the game that made it, its key and time. Kinds: `night` (the sky: a moon phase such as `full`), `deed` (what
+  happened: `found_wall`, `given_member`, `from_demon`, `from_stranger`, `carried_up`) and `moon` (the Moon's judgment:
+  `answered`, `blessed`). New values need no migration; the database only checks the shape (`a-z`, `0-9`, `_`).
+- **Rules the database enforces:** marks are never edited or deleted; numbers count up per copy with no gaps; a used-up
+  copy takes no marks; the moon only answers or blesses. Each mark is sealed on the ledger in the same batch, and the
+  record never names a player.
+- **Blessings:** a `blessed` mark counts the copy one tier higher in its game, up to mythic: common 3 times, uncommon 2,
+  rare 1, anything else never (checked in `registry.js`). The game does the counting.
+- **Calls** (`Registry` entrypoint): `await env.REGISTRY.addMark({ itemId, copy, holder: { game, playerId }, kind, value, key })`
+  stamps a mark on a copy the holder holds: `{ ok: true, n, created }` (a retry with the same key gives back the same
+  mark) or `{ error }`. `await env.REGISTRY.marksOf(itemId, copy)` is `[{ kind, value, game, at }]`, oldest first, and
+  `heldBy` now carries each copy's `marks` too. The HTTP door (88x31) has no mark calls yet.
+
 ## Not done yet
-- 4Dungeon doesn't read the table yet. A button that leaves 88x31's catalog isn't retired automatically.
+- 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.
+- No game stamps marks yet: 4Dungeon is next.
