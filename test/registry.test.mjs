@@ -246,3 +246,14 @@ test("the public Worker shows no copies and no holders", async () => {
   assert.equal(items.status, 200);
   for (const word of ["holder", "424242", "irl-dungeon", "born_key"]) assert.ok(!items.text.includes(word), word);
 });
+
+test("GET /api/registry/head gives the entry count, the newest hash and the copy count, and nothing about holders", async () => {
+  const db = setup();
+  await birth(db, irl(1, "h1"));
+  await birth(db, irl(2, "h2"));
+  const last = q(db, "SELECT hash FROM ledger ORDER BY id DESC LIMIT 1")[0].hash;
+  const r = await worker.fetch(new Request("https://items.example/api/registry/head"), { DB: db });
+  const body = await r.json();
+  assert.equal(r.status, 200);
+  assert.deepEqual(body, { ok: true, entries: 2, head: last, copies: 2 });
+});

@@ -2,8 +2,11 @@
 // scripts run by the owner). Public, GET only.
 //   GET /api/items            active items. ?source= ?rarity= filter; ?all=1 includes retired ones.
 //   GET /api/items/:id        one item by id (retired ones too, so an old find still resolves).
+//   GET /api/registry/head    the registry ledger's newest hash and entry count, for the outside anchor (88x31-anchors).
+//                             Counts and a hash only: no holders, no copies listed.
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
+import { verify } from "./registry.js";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-methods": "GET, OPTIONS", "access-control-allow-headers": "if-none-match" };
 const RARITIES = ["common", "uncommon", "rare", "prototype", "relic", "ultra", "moon", "mythic"];
 const shape = (r) => ({
@@ -39,6 +42,10 @@ export default {
       if (url.searchParams.get("all") !== "1") where.push("retired = 0");
       const { results } = await env.DB.prepare(`SELECT * FROM items ${where.length ? "WHERE " + where.join(" AND ") : ""} ORDER BY id`).bind(...args).all();
       return cached(req, { items: results.map(shape) });
+    }
+    if (url.pathname === "/api/registry/head") {
+      const v = await verify(env.DB), copies = (await env.DB.prepare("SELECT COUNT(*) AS n FROM copies").first()).n;
+      return json(v.ok ? { ok: true, entries: v.count, head: v.head, copies } : { ok: false, broken_at: v.at }, 200, { "cache-control": "public, max-age=300" });
     }
     const m = url.pathname.match(/^\/api\/items\/(\d{1,12})$/);
     if (m) {
