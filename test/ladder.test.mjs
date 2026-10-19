@@ -67,7 +67,7 @@ test("the HTTP door needs the key and always acts as 88x31", async () => {
 
 test("migration 004 runs on the old layout and keeps every item, copy and ledger row", () => {
   const db = new DatabaseSync(":memory:");
-  db.exec(execSync("git show HEAD:schema.sql", { encoding: "utf8" }));
+  db.exec(execSync("git show dd6d80c^:schema.sql", { encoding: "utf8" }));
   db.exec("INSERT INTO items (source, source_key, rarity, name, created_at, updated_at) VALUES ('4dungeon', 'M:1', 'mythic', 'old', 1, 1), ('4dungeon', 'C:1', 'common', 'c', 1, 1)");
   db.exec("INSERT INTO copies (item_id, copy, born_game, born_key, holder_game, holder_id, born_at, moved_at) VALUES (2, 1, 'irl-dungeon', 'k', 'irl-dungeon', 1, 1, 1)");
   db.exec("PRAGMA foreign_keys = ON");

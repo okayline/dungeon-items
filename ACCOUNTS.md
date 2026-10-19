@@ -18,7 +18,7 @@ game's own address) can't carry over: players make a new one, and their save cod
 call the methods listed in `src/rpc.js` (irl-dungeon's `src/worker.js` "save codes and passkeys" section is the model),
 and import its old save-code hashes with `importCode` (same hashing, so they work as is).
 
-**Games using it:** irl-dungeon (service binding with the `Accounts` entrypoint) and 88x31 (a Cloudflare Pages site, so it calls plain HTTP: `POST /rpc/accounts/<method>` on this Worker through an ordinary service binding, with the `ACCOUNTS_KEY` secret, a random string of 16+ characters, set the same on both projects: `npx wrangler secret put ACCOUNTS_KEY` here and the Pages project's secret). Without the key the route answers 404. 88x31's three passkeys made on the bare `88x31.app` were imported with `scripts/import-passkeys.mjs`.
+**Games using it:** 4Dungeon (game name `4dungeon`), Dawn Baton (`dawn-baton`), irl-dungeon (`irl-dungeon`) and scoundrel.exe (`scoundrel`), each with a service binding to the `Accounts` entrypoint; and 88x31 (a Cloudflare Pages site, so it calls plain HTTP: `POST /rpc/accounts/<method>` on this Worker through an ordinary service binding, with the `ACCOUNTS_KEY` secret, a random string of 16+ characters, set the same on both projects: `npx wrangler secret put ACCOUNTS_KEY` here and the Pages project's secret). Without the key the route answers 404. 88x31's three passkeys made on the bare `88x31.app` were imported with `scripts/import-passkeys.mjs`.
 
-**Deploy order:** (1) run `migrations/003_accounts.sql` on the live `items-db`; (2) deploy dungeon-items; (3) deploy the games (irl-dungeon, 88x31).
-irl-dungeon moves a player's old save codes into their account the first time it sees them; old passkey rows stay unused.
+**Deploy order:** (1) run `migrations/003_accounts.sql` on the live `items-db`; (2) deploy dungeon-items; (3) deploy the games. All three steps have been done.
+Each game moves a player's old save codes into their account the first time it sees them; old passkey rows stay unused.

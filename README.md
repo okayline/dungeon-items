@@ -1,8 +1,8 @@
 # dungeon-items
 
-The one item table every game reads: 4Dungeon, irl-dungeon, 88x31. Items are not copied between games; each game asks this table.
+The one item table every game reads: 4Dungeon, irl-dungeon, 88x31. It also holds the copy registry, marks and the shared accounts (`ACCOUNTS.md`). Items are not copied between games; each game asks this table.
 
-- **Database:** D1 `items-db` (id b39d9b77-fb44-4474-82b2-60252578f38a, region OC). Holds 98 items: 4Dungeon's 46 from `rules.js` (12 common, 12 uncommon, 12 rare, 6 mythic, 4 moon; ids 1-46) and 52 original-tier 88x31 buttons (36 common, 16 uncommon; ids 47-98).
+- **Database:** D1 `items-db` (id b39d9b77-fb44-4474-82b2-60252578f38a, region OC). Holds 135 items (counted on the live table, 2026-10-19): 4Dungeon's 46 from `rules.js` (12 common, 12 uncommon, 12 rare, 6 mythic, 4 moon; ids 1-46) and 89 original-tier 88x31 buttons (36 common, 16 uncommon, 23 rare of which 4 are retired, 8 prototype, 6 ultra; the first 52 are ids 47-98, the rest came with migration 004).
 - **Read API** (`src/worker.js`, GET only, public, CORS open so the itch.io page can call it):
   - `GET /api/items`: active items. `?source=4dungeon`, `?rarity=moon`, `?all=1` (include retired).
   - `GET /api/items/:id`: one item, retired ones too, so an old find always resolves.
@@ -62,4 +62,4 @@ story belongs to the copy, so it follows the copy into any game.
 
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.
-- No game stamps marks yet: 4Dungeon is next.
+- Only 4Dungeon stamps marks (since its v1.25). The HTTP door (88x31) has no mark calls.
