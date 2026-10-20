@@ -9,11 +9,10 @@ import { GENESIS } from "./ledger.js";
 
 const COLS = "id, kind, game, record, prev_hash, hash, created_at";
 
-// 88x31's rares and up stay mysteries in public, the same rule as 88x31's own ledger for logged-out visitors
-// (88x31 functions/api/ledger.js): no name, picture, rarity or anything else, only that it is an 88x31 button.
+// Only 88x31's commons show in public: every other 88x31 item is a mystery, the same rule as 88x31's logged-out Wall
+// (88x31 functions/api/designs.js): no name, picture, rarity or anything else, only that it is an 88x31 button.
 // The sealed records hold item ids only, so the hashes still check. Used by the ledger, a copy's story and /api/items.
-const MYSTERY = new Set(["rare", "prototype", "ultra"]);
-export const isMystery = (i) => !!i && i.source === "88x31" && MYSTERY.has(i.rarity);
+export const isMystery = (i) => !!i && i.source === "88x31" && i.rarity !== "common";
 export const mysteryItem = (i) => ({ source: i.source, hidden: true });
 
 async function shape(db, results) {
