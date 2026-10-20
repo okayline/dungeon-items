@@ -109,7 +109,7 @@ body.dun h1{font:44px "VT323",ui-monospace,monospace;color:#fff}body.dun .sub{fo
 body.dun hr{height:auto;background:none;margin:8px 0}body.dun hr::before{content:"";display:none}
 body.dun .head,body.dun #list>p{font-family:"VT323",ui-monospace,monospace;font-size:19px}body.dun #list>p a{color:#fff}
 </style></head><body><main>
-<h1 id="title">~*~ Item Registry ~*~</h1>
+<h1 id="title">~*~ The Registry ~*~</h1>
 <p class="sub" id="sub">Every copy ever made, moved, marked or used up, in every game. Newest first.</p>
 <hr>
 <div class="head" id="head"></div>
