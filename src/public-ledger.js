@@ -92,7 +92,7 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 /* Dawn Baton's checkpoints: its own page's navy panel, rainbow bar and gold heading (dawn-baton public/index.html) */
 .baton{background:#1d1d63;border:2px solid #6c6cff;border-radius:6px;box-shadow:none;padding:0 12px 10px;color:#f2f2ff;font:14px/1.35 "Trebuchet MS",Verdana,sans-serif;overflow:hidden}
 .baton .bar{height:6px;margin:0 -12px 8px;background:linear-gradient(90deg,#ff5d5d,#ffb84d,#ffe066,#6be08a,#5dc8ff,#8a7bff,#ff7bd0)}
-.baton .h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#ffe066;font-weight:700;margin:0 0 4px}
+.baton .h{font-size:11px;letter-spacing:.08em;color:#ffe066;font-weight:700;margin:0 0 4px}
 .baton .grad{display:flex;height:22px;border:2px solid #fff;margin:6px 0 2px}.baton .grad i{flex:1}.baton .grad i.none{background:#0b0b2b}
 .baton .tune{display:flex;color:#ffe066;font-size:13px}.baton .tune span{flex:1;text-align:center}
 .ascii .run{font-size:15px;color:var(--fg)}.ascii > .h{font-size:11px;color:var(--gold);letter-spacing:.08em;font-weight:700;margin:0 0 4px}.ascii .run.won{color:var(--gold)}
@@ -181,17 +181,17 @@ const dun = (i) => !!i && i.source === "4dungeon";
 function rule() { const d = el("div", "rule"); d.append(el("span", null, "+"), el("i", null, "=".repeat(300)), el("span", null, "+")); return d; }
 function ascii(p) { p.classList.add("ascii"); p.prepend(rule()); p.append(rule()); return p; }
 // the heading above the entry number: the game, then what happened, in that game's own words (88x31, irl-dungeon and
-// scoundrel.exe lowercase; 4Dungeon and Dawn Baton in capitals, like their screens). A move between games is headed by the
+// scoundrel.exe lowercase; 4Dungeon in capitals, like its screen; Dawn Baton as a sentence). A move between games is headed by the
 // game it went to ("arrive"). A game or kind missing here gets the plain words in ANY.
 const ANY = { copy: "new copy", move: "copy changed hands", arrive: "copy arrived", spend: "copy used up", mark: "copy marked", checkpoint: "checkpoint" };
 const HEAD = {
   "88x31": { copy: "new button", move: "button traveled", arrive: "button arrived", spend: "button gone", mark: "button marked" },
   "4dungeon": { copy: "ITEM FOUND", move: "ITEM CHANGED HANDS", arrive: "ITEM IN BAG", spend: "ITEM LEFT BAG", mark: "ITEM MARKED", checkpoint: "CHECKPOINT" },
   "irl-dungeon": { copy: "new find", move: "find changed hands", arrive: "find arrived", spend: "find used up", mark: "find marked" },
-  "dawn-baton": { copy: "BATON MADE", move: "BATON CHANGED HANDS", arrive: "BATON ARRIVED", spend: "BATON USED UP", mark: "BATON MARKED", checkpoint: "LAP CAME HOME" },
+  "dawn-baton": { copy: "Baton made", move: "Baton changed hands", arrive: "Baton arrived", spend: "Baton used up", mark: "Baton marked", checkpoint: "Baton came home" },
   "scoundrel": { checkpoint: (d) => d && d.status === "won" ? "run cleared" : d && Number.isInteger(d.score) ? "run deleted" : "run" },
 };
-const CAPS = { "4dungeon": "4DUNGEON", "dawn-baton": "DAWN BATON" };
+const CAPS = { "4dungeon": "4DUNGEON" };
 function heading(r) {
   if (!r) return null;
   const at = r.k === "move" ? r.to : r.game, k = r.k === "move" && r.from !== r.to ? "arrive" : r.k;
