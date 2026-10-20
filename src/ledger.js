@@ -9,7 +9,7 @@
 // UNIQUE, so two entries can never build on the same head: no forks, and two writers racing for the head can't both
 // win (the loser re-reads the head and tries again).
 //
-// Records hold item ids, copy numbers and game names only: no player ids, no keys, no cells. Who did it is in the
+// Records hold item ids, copy numbers and game names only (and a run's public facts, sealRun): no player ids, no keys, no cells. Who did it is in the
 // table's own game + player_id columns, which nothing publishes.
 //
 // WHAT A CHAIN CANNOT DO: it can't show that the newest entries were dropped. Only a copy of the head kept somewhere

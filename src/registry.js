@@ -17,6 +17,7 @@
 //
 // The ladder (migration 004): common < uncommon < rare < prototype < relic < ultra, plus moon. Ultra is 1-of-1, and
 // prototype, relic and ultra are only born in their home game (items.source): triggers in schema.sql enforce both.
+//   sealRun(db, { game, playerId, run, detail, t? })  a run's end, for a game with no ledger of its own (see above whereIs).
 //   verify(db)                                        checks the whole ledger: { ok, count, head } or { ok: false, at }.
 //
 // `key` is the game's own name for the moment the copy was made (irl-dungeon: its find, by player, cell, spot and day).
@@ -197,6 +198,29 @@ export async function checkpoint(db, { game, entries, head: h, detail, name = nu
     const record = JSON.stringify({ k: "checkpoint", game, entries, head: h, ...(detail ? { detail } : {}) });
     try {
       await db.batch([await chainInsert(db, await head(db), { kind: "checkpoint", game, playerId: 0, record, t, name })]);
+      return { ok: true, created: true };
+    } catch (e) {
+      if (chainClash(e)) continue;
+      throw e;
+    }
+  }
+  throw busy();
+}
+
+// (Oct 20) A RUN'S END, for a game that keeps no ledger of its own (4Dungeon): one sealed entry with a few public facts.
+//   sealRun(db, { game, playerId, run, detail, t? })   `run` is the game's own fingerprint of the run (8 to 64 lowercase
+//   letters and digits, never its real id), so the same run is sealed once and a board can check a score against it.
+//   `detail` is the same shape as a checkpoint's. -> { ok: true, created } or { error }. Nothing names the player.
+export async function sealRun(db, { game, playerId, run, detail, t = now() } = {}) {
+  if (!holderOk({ game, playerId })) return { error: "Whose run? A game and a player id are needed." };
+  if (!(typeof run === "string" && /^[a-z0-9]{8,64}$/.test(run))) return { error: "A run needs its fingerprint: 8 to 64 lowercase letters and digits." };
+  if (!detail || !detailOk(detail)) return { error: "A run's detail is up to 12 short public facts: whole numbers, short words, or lists of them." };
+  const record = JSON.stringify({ k: "run", game, run, detail });
+  for (let i = 0; i < TRIES; i++) {
+    const have = await db.prepare("SELECT record FROM ledger WHERE kind = 'run' AND game = ? AND json_extract(record, '$.run') = ?").bind(game, run).first();
+    if (have) return have.record === record ? { ok: true, created: false } : { error: "That run was already sealed, with other facts." };
+    try {
+      await db.batch([await chainInsert(db, await head(db), { kind: "run", game, playerId, record, t })]);
       return { ok: true, created: true };
     } catch (e) {
       if (chainClash(e)) continue;
