@@ -92,6 +92,9 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 .baton{background:#1d1d63;border:2px solid #6c6cff;border-radius:6px;box-shadow:none;padding:0 12px 10px;color:#f2f2ff;font:14px/1.35 "Trebuchet MS",Verdana,sans-serif;overflow:hidden}
 .baton .bar{height:6px;margin:0 -12px 8px;background:linear-gradient(90deg,#ff5d5d,#ffb84d,#ffe066,#6be08a,#5dc8ff,#8a7bff,#ff7bd0)}
 .baton .h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#ffe066;font-weight:700;margin:0 0 4px}
+.baton .grad{display:flex;height:22px;border:2px solid #fff;margin:6px 0 2px}.baton .grad i{flex:1}.baton .grad i.none{background:#0b0b2b}
+.baton .tune{display:flex;color:#ffe066;font-size:13px}.baton .tune span{flex:1;text-align:center}.baton .lap{font-size:13px;color:#f2f2ff;margin-top:4px}
+.ascii .run{font-size:15px;text-transform:uppercase;color:var(--fg)}.ascii .run.won{color:var(--gold)}
 .baton .top{color:#b9b9ff;font-size:12px}.baton .say{font-size:15px}.baton .seal{color:#b9b9ff;font-family:"Courier New",Courier,monospace}
 body.dun{background:#07090a}body.dun::before{display:none}
 body.dun h1{font:44px "VT323",ui-monospace,monospace;color:#fff}body.dun .sub{font:20px "VT323",ui-monospace,monospace;color:#8f8f8a;font-weight:normal}
@@ -174,8 +177,28 @@ function row(e) {
   p.append(el("div", "seal", "record " + e.record + "\\nprev " + e.prev_hash + "\\nhash " + e.hash));
   p.lastChild.style.whiteSpace = "pre-wrap";
   // a game's checkpoint wears that game's own look: Dawn Baton's panel, scoundrel.exe's ASCII frame (the same as 4Dungeon's)
-  if (r && r.k === "checkpoint" && r.game === "dawn-baton") { p.classList.add("baton"); p.prepend(el("div", "bar"), el("div", "h", "Dawn Baton \u00b7 checkpoint")); return p; }
-  if (r && r.k === "checkpoint" && r.game === "scoundrel") { s.prepend("> "); return ascii(p); }
+  const d = r && r.k === "checkpoint" && r.detail && typeof r.detail === "object" ? r.detail : null, int = (v) => Number.isInteger(v);
+  if (r && r.k === "checkpoint" && r.game === "dawn-baton") {
+    p.classList.add("baton"); p.prepend(el("div", "bar"), el("div", "h", "Dawn Baton \u00b7 checkpoint"));
+    if (d && int(d.lap)) {   // the finished lap: who held it, its 24 colours and its tune (s settle, l lean, - silent)
+      const n = (v, one, many) => (int(v) ? v + " " + (v === 1 ? one : many) : null);
+      const add = [el("div", "lap", ["Lap " + d.lap + " closed", (d.people === 0 ? "nobody passed the baton" : n(d.people, "person passed the baton", "people passed the baton")), n(d.bots, "bot", "bots"), int(d.unheld) && d.unheld > 0 ? d.unheld + " unheld" : null].filter(Boolean).join(" \u00b7 "))];
+      if (Array.isArray(d.colors) && d.colors.length) { const gr = el("div", "grad"); for (const c of d.colors) { const i = el("i"); if (typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c)) i.style.background = c; else i.className = "none"; gr.append(i); } add.push(gr); }
+      if (typeof d.tune === "string" && d.tune.length) { const tn = el("div", "tune"); for (const ch of d.tune) tn.append(el("span", null, ch === "s" ? "\u266a" : ch === "l" ? "\u266d" : "\u00b7")); add.push(tn); }
+      s.after(...add);
+    }
+    return p;
+  }
+  if (r && r.k === "checkpoint" && r.game === "scoundrel") {
+    s.prepend("> ");
+    if (d && int(d.score)) {   // the run that just ended, as scoundrel.exe sealed it
+      const won = d.status === "won";
+      const bits = [int(d.day) ? "Day #" + d.day : null, won ? "cleared" + (int(d.hp) ? " with " + d.hp + " HP" : "") : "died" + (int(d.room) ? " in room " + d.room : ""),
+        "score " + d.score, !won && int(d.demons_left) ? d.demons_left + " demons left" : null, int(d.moves) ? d.moves + " moves" : null].filter(Boolean);
+      const line = el("div", "run" + (won ? " won" : ""), bits.join(" \u00b7 ")); s.after(line);
+    }
+    return ascii(p);
+  }
   return dun(e.item) ? ascii(p) : p;
 }
 let last = null;

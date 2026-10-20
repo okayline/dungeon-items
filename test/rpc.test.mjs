@@ -125,3 +125,14 @@ test("a checkpoint seals another game's ledger head on the chain: once per head,
   ]);
   assert.equal((await reg.verify()).ok, true);
 });
+
+test("a checkpoint can carry a few public facts for the page, and nothing that isn't short and plain", async () => {
+  const db = fakeD1();
+  const reg = new Registry({}, { DB: db });
+  const detail = { lap: 5, people: 2, bots: 20, unheld: 2, colors: ["#e06a5c", null, "#5cb8e0"] };
+  assert.deepEqual(await reg.checkpoint({ game: "dawn-baton", entries: 9, head: "c".repeat(64), detail }), { ok: true, created: true });
+  assert.deepEqual(JSON.parse(q(db, "SELECT record FROM ledger")[0].record).detail, detail);
+  assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), detail: { name: "<script>" } })).error, /detail/);
+  assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), detail: { score: { deep: 1 } } })).error, /detail/);
+  assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), detail: [1] })).error, /detail/);
+});

@@ -172,14 +172,20 @@ export async function itemIds(db, game, keys) {
 }
 
 // Checkpoints: another game's own ledger, written down here so the registry's hourly Bitcoin stamp covers it too.
-//   checkpoint(db, { game, entries, head, t? })   "that game's ledger had `entries` entries, newest fingerprint `head`".
+//   checkpoint(db, { game, entries, head, detail?, t? })   "that game's ledger had `entries` entries, newest fingerprint `head`".
 //        -> { ok: true, created } (created is false when that game's last checkpoint already says this) or { error }.
 // One fingerprint covers every entry before it, so a later checkpoint covers earlier ones. A game's ledger only grows:
 // fewer entries than its last checkpoint, or the same count with a different fingerprint, is refused. The registry
 // can't read the game's database, so a checkpoint is what that game reports. It names no copy and no player (player_id 0).
+// `detail` (optional) is a few public facts the game adds for the ledger page, such as Dawn Baton's lap or a scoundrel.exe
+// run's score: up to 12 keys of whole numbers, short words or lists of up to 24 of them. Never a player.
 const isHead = (h) => typeof h === "string" && /^[0-9a-f]{64}$/.test(h);
-export async function checkpoint(db, { game, entries, head: h, t = now() } = {}) {
+const isWord = (v) => v === null || Number.isInteger(v) || (typeof v === "string" && /^[#A-Za-z0-9_ .-]{0,40}$/.test(v));
+const detailOk = (d) => d === undefined || (!!d && typeof d === "object" && !Array.isArray(d) && Object.keys(d).length <= 12
+  && Object.entries(d).every(([k, v]) => /^[a-z_]{1,20}$/.test(k) && (isWord(v) || (Array.isArray(v) && v.length <= 24 && v.every(isWord)))));
+export async function checkpoint(db, { game, entries, head: h, detail, t = now() } = {}) {
   if (!isText(game, 40) || !isInt(entries) || !isHead(h)) return { error: "A checkpoint needs a game, an entry count and a 64-character fingerprint." };
+  if (!detailOk(detail)) return { error: "A checkpoint's detail is up to 12 short public facts: whole numbers, short words, or lists of them." };
   for (let i = 0; i < TRIES; i++) {
     const prev = await db.prepare("SELECT record FROM ledger WHERE kind = 'checkpoint' AND game = ? ORDER BY id DESC LIMIT 1").bind(game).first();
     if (prev) {
@@ -187,7 +193,7 @@ export async function checkpoint(db, { game, entries, head: h, t = now() } = {})
       if (p.head === h && p.entries === entries) return { ok: true, created: false };
       if (entries <= p.entries) return { error: "That ledger had " + p.entries + " entries at its last checkpoint: it can only grow." };
     }
-    const record = JSON.stringify({ k: "checkpoint", game, entries, head: h });
+    const record = JSON.stringify({ k: "checkpoint", game, entries, head: h, ...(detail ? { detail } : {}) });
     try {
       await db.batch([await chainInsert(db, await head(db), { kind: "checkpoint", game, playerId: 0, record, t })]);
       return { ok: true, created: true };
