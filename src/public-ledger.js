@@ -68,6 +68,7 @@ hr{border:0;height:6px;margin:16px 0;background:linear-gradient(90deg,#f00,#f90,
 a{color:var(--link)}a:visited{color:#ff99ff}
 .panel{background:var(--panel);border:3px ridge var(--edge);padding:10px;margin:12px 0;box-shadow:6px 6px 0 rgba(0,0,0,.6)}
 .top{font-size:13px;color:var(--ink)}
+.panel > .h{font-size:11px;letter-spacing:.08em;font-weight:700;margin:0 0 4px;color:var(--ink)}   /* a game's heading above the entry number */
 .say{margin:4px 0;font-size:16px}
 .name{text-align:center;font-weight:bold;font-size:22px;color:var(--ink);margin:0 0 8px}
 .say img{float:left;width:88px;height:31px;margin:2px 10px 4px 0;image-rendering:pixelated;border:0}
@@ -179,6 +180,27 @@ function facts(i) {
 const dun = (i) => !!i && i.source === "4dungeon";
 function rule() { const d = el("div", "rule"); d.append(el("span", null, "+"), el("i", null, "=".repeat(300)), el("span", null, "+")); return d; }
 function ascii(p) { p.classList.add("ascii"); p.prepend(rule()); p.append(rule()); return p; }
+// the heading above the entry number: the game, then what happened, in that game's own words (88x31, irl-dungeon and
+// scoundrel.exe lowercase; 4Dungeon and Dawn Baton in capitals, like their screens). A move between games is headed by the
+// game it went to ("arrive"). A game or kind missing here gets the plain words in ANY.
+const ANY = { copy: "new copy", move: "copy changed hands", arrive: "copy arrived", spend: "copy used up", mark: "copy marked", checkpoint: "checkpoint" };
+const HEAD = {
+  "88x31": { copy: "new button", move: "button changed hands", arrive: "button arrived", spend: "button gone", mark: "button marked" },
+  "4dungeon": { copy: "ITEM FOUND", move: "ITEM CHANGED HANDS", arrive: "ITEM INTO THE BAG", spend: "ITEM LEFT THE BAG", mark: "ITEM MARKED", checkpoint: "CHECKPOINT" },
+  "irl-dungeon": { copy: "new find", move: "find changed hands", arrive: "find arrived", spend: "find used up", mark: "find marked" },
+  "dawn-baton": { copy: "BATON MADE", move: "BATON CHANGED HANDS", arrive: "BATON ARRIVED", spend: "BATON USED UP", mark: "BATON MARKED", checkpoint: "LAP CAME HOME" },
+  "scoundrel": { checkpoint: (d) => d && d.status === "won" ? "run cleared" : d && Number.isInteger(d.score) ? "run deleted" : "run" },
+};
+const CAPS = { "4dungeon": "4DUNGEON", "dawn-baton": "DAWN BATON" };
+function heading(r) {
+  if (!r) return null;
+  const at = r.k === "move" ? r.to : r.game, k = r.k === "move" && r.from !== r.to ? "arrive" : r.k;
+  let w = (HEAD[at] && HEAD[at][k]) || ANY[k];
+  if (typeof w === "function") w = w(r.detail);
+  if (!w) return null;
+  if (CAPS[at] && w === ANY[k]) w = w.toUpperCase();
+  return el("div", "h", (CAPS[at] || g(at)) + " \u00b7 " + w);
+}
 function row(e) {
   let r; try { r = JSON.parse(e.record); } catch { r = null; }
   const p = el("div", "panel");
@@ -191,10 +213,11 @@ function row(e) {
   if (e.item && !one) { p.append(el("div", "facts", facts(e.item))); p.lastChild.classList.add("q-" + e.item.rarity); if (e.item.note) p.append(el("div", "note", "“" + e.item.note + "”")); }
   p.append(el("div", "seal", "record " + e.record + "\\nprev " + e.prev_hash + "\\nhash " + e.hash));
   p.lastChild.style.whiteSpace = "pre-wrap";
+  const h = heading(r); if (h) p.prepend(h);
   // a game's checkpoint wears that game's own look: Dawn Baton's panel, scoundrel.exe's ASCII frame (the same as 4Dungeon's)
   const d = r && r.k === "checkpoint" && r.detail && typeof r.detail === "object" ? r.detail : null, int = (v) => Number.isInteger(v);
   if (r && r.k === "checkpoint" && r.game === "dawn-baton") {
-    p.classList.add("baton"); p.prepend(el("div", "bar"), el("div", "h", "Dawn Baton \u00b7 checkpoint"));
+    p.classList.add("baton"); p.prepend(el("div", "bar"));
     if (d && int(d.lap)) {   // under the sentence: the lap's 24 colours and its tune (s settle, l lean, - silent)
       const add = [];
       if (Array.isArray(d.colors) && d.colors.length) { const gr = el("div", "grad"); for (const c of d.colors) { const i = el("i"); if (typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c)) i.style.background = c; else i.className = "none"; gr.append(i); } add.push(gr); }
@@ -204,7 +227,7 @@ function row(e) {
     return p;
   }
   if (r && r.k === "checkpoint" && r.game === "scoundrel") {
-    s.prepend("> "); p.prepend(el("div", "h", "scoundrel.exe \u00b7 run"));   // the same size and place as Dawn Baton's heading
+    s.prepend("> ");
     if (d && int(d.score)) { s.classList.add("run"); if (d.status === "won") s.classList.add("won"); }   // the sentence wears the run's colour
     return ascii(p);
   }
