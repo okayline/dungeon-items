@@ -45,6 +45,17 @@ test("copyStory gives a copy's public story: how many exist, when it was made, n
   assert.equal(await reg.copyStory(1, 9), null);
 });
 
+test("the public ledger gives each entry its item's public details, and no player ids", async () => {
+  const db = fakeD1();
+  db.raw.prepare("INSERT INTO items (source, source_key, rarity, name, note, alignment, nature, type, image, created_at, updated_at) VALUES ('88x31', 'd9', 'rare', 'Neon Nite', 'a note', 'LAW', 'tech', 'neon', 'https://88x31.app/api/img?d=9', 1, 1)").run();
+  const reg = new Registry({}, { DB: db });
+  await reg.birth({ itemId: 1, game: "88x31", playerId: 7003, key: "a" });
+  const { publicLedger } = await import("../src/public-ledger.js");
+  const d = await publicLedger(db, new URLSearchParams());
+  assert.deepEqual(d.entries[0].item, { name: "Neon Nite", rarity: "rare", note: "a note", alignment: "LAW", nature: "tech", type: "neon", image: "https://88x31.app/api/img?d=9", source: "88x31" });
+  assert.ok(!JSON.stringify(d).includes("7003"));
+});
+
 test("the entrypoint refuses what the registry refuses", async () => {
   const db = withItems();
   const reg = new Registry({}, { DB: db });

@@ -277,7 +277,8 @@ test("GET /api/registry/ledger lists entries newest first with item names, never
   assert.ok(body.entries.every((e) => Number.isInteger(e.at) && e.at > 1e9));   // each entry carries its time
   const html = await get("/ledger");
   assert.equal(html.status, 200);
-  assert.ok(html.text.includes("Item registry ledger"));
+  assert.ok(html.text.includes("Item Registry"));
+  new Function(html.text.split("<script>")[1].split("</script>")[0]);   // the page's script parses (an escape lost in the template string breaks it)
 });
 
 test("GET /api/registry/copy gives one copy's entries newest first, only that copy's, and no holder", async () => {
