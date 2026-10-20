@@ -22,7 +22,7 @@ export class Registry extends WorkerEntrypoint {
   whereIs(itemId, copy) { return whereIs(this.env.DB, itemId, copy); }
   verify() { return verify(this.env.DB); }
   addMark(args) { return addMark(this.env.DB, args); }
-  addMarks(args) { return addMarks(this.env.DB, args); }   // one entry for a moment many copies lived through
+  addMarks(args) { return addMarks(this.env.DB, args); }   // one entry for everything a move did to many copies
   marksOf(itemId, copy) { return marksOf(this.env.DB, itemId, copy); }
   copyStory(itemId, copy) { return copyStory(this.env.DB, itemId, copy); }   // one copy's public story (what /ledger shows), for a game's own screen
   itemIds(game, keys) { return itemIds(this.env.DB, game, keys); }   // a game's own item ids by source_key: { "<key>": id } (Dawn Baton finds its baton this way)

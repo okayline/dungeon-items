@@ -81,24 +81,32 @@ test("heldBy and marksOf carry a copy's marks, oldest first", async () => {
   assert.deepEqual(held.find((h) => h.itemId === 2).marks, []);
 });
 
-test("addMarks: one ledger entry for a moment many copies lived through; each copy still gets its own numbered mark", async () => {
+test("addMarks: one ledger entry for everything a move did to many copies; each copy still gets its own numbered marks", async () => {
   const db = await setup();
   const { addMarks } = await import("../src/registry.js"), { copyStory } = await import("../src/public-ledger.js");
   await addMark(db, mark("night", "full", "m1"));                                  // copy 1 of item 1 already has mark 1
   await spendCopy(db, { itemId: 3, copy: 1, holder: P });
-  const many = { holder: P, kind: "deed", value: "fled_fight", t: 60, copies: [{ itemId: 1, copy: 1, key: "f1" }, { itemId: 2, copy: 1, key: "f2" }, { itemId: 3, copy: 1, key: "f3" }] };
+  const move = { holder: P, t: 60, marks: [
+    { kind: "night", value: "wax_gib", copies: [{ itemId: 2, copy: 1, key: "w2" }] },
+    { kind: "deed", value: "from_demon", copies: [{ itemId: 2, copy: 1, key: "d2" }] },
+    { kind: "deed", value: "beat_demon", copies: [{ itemId: 1, copy: 1, key: "b1" }, { itemId: 3, copy: 1, key: "b3" }] }] };
   const before = q(db, "SELECT COUNT(*) AS c FROM ledger")[0].c;
-  const r = await addMarks(db, many);
-  assert.deepEqual(r, { ok: true, marked: [{ itemId: 1, copy: 1, n: 2 }, { itemId: 2, copy: 1, n: 1 }], already: 0, skipped: [{ itemId: 3, copy: 1, error: "That copy was used up." }] });
-  assert.deepEqual(q(db, "SELECT item_id, copy, n, value, mark_key FROM marks WHERE value = 'fled_fight' ORDER BY item_id"),
-    [{ item_id: 1, copy: 1, n: 2, value: "fled_fight", mark_key: "f1" }, { item_id: 2, copy: 1, n: 1, value: "fled_fight", mark_key: "f2" }]);
+  const r = await addMarks(db, move);
+  assert.deepEqual(r, { ok: true, marked: [{ itemId: 2, copy: 1, n: 1, value: "wax_gib" }, { itemId: 2, copy: 1, n: 2, value: "from_demon" }, { itemId: 1, copy: 1, n: 2, value: "beat_demon" }],
+    already: 0, skipped: [{ itemId: 3, copy: 1, value: "beat_demon", error: "That copy was used up." }] });
+  assert.deepEqual(q(db, "SELECT item_id, copy, n, kind, value, mark_key FROM marks WHERE made_at = 60 ORDER BY item_id DESC, n"),
+    [{ item_id: 2, copy: 1, n: 1, kind: "night", value: "wax_gib", mark_key: "w2" }, { item_id: 2, copy: 1, n: 2, kind: "deed", value: "from_demon", mark_key: "d2" },
+     { item_id: 1, copy: 1, n: 2, kind: "deed", value: "beat_demon", mark_key: "b1" }]);
   const rows = q(db, "SELECT record, prev_hash, hash FROM ledger WHERE id > ? ORDER BY id", before);
-  const rec = '{"k":"mark","copies":[{"item":1,"copy":1,"n":2},{"item":2,"copy":1,"n":1}],"kind":"deed","value":"fled_fight","game":"4dungeon"}';
-  assert.deepEqual(rows.map((x) => x.record), [rec]);                              // one entry, not two
+  const rec = '{"k":"mark","marks":[{"kind":"night","value":"wax_gib","copies":[{"item":2,"copy":1,"n":1}]},{"kind":"deed","value":"from_demon","copies":[{"item":2,"copy":1,"n":2}]},'
+    + '{"kind":"deed","value":"beat_demon","copies":[{"item":1,"copy":1,"n":2}]}],"game":"4dungeon"}';
+  assert.deepEqual(rows.map((x) => x.record), [rec]);                              // one entry, not three
   assert.equal(rows[0].hash, sha(rows[0].prev_hash + "|" + rec));
   assert.equal((await verify(db)).ok, true);
-  assert.deepEqual(await addMarks(db, many), { ok: true, marked: [], already: 2, skipped: [{ itemId: 3, copy: 1, error: "That copy was used up." }] });   // a retry adds nothing
+  assert.equal((await addMarks(db, move)).already, 3);                             // a retry adds nothing
   assert.equal(q(db, "SELECT COUNT(*) AS c FROM ledger")[0].c, before + 1);
-  assert.ok((await copyStory(db, 2, 1)).entries.some((e) => e.record === rec));    // each copy's story has the shared entry
-  assert.deepEqual((await addMarks(db, { ...many, kind: "moon", value: "blessed" })).error, "Only the moon's answer goes on many copies at once.");
+  assert.ok((await copyStory(db, 1, 1)).entries.some((e) => e.record === rec));    // each copy's story has the shared entry
+  assert.equal((await addMarks(db, { holder: P, marks: [{ kind: "moon", value: "blessed", copies: [{ itemId: 1, copy: 1, key: "x" }] }] })).error, "Only the moon's answer goes on many copies at once.");
+  const old = await addMarks(db, { holder: P, kind: "deed", value: "fled_fight", t: 70, copies: [{ itemId: 2, copy: 1, key: "f2" }] });   // the v1.38 call, until 4Dungeon v1.39 is live
+  assert.deepEqual(old.marked, [{ itemId: 2, copy: 1, n: 3, value: "fled_fight" }]);
 });

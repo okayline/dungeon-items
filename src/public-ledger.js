@@ -15,8 +15,10 @@ const COLS = "id, kind, game, record, prev_hash, hash, created_at, name";
 export const isMystery = (i) => !!i && i.source === "88x31" && i.rarity !== "common";
 export const mysteryItem = (i) => ({ source: i.source, hidden: true });
 
-// the item ids a record names: one (item), or a mark many copies share (copies: [{ item, copy, n }])
-const idsOf = (rec) => { try { const r = JSON.parse(rec); return Array.isArray(r.copies) ? r.copies.map((c) => c && c.item) : [r.item]; } catch { return []; } };   // an unreadable record just has no name
+// the item ids a record names: one (item), a mark many copies share (copies: [{ item, copy, n }]), or a move's marks
+// (marks: [{ kind, value, copies }]), each copy as often as the record names it
+const named = (r) => Array.isArray(r.marks) ? r.marks.flatMap((m) => (m && Array.isArray(m.copies) ? m.copies : [])) : Array.isArray(r.copies) ? r.copies : null;
+const idsOf = (rec) => { try { const r = JSON.parse(rec), cs = named(r); return cs ? cs.map((c) => c && c.item) : [r.item]; } catch { return []; } };   // an unreadable record just has no name
 async function shape(db, results) {
   const ids = new Set();
   for (const r of results) for (const n of idsOf(r.record)) if (Number.isInteger(n)) ids.add(n);
@@ -28,7 +30,7 @@ async function shape(db, results) {
   }
   return results.map((r) => {
     let item = null, items;
-    try { const rec = JSON.parse(r.record); if (Array.isArray(rec.copies)) { items = idsOf(r.record).map((n) => names.get(n) || null); if (items.length === 1) item = items[0]; } else item = names.get(rec.item) || null; } catch { /* as above */ }
+    try { const rec = JSON.parse(r.record); if (named(rec)) { items = idsOf(r.record).map((n) => names.get(n) || null); if (items.length === 1) item = items[0]; } else item = names.get(rec.item) || null; } catch { /* as above */ }
     return { id: r.id, kind: r.kind, game: r.game, record: r.record, prev_hash: r.prev_hash, hash: r.hash, at: r.created_at, ...(r.name ? { name: r.name } : {}), item, ...(items ? { items } : {}) };
   });
 }
@@ -48,7 +50,9 @@ export async function copyStory(db, item, copy) {
   const c = await db.prepare("SELECT c.born_game, c.born_at, c.moves, c.spent, i.id, i.name, i.note, i.rarity, i.source, i.type, i.image, i.alignment, i.nature, (SELECT MAX(copy) FROM copies WHERE item_id = c.item_id) AS made FROM copies c JOIN items i ON i.id = c.item_id WHERE c.item_id = ? AND c.copy = ?").bind(item, copy).first();
   if (!c) return null;
   const { results } = await db.prepare(`SELECT ${COLS} FROM ledger WHERE (json_extract(record, '$.item') = ? AND json_extract(record, '$.copy') = ?)
-    OR EXISTS (SELECT 1 FROM json_each(record, '$.copies') j WHERE json_extract(j.value, '$.item') = ? AND json_extract(j.value, '$.copy') = ?) ORDER BY id DESC`).bind(item, copy, item, copy).all();   // a mark it shares with other copies too
+    OR EXISTS (SELECT 1 FROM json_each(record, '$.copies') j WHERE json_extract(j.value, '$.item') = ? AND json_extract(j.value, '$.copy') = ?)
+    OR EXISTS (SELECT 1 FROM json_each(record, '$.marks') m, json_each(m.value, '$.copies') j WHERE json_extract(j.value, '$.item') = ? AND json_extract(j.value, '$.copy') = ?)
+    ORDER BY id DESC`).bind(item, copy, item, copy, item, copy).all();   // a mark it shares with other copies too, or a move's marks
   return {
     item: isMystery(c) ? { id: c.id, ...mysteryItem(c) } : { id: c.id, name: c.name, note: c.note, rarity: c.rarity, source: c.source, type: c.type, image: c.image, alignment: c.alignment, nature: c.nature },
     copy, of: c.made, born_game: c.born_game, born_at: c.born_at, moves: c.moves, used_up: !!c.spent, entries: await shape(db, results),
@@ -182,20 +186,48 @@ function momentWords(r) {
   }
   return null;
 }
-// a mark many copies share (addMarks): "TORCH #3, BONE CHARM #12 and LANTERN #1 ran from a fight, in 4Dungeon."
+// marks naming copies (addMarks): one moment many copies share ({ copies, kind, value }, 4Dungeon v1.38), or everything one
+// move did ({ marks: [{ kind, value, copies }] }, v1.39). Copies with the same marks share a sentence: "a scratched data
+// disc #2 and a neon tube fragment #3 were found under a waxing gibbous moon and came from a demon; a cracked phone #2
+// saw a demon fall, in 4Dungeon."
 const were = (w) => w.replace(/^was /, "were ").replace(/^is /, "are ").replace(/^has /, "have ");
-const shared = (r) => Array.isArray(r && r.copies) && r.k === "mark";
-const copyName = (e, r, k) => { const i = (e.items || [])[k], c = r.copies[k] || {}; return (i ? nameOf(i) : "item " + c.item) + " #" + c.copy; };
-function sharedWords(e, r) {
-  const w = (e.items || []).some((i) => i && i.hidden) && /^(foil|pattern|effect)_/.test(r.value) ? "came with some kind of " + r.value.split("_")[0] : markWords(r);
-  return " " + (w ? (r.copies.length > 1 ? were(w) : w) : "got a mark: " + r.value.replace(/_/g, " ")) + ", in " + g(r.game) + ".";
+const shared = (r) => !!r && r.k === "mark" && (Array.isArray(r.copies) || Array.isArray(r.marks));
+const andList = (xs) => xs.length > 1 ? xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1] : xs[0] || "";
+// each copy once, with its marks and their numbers in order (e.items follows the copies as the record names them)
+function copiesOf(e, r) {
+  const out = new Map();
+  let k = 0;
+  for (const m of Array.isArray(r.marks) ? r.marks : [{ kind: r.kind, value: r.value, copies: r.copies }]) for (const c of (m && Array.isArray(m.copies) ? m.copies : [])) {
+    const look = (e.items || [])[k++];
+    if (!c) continue;
+    const id = c.item + ":" + c.copy;
+    if (!out.has(id)) out.set(id, { item: c.item, copy: c.copy, look, ns: [], marks: [] });
+    out.get(id).ns.push(c.n); out.get(id).marks.push(m);
+  }
+  return [...out.values()];
 }
-const thisCopy = (r) => shared(r) && one ? r.copies.find((c) => c && String(c.item) === qs.get("item") && String(c.copy) === qs.get("copy")) : null;
+// the copies grouped by their marks; the move's earliest marks first (its new finds), then by item and copy number,
+// so the same things sit together
+function groupsOf(e, r) {
+  const by = new Map(), low = (cs) => Math.min(...cs.flatMap((c) => c.ns));
+  for (const c of copiesOf(e, r)) { const k = c.marks.map((m) => m.kind + " " + m.value).join(","); if (!by.has(k)) by.set(k, []); by.get(k).push(c); }
+  const order = (a, b) => a.item - b.item || a.copy - b.copy;
+  return [...by.values()].map((cs) => cs.sort(order)).sort((a, b) => low(a) - low(b) || order(a[0], b[0]));
+}
+const copyName = (c) => (c.look ? nameOf(c.look) : "item " + c.item) + " #" + c.copy;
+function groupWords(cs) {
+  const hid = cs.some((c) => c.look && c.look.hidden);
+  return " " + andList(cs[0].marks.map((m) => {
+    const w = hid && /^(foil|pattern|effect)_/.test(m.value) ? "came with some kind of " + m.value.split("_")[0] : markWords(m);
+    return w ? (cs.length > 1 ? were(w) : w) : "got a mark: " + m.value.replace(/_/g, " ");
+  }));
+}
+const thisCopy = (e, r) => one ? copiesOf(e, r).find((c) => String(c.item) === qs.get("item") && String(c.copy) === qs.get("copy")) : null;
 // a mystery button's finish (foil_, pattern_, effect_) stays a mystery too: "came with some kind of foil"
 function say(e, r) {
   if (!r) return "An entry this page can't read.";
   if (r.k === "run") return momentWords(r) || g(r.game) + " sealed a moment of a run.";
-  if (shared(r)) return r.copies.map((c, k) => copyName(e, r, k)).join(", ") + sharedWords(e, r);   // (row() writes it with links)
+  if (shared(r)) return groupsOf(e, r).map((cs) => andList(cs.map(copyName)) + groupWords(cs)).join("; ") + ", in " + g(r.game) + ".";   // (row() writes it with links)
   if (r.k === "checkpoint") return lapWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world in " + g(r.game) + ".";
@@ -230,7 +262,7 @@ const HEAD = {
 const CAPS = { "4dungeon": "4DUNGEON" };
 function heading(r) {
   if (!r) return null;
-  const at = r.k === "move" ? r.to : r.game, k = r.k === "move" && r.from !== r.to ? "arrive" : shared(r) && r.copies.length > 1 ? "marks" : r.k;
+  const at = r.k === "move" ? r.to : r.game, k = r.k === "move" && r.from !== r.to ? "arrive" : shared(r) && copiesOf({}, r).length > 1 ? "marks" : r.k;
   let w = (HEAD[at] && (HEAD[at][k + "_" + r.moment] || HEAD[at][k])) || ANY[k];   // a run's moment has its own heading (run_enter ...)
   if (typeof w === "function") w = w(r.detail);
   if (!w) return null;
@@ -240,17 +272,23 @@ function heading(r) {
 function row(e) {
   let r; try { r = JSON.parse(e.record); } catch { r = null; }
   const p = el("div", "panel");
-  const n = shared(r) ? (r.copies.length === 1 ? r.copies[0] : thisCopy(r) || {}).n : r && r.k === "mark" ? r.n : null;
-  p.append(el("div", "top", "#" + e.id + " · " + when(e.at) + (n ? " · mark " + n + " on this copy" : "")));
+  const cs = shared(r) ? copiesOf(e, r) : null, mine = cs ? (cs.length === 1 ? cs[0] : thisCopy(e, r)) : null;
+  const ns = mine ? mine.ns.filter(Number.isInteger) : r && r.k === "mark" && Number.isInteger(r.n) ? [r.n] : [];
+  const nw = ns.length === 1 ? "mark " + ns[0] : ns.every((n, i) => !i || n === ns[i - 1] + 1) ? "marks " + ns[0] + "\u2013" + ns[ns.length - 1] : "marks " + andList(ns.map(String));
+  p.append(el("div", "top", "#" + e.id + " · " + when(e.at) + (ns.length ? " · " + nw + " on this copy" : "")));
   const s = el("div", "say"), lead = e.item || (e.items || []).find(Boolean);   // a shared mark wears its first thing's look
   if (e.item && e.item.image) { const im = el("img"); im.src = e.item.image; im.alt = e.item.name; s.append(im); }
   if (dun(lead)) s.append("> ");
   if (shared(r)) {   // each thing links to its own story
-    r.copies.forEach((c, k) => {
-      if (k) s.append(k === r.copies.length - 1 ? " and " : ", ");
-      if (one || !c) s.append(copyName(e, r, k)); else { const l = el("a", null, copyName(e, r, k)); l.href = "?item=" + c.item + "&copy=" + c.copy; s.append(l); }
+    groupsOf(e, r).forEach((group, gi) => {
+      if (gi) s.append("; ");
+      group.forEach((c, k) => {
+        if (k) s.append(k === group.length - 1 ? " and " : ", ");
+        if (one) s.append(copyName(c)); else { const l = el("a", null, copyName(c)); l.href = "?item=" + c.item + "&copy=" + c.copy; s.append(l); }
+      });
+      s.append(groupWords(group));
     });
-    s.append(sharedWords(e, r));
+    s.append(", in " + g(r.game) + ".");
   } else if (r && !one && Number.isInteger(r.item)) { const l = el("a", null, say(e, r)); l.href = "?item=" + r.item + "&copy=" + r.copy; s.append(l); } else s.append(say(e, r));
   p.append(s);
   if (e.item && !one) { p.append(el("div", "facts", facts(e.item))); p.lastChild.classList.add("q-" + e.item.rarity); if (e.item.note) p.append(el("div", "note", "“" + e.item.note + "”")); }

@@ -283,50 +283,65 @@ export async function addMark(db, { itemId, copy, holder, kind, value, key, t = 
   throw busy();
 }
 
-// One thing that happened to several copies at once, such as a fight everything in the bag lived through:
-//   addMarks(db, { copies: [{ itemId, copy, key }], holder, kind, value, t? })
-//        -> { ok: true, marked: [{ itemId, copy, n }], already, skipped: [{ itemId, copy, error }] } or { error }.
-// Each copy gets its own mark, numbered as addMark numbers them, but the ledger gets ONE entry naming them all:
-// { k: "mark", copies: [{ item, copy, n }], kind, value, game }. A copy whose key already made its mark counts in
-// `already`; one that is used up, not the holder's or unknown is skipped with the reason. Nothing new, no entry.
+// What one move did to several copies at once, such as a find's moon, place and level, or a fight everything in the
+// bag lived through:
+//   addMarks(db, { holder, marks: [{ kind, value, copies: [{ itemId, copy, key }] }], t? })
+//        -> { ok: true, marked: [{ itemId, copy, n, value }], already, skipped: [{ itemId, copy, value, error }] } or { error }.
+// Each copy gets its own marks, numbered as addMark numbers them (a copy with three marks in one move gets three numbers
+// in the order given), but the ledger gets ONE entry for the whole move:
+// { k: "mark", marks: [{ kind, value, copies: [{ item, copy, n }] }], game }. A mark whose key already made it counts in
+// `already`; one on a copy that is used up, not the holder's or unknown is skipped with the reason. Nothing new, no entry.
 // No blessings here: a blessing climbs one copy's ladder, so it goes through addMark.
+// (Until 4Dungeon v1.39 is live, the v1.38 call { holder, kind, value, copies } is read as a move with one mark.)
 export const MARKS_AT_ONCE = 300;
 const EACH = (col) => `json_extract(j.value, '$.${col}')`;
-export async function addMarks(db, { copies, holder, kind, value, t = now() } = {}) {
+export async function addMarks(db, { holder, marks, kind, value, copies, t = now() } = {}) {
   if (!holderOk(holder)) return { error: "Whose copies? A game and a player id are needed." };
-  if (!MARK_KINDS.has(kind) || !markValue(value)) return { error: "A mark needs a kind (night, deed or moon) and a value." };
-  if (kind === "moon" && value !== "answered") return { error: "Only the moon's answer goes on many copies at once." };
-  if (!Array.isArray(copies) || !copies.length || copies.length > MARKS_AT_ONCE) return { error: `Between 1 and ${MARKS_AT_ONCE} copies.` };
-  const seen = new Set();
-  for (const c of copies) {
-    if (!c || !isInt(c.itemId) || !isInt(c.copy) || !isText(c.key, 200)) return { error: "Each copy needs an item, a copy number and a key." };
-    if (seen.has(c.itemId + ":" + c.copy)) return { error: "A copy is named twice." };
-    seen.add(c.itemId + ":" + c.copy);
+  if (marks === undefined && kind !== undefined) marks = [{ kind, value, copies }];
+  if (!Array.isArray(marks) || !marks.length) return { error: "Which marks?" };
+  const list = [], keys = new Set();
+  for (const [m, g] of marks.entries()) {
+    if (!g || !MARK_KINDS.has(g.kind) || !markValue(g.value)) return { error: "A mark needs a kind (night, deed or moon) and a value." };
+    if (g.kind === "moon" && g.value !== "answered") return { error: "Only the moon's answer goes on many copies at once." };
+    if (!Array.isArray(g.copies) || !g.copies.length) return { error: "Each mark needs its copies." };
+    const seen = new Set();
+    for (const c of g.copies) {
+      if (!c || !isInt(c.itemId) || !isInt(c.copy) || !isText(c.key, 200)) return { error: "Each copy needs an item, a copy number and a key." };
+      if (seen.has(c.itemId + ":" + c.copy)) return { error: "A copy is named twice in one mark." };
+      if (keys.has(c.key)) return { error: "A key is used twice." };
+      seen.add(c.itemId + ":" + c.copy); keys.add(c.key);
+      list.push({ m, item: c.itemId, copy: c.copy, key: c.key });
+    }
   }
-  const list = JSON.stringify(copies.map((c) => ({ item: c.itemId, copy: c.copy, key: c.key })));
+  if (list.length > MARKS_AT_ONCE) return { error: `Up to ${MARKS_AT_ONCE} marks at once.` };
   for (let i = 0; i < TRIES; i++) {
-    // one read for every copy: is it theirs and alive, did its key already make a mark, and its next number
-    const { results } = await db.prepare(`SELECT ${EACH("item")} AS item, ${EACH("copy")} AS copy, ${EACH("key")} AS mkey, c.holder_game, c.holder_id, c.spent,
+    // one read for every mark: is its copy theirs and alive, did its key already make a mark, and the copy's next number
+    const { results } = await db.prepare(`SELECT ${EACH("item")} AS item, ${EACH("copy")} AS copy, c.holder_game, c.holder_id, c.spent,
         (SELECT m.item_id || ':' || m.copy FROM marks m WHERE m.game = ? AND m.mark_key = ${EACH("key")}) AS had,
         (SELECT COALESCE(MAX(m.n), 0) + 1 FROM marks m WHERE m.item_id = ${EACH("item")} AND m.copy = ${EACH("copy")}) AS n
-      FROM json_each(?) j LEFT JOIN copies c ON c.item_id = ${EACH("item")} AND c.copy = ${EACH("copy")} ORDER BY j.key`).bind(holder.game, list).all();
-    const marked = [], skipped = [];
+      FROM json_each(?) j LEFT JOIN copies c ON c.item_id = ${EACH("item")} AND c.copy = ${EACH("copy")} ORDER BY j.key`).bind(holder.game, JSON.stringify(list)).all();
+    const made = [], skipped = [], next = new Map();
     let already = 0;
-    for (const r of results) {
-      const no = (error) => skipped.push({ itemId: r.item, copy: r.copy, error });
+    results.forEach((r, x) => {
+      const g = marks[list[x].m], no = (error) => skipped.push({ itemId: r.item, copy: r.copy, value: g.value, error });
       if (r.had) { if (r.had === r.item + ":" + r.copy) already++; else no("That key already made a different mark."); }
       else if (!r.holder_game) no("No such copy.");
       else if (r.spent) no("That copy was used up.");
       else if (r.holder_game !== holder.game || r.holder_id !== holder.playerId) no("That copy isn't theirs to mark.");
-      else marked.push({ item: r.item, copy: r.copy, n: r.n, key: r.mkey });
-    }
-    const out = { ok: true, marked: marked.map((m) => ({ itemId: m.item, copy: m.copy, n: m.n })), already, skipped };
-    if (!marked.length) return out;
-    const record = JSON.stringify({ k: "mark", copies: marked.map((m) => ({ item: m.item, copy: m.copy, n: m.n })), kind, value, game: holder.game });
+      else {   // a copy's second new mark in this move comes after its first
+        const id = r.item + ":" + r.copy, n = next.get(id) || r.n;
+        next.set(id, n + 1);
+        made.push({ m: list[x].m, item: r.item, copy: r.copy, n, key: list[x].key, kind: g.kind, value: g.value });
+      }
+    });
+    const out = { ok: true, marked: made.map((x) => ({ itemId: x.item, copy: x.copy, n: x.n, value: x.value })), already, skipped };
+    if (!made.length) return out;
+    const sealed = marks.map((g, m) => ({ kind: g.kind, value: g.value, copies: made.filter((x) => x.m === m).map((x) => ({ item: x.item, copy: x.copy, n: x.n })) })).filter((g) => g.copies.length);
+    const record = JSON.stringify({ k: "mark", marks: sealed, game: holder.game });
     try {
       await db.batch([
-        db.prepare(`INSERT INTO marks (item_id, copy, n, kind, value, game, mark_key, made_at) SELECT ${EACH("item")}, ${EACH("copy")}, ${EACH("n")}, ?, ?, ?, ${EACH("key")}, ? FROM json_each(?) j`)
-          .bind(kind, value, holder.game, t, JSON.stringify(marked)),
+        db.prepare(`INSERT INTO marks (item_id, copy, n, kind, value, game, mark_key, made_at) SELECT ${EACH("item")}, ${EACH("copy")}, ${EACH("n")}, ${EACH("kind")}, ${EACH("value")}, ?, ${EACH("key")}, ? FROM json_each(?) j ORDER BY j.key`)
+          .bind(holder.game, t, JSON.stringify(made)),
         await chainInsert(db, await head(db), { kind: "mark", game: holder.game, playerId: holder.playerId, record, t }),
       ]);
       return out;
