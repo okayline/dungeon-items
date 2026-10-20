@@ -292,6 +292,8 @@ function row(e) {
     });
     s.append(inGame(r.game, ", in ") + ".");
   } else if (r && !one && Number.isInteger(r.item)) { const l = el("a", null, say(e, r)); l.href = "?item=" + r.item + "&copy=" + r.copy; s.append(l); } else s.append(say(e, r));
+  let end = s; while (end.lastChild) end = end.lastChild;   // an entry ends without a period (min, Oct 20); its sentences inside keep theirs
+  if (end.nodeType === 3) end.textContent = end.textContent.replace(/[.]$/, "");
   p.append(s);
   if (e.item && !one) { p.append(el("div", "facts", facts(e.item))); p.lastChild.classList.add("q-" + e.item.rarity); if (e.item.note) p.append(el("div", "note", "“" + e.item.note + "”")); }
   p.append(el("div", "seal", "record " + e.record + "\\nprev " + e.prev_hash + "\\nhash " + e.hash));
