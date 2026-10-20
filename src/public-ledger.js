@@ -94,7 +94,7 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 .baton .h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#ffe066;font-weight:700;margin:0 0 4px}
 .baton .grad{display:flex;height:22px;border:2px solid #fff;margin:6px 0 2px}.baton .grad i{flex:1}.baton .grad i.none{background:#0b0b2b}
 .baton .tune{display:flex;color:#ffe066;font-size:13px}.baton .tune span{flex:1;text-align:center}
-.ascii .run{font-size:15px;text-transform:uppercase;color:var(--fg)}.ascii .run.won{color:var(--gold)}
+.ascii .run{font-size:15px;color:var(--fg)}.ascii .run.won{color:var(--gold)}
 .baton .top{color:#b9b9ff;font-size:12px}.baton .say{font-size:15px}.baton .seal{color:#b9b9ff;font-family:"Courier New",Courier,monospace}
 body.dun{background:#07090a}body.dun::before{display:none}
 body.dun h1{font:44px "VT323",ui-monospace,monospace;color:#fff}body.dun .sub{font:20px "VT323",ui-monospace,monospace;color:#8f8f8a;font-weight:normal}
@@ -142,7 +142,7 @@ function markWords(r) {
   if (/^on_(b[0-9]|[0-9]+)f$/.test(r.value)) return "was picked up on " + r.value.slice(3).toUpperCase();   // the level (4Dungeon v1.33)
   return DEED[r.value] || finishWords(r.value);
 }
-// a checkpoint's detail, told in its game's own voice: Dawn Baton's plain sentences, scoundrel.exe's capitals
+// a checkpoint's detail, told in its game's own voice
 const isInt = (v) => Number.isInteger(v), plural = (v, one, many) => v + " " + (v === 1 ? one : many);
 function lapWords(r) {
   const d = r.detail;
@@ -153,9 +153,9 @@ function lapWords(r) {
 function runWords(r) {
   const d = r.detail;
   if (r.game !== "scoundrel" || !d || !isInt(d.score)) return null;
-  const day = isInt(d.day) ? "DAY #" + d.day + ": " : "", moves = isInt(d.moves) ? " AFTER " + d.moves + " MOVES" : "";
-  if (d.status === "won") return day + "A SCOUNDREL CLEARED THE DECK" + (isInt(d.hp) ? " WITH " + d.hp + " HP LEFT" : "") + ". SCORE " + d.score + moves + ".";
-  return day + "A SCOUNDREL WAS DELETED" + (isInt(d.room) ? " IN ROOM " + d.room : "") + (isInt(d.demons_left) ? ", " + plural(d.demons_left, "DEMON", "DEMONS") + " STILL IN THE DECK" : "") + ". SCORE " + d.score + moves + ".";
+  const day = isInt(d.day) ? "Day #" + d.day + ": " : "", end = "Score " + d.score + (isInt(d.moves) ? " after " + d.moves + " moves." : ".");
+  if (d.status === "won") return day + "A Scoundrel CLEARED the deck! " + (isInt(d.hp) ? d.hp + " HP left. " : "") + end;
+  return day + "A Scoundrel was DELETED" + (isInt(d.room) ? " in Room " + d.room : "") + ". " + (isInt(d.demons_left) ? plural(d.demons_left, "Demon", "Demons") + " still in the deck. " : "") + end;
 }
 // a mystery button's finish (foil_, pattern_, effect_) stays a mystery too: "came with some kind of foil"
 function say(e, r) {
