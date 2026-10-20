@@ -74,7 +74,8 @@ CREATE TABLE IF NOT EXISTS ledger (
   record      TEXT NOT NULL,          -- the sealed JSON record
   prev_hash   TEXT NOT NULL UNIQUE,
   hash        TEXT NOT NULL UNIQUE,
-  created_at  INTEGER NOT NULL
+  created_at  INTEGER NOT NULL,
+  name        TEXT CHECK (name IS NULL OR length(name) BETWEEN 1 AND 40)   -- a checkpoint's player name, beside the record and not sealed (migration 006)
 );
 
 CREATE TRIGGER IF NOT EXISTS copies_never_deleted BEFORE DELETE ON copies

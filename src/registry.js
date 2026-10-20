@@ -183,9 +183,10 @@ const isHead = (h) => typeof h === "string" && /^[0-9a-f]{64}$/.test(h);
 const isWord = (v) => v === null || Number.isInteger(v) || (typeof v === "string" && /^[#A-Za-z0-9_ .-]{0,40}$/.test(v));
 const detailOk = (d) => d === undefined || (!!d && typeof d === "object" && !Array.isArray(d) && Object.keys(d).length <= 12
   && Object.entries(d).every(([k, v]) => /^[a-z_]{1,20}$/.test(k) && (isWord(v) || (Array.isArray(v) && v.length <= 24 && v.every(isWord)))));
-export async function checkpoint(db, { game, entries, head: h, detail, t = now() } = {}) {
+export async function checkpoint(db, { game, entries, head: h, detail, name = null, t = now() } = {}) {
   if (!isText(game, 40) || !isInt(entries) || !isHead(h)) return { error: "A checkpoint needs a game, an entry count and a 64-character fingerprint." };
   if (!detailOk(detail)) return { error: "A checkpoint's detail is up to 12 short public facts: whole numbers, short words, or lists of them." };
+  if (name !== null && !(typeof name === "string" && /^[A-Za-z0-9_. -]{1,40}$/.test(name))) return { error: "A checkpoint's name is up to 40 letters, numbers, spaces, - _ or ." };
   for (let i = 0; i < TRIES; i++) {
     const prev = await db.prepare("SELECT record FROM ledger WHERE kind = 'checkpoint' AND game = ? ORDER BY id DESC LIMIT 1").bind(game).first();
     if (prev) {
@@ -195,7 +196,7 @@ export async function checkpoint(db, { game, entries, head: h, detail, t = now()
     }
     const record = JSON.stringify({ k: "checkpoint", game, entries, head: h, ...(detail ? { detail } : {}) });
     try {
-      await db.batch([await chainInsert(db, await head(db), { kind: "checkpoint", game, playerId: 0, record, t })]);
+      await db.batch([await chainInsert(db, await head(db), { kind: "checkpoint", game, playerId: 0, record, t, name })]);
       return { ok: true, created: true };
     } catch (e) {
       if (chainClash(e)) continue;

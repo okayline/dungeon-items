@@ -7,7 +7,7 @@
 // anyone can still rebuild the hashes from `record` alone.
 import { GENESIS } from "./ledger.js";
 
-const COLS = "id, kind, game, record, prev_hash, hash, created_at";
+const COLS = "id, kind, game, record, prev_hash, hash, created_at, name";
 
 // Only 88x31's commons show in public: every other 88x31 item is a mystery, the same rule as 88x31's logged-out Wall
 // (88x31 functions/api/designs.js): no name, picture, rarity or anything else, only that it is an 88x31 button.
@@ -27,7 +27,7 @@ async function shape(db, results) {
   return results.map((r) => {
     let item = null;
     try { item = names.get(JSON.parse(r.record).item) || null; } catch { /* as above */ }
-    return { id: r.id, kind: r.kind, game: r.game, record: r.record, prev_hash: r.prev_hash, hash: r.hash, at: r.created_at, item };
+    return { id: r.id, kind: r.kind, game: r.game, record: r.record, prev_hash: r.prev_hash, hash: r.hash, at: r.created_at, ...(r.name ? { name: r.name } : {}), item };
   });
 }
 
@@ -150,17 +150,17 @@ function lapWords(r) {
   const held = isInt(d.people) && d.people > 0 ? plural(d.people, "person", "people") + " passed the baton along." : "nobody passed the baton.";
   return "Lap " + d.lap + " came home, and " + held + (isInt(d.unheld) && d.unheld > 0 ? " " + plural(d.unheld, "band", "bands") + " went unheld." : "");
 }
-function runWords(r) {
+function runWords(r, who) {
   const d = r.detail;
   if (r.game !== "scoundrel" || !d || !isInt(d.score)) return null;
   const day = isInt(d.day) ? "Day #" + d.day + ": " : "", end = "Score " + d.score + (isInt(d.moves) ? " after " + d.moves + " moves." : ".");
-  if (d.status === "won") return day + "A Scoundrel CLEARED the deck! " + (isInt(d.hp) ? d.hp + " HP left. " : "") + end;
-  return day + "A Scoundrel was DELETED" + (isInt(d.room) ? " in Room " + d.room : "") + ". " + (isInt(d.demons_left) ? plural(d.demons_left, "Demon", "Demons") + " still in the deck. " : "") + end;
+  if (d.status === "won") return day + who + " CLEARED the deck! " + (isInt(d.hp) ? d.hp + " HP left. " : "") + end;
+  return day + who + " was DELETED" + (isInt(d.room) ? " in Room " + d.room : "") + ". " + (isInt(d.demons_left) ? plural(d.demons_left, "Demon", "Demons") + " still in the deck. " : "") + end;
 }
 // a mystery button's finish (foil_, pattern_, effect_) stays a mystery too: "came with some kind of foil"
 function say(e, r) {
   if (!r) return "An entry this page can't read.";
-  if (r.k === "checkpoint") return lapWords(r) || runWords(r) || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
+  if (r.k === "checkpoint") return lapWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world in " + g(r.game) + ".";
   if (r.k === "move") return r.from === r.to ? what + " changed hands in " + g(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";

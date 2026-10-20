@@ -4,7 +4,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { register } from "node:module";
+import { createHash } from "node:crypto";
 import { fakeD1 } from "./helpers.mjs";
+import { publicLedger } from "../src/public-ledger.js";
 
 const stub = "export class WorkerEntrypoint { constructor(ctx, env) { this.ctx = ctx; this.env = env; } }";
 register("data:text/javascript," + encodeURIComponent(
@@ -135,4 +137,16 @@ test("a checkpoint can carry a few public facts for the page, and nothing that i
   assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), detail: { name: "<script>" } })).error, /detail/);
   assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), detail: { score: { deep: 1 } } })).error, /detail/);
   assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), detail: [1] })).error, /detail/);
+});
+
+test("a checkpoint's name sits beside the record: shown by the ledger API, never sealed in the hash", async () => {
+  const db = fakeD1();
+  const reg = new Registry({}, { DB: db });
+  assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), name: "<b>" })).error, /name/);
+  assert.deepEqual(await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), detail: { score: 12 }, name: "ryan" }), { ok: true, created: true });
+  const [row] = q(db, "SELECT record, prev_hash, hash, name FROM ledger");
+  assert.equal(row.name, "ryan");
+  assert.doesNotMatch(row.record, /ryan/);
+  assert.equal(row.hash, createHash("sha256").update(row.prev_hash + "|" + row.record).digest("hex"));   // the hash covers the record alone
+  assert.equal((await publicLedger(db, new URLSearchParams())).entries[0].name, "ryan");
 });

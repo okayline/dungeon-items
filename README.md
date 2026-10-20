@@ -69,14 +69,17 @@ Baton makes one numbered copy for it (key `lap:<n>`) and gives it to one of that
 stamper makes no copy, so copy numbers count held laps, not days. Seed it with `node scripts/seed-sql.mjs seed/dawn-baton.json`
 and run the SQL on `items-db` before deploying the Dawn Baton version that binds `REGISTRY`.
 
-## Checkpoints (no migration)
+## Checkpoints (migration 006 for the name)
 Another game's own ledger, written into this one so the registry's hourly Bitcoin stamp (88x31-anchors) covers it too.
 `await env.REGISTRY.checkpoint({ game, entries, head })` seals "that game's ledger had `entries` entries, newest
 fingerprint `head`" as a ledger entry of kind `checkpoint` (player_id 0; it names no copy and no player). One fingerprint
 covers every entry before it. A retry with the same values adds nothing; fewer entries than that game's last checkpoint,
 or the same count with a different fingerprint, is refused. The registry can't read the game's database, so a
 checkpoint is what that game reports. Dawn Baton sends one when each lap closes; scoundrel.exe after every finished run.
-The `/ledger` page shows them as "Dawn Baton's own ledger reached N entries".
+An optional `detail` (up to 12 short public facts) and `name` go with it. `detail` is sealed in the record; `name`
+(`migrations/006_checkpoint_name.sql`, the `ledger.name` column) is the player's public name in that game, stored
+beside the record and not hashed, so no record names a player. The `/ledger` page tells each one as a sentence in its
+game's voice (Dawn Baton's lap, scoundrel.exe's run with the name or "A Scoundrel").
 
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.

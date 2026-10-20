@@ -30,14 +30,15 @@ export async function head(db) {
   return h ? h.hash : GENESIS;
 }
 
-// Build the insert for one entry chained after `prev`: { kind, game, playerId, record (a JSON string), t (seconds) }.
+// Build the insert for one entry chained after `prev`: { kind, game, playerId, record (a JSON string), t (seconds), name? }.
+// `name` (checkpoints only) is stored beside the record and is not part of the hash.
 // With `ifChanged`, the row is written only if the statement just before it in the batch changed a row, so a lost
 // race on that statement leaves nothing on the ledger.
 export async function chainInsert(db, prev, e, { ifChanged = false } = {}) {
   const hash = await sha256(prev + "|" + e.record);
-  const cols = "INSERT INTO ledger (kind, game, player_id, record, prev_hash, hash, created_at)";
-  const args = [e.kind, e.game, e.playerId, e.record, prev, hash, e.t];
-  return db.prepare(ifChanged ? `${cols} SELECT ?,?,?,?,?,?,? WHERE changes() = 1` : `${cols} VALUES (?,?,?,?,?,?,?)`).bind(...args);
+  const cols = "INSERT INTO ledger (kind, game, player_id, record, prev_hash, hash, created_at, name)";
+  const args = [e.kind, e.game, e.playerId, e.record, prev, hash, e.t, e.name ?? null];
+  return db.prepare(ifChanged ? `${cols} SELECT ?,?,?,?,?,?,?,? WHERE changes() = 1` : `${cols} VALUES (?,?,?,?,?,?,?,?)`).bind(...args);
 }
 
 export const isUnique = (e) => /UNIQUE/i.test(String(e && e.message));
