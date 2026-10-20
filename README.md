@@ -64,4 +64,4 @@ story belongs to the copy, so it follows the copy into any game.
 
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.
-- 4Dungeon stamps marks (since its v1.25) and irl-dungeon (since its v0.22). 88x31 can (the HTTP door has `addMark`) but doesn't yet.
+- 4Dungeon stamps marks (since its v1.25), irl-dungeon (since its v0.22) and 88x31 (since its v0.46, from its registry sync, through the HTTP door's `addMark`).
