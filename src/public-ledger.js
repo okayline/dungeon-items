@@ -2,7 +2,7 @@
 //   GET /api/registry/ledger?before=ID&limit=N   JSON (N up to 100)
 //   GET /ledger                                  the same thing as a page
 // Records hold item ids, copy numbers and game names only (see ledger.js), never a player id. The player_id column is not
-// selected here. Each entry shows its date, not its time, as in irl-dungeon. The item's name is added for reading; it
+// selected here. Each entry carries the time it was sealed (`at`, seconds). The item's name is added for reading; it
 // is not part of the sealed record, so anyone can still rebuild the hashes from `record` alone.
 import { GENESIS } from "./ledger.js";
 
@@ -20,7 +20,7 @@ async function shape(db, results) {
   return results.map((r) => {
     let item = null;
     try { item = names.get(JSON.parse(r.record).item) || null; } catch { /* as above */ }
-    return { id: r.id, kind: r.kind, game: r.game, record: r.record, prev_hash: r.prev_hash, hash: r.hash, date: new Date(r.created_at * 1000).toISOString().slice(0, 10), item };
+    return { id: r.id, kind: r.kind, game: r.game, record: r.record, prev_hash: r.prev_hash, hash: r.hash, at: r.created_at, item };
   });
 }
 
@@ -32,13 +32,13 @@ export async function publicLedger(db, params) {
 }
 
 // One copy's whole story: the item, the game that made it, and every ledger entry about it (made, moved, marked, used
-// up), oldest first. Who holds it now is not shown. Returns null when there is no such copy.
+// up), newest first. Who holds it now is not shown. Returns null when there is no such copy.
 export async function copyHistory(db, params) {
   const item = Number(params.get("item")), copy = Number(params.get("copy"));
   if (!Number.isInteger(item) || !Number.isInteger(copy) || item < 1 || copy < 1) return null;
   const c = await db.prepare("SELECT c.born_game, c.moves, c.spent, i.id, i.name, i.note, i.rarity, i.source, i.type, i.image, i.alignment, i.nature FROM copies c JOIN items i ON i.id = c.item_id WHERE c.item_id = ? AND c.copy = ?").bind(item, copy).first();
   if (!c) return null;
-  const { results } = await db.prepare(`SELECT ${COLS} FROM ledger WHERE json_extract(record, '$.item') = ? AND json_extract(record, '$.copy') = ? ORDER BY id`).bind(item, copy).all();
+  const { results } = await db.prepare(`SELECT ${COLS} FROM ledger WHERE json_extract(record, '$.item') = ? AND json_extract(record, '$.copy') = ? ORDER BY id DESC`).bind(item, copy).all();
   return {
     item: { id: c.id, name: c.name, note: c.note, rarity: c.rarity, source: c.source, type: c.type, image: c.image, alignment: c.alignment, nature: c.nature },
     copy, born_game: c.born_game, moves: c.moves, used_up: !!c.spent, entries: await shape(db, results),
@@ -77,7 +77,7 @@ const qs = new URLSearchParams(location.search), one = qs.get("item") && qs.get(
 function row(e) {
   const div = document.createElement("div"); div.className = "e";
   const a = document.createElement("div");
-  a.append("#" + e.id + " " + e.date + "  ");
+  a.append("#" + e.id + " " + new Date(e.at * 1000).toLocaleString() + "  ");
   let r; try { r = JSON.parse(e.record); } catch { r = null; }
   if (r && !one && Number.isInteger(r.item)) { const l = document.createElement("a"); l.href = "?item=" + r.item + "&copy=" + r.copy; l.textContent = say(e); a.append(l); } else a.append(say(e));
   const h = document.createElement("div"); h.className = "h"; h.textContent = "prev " + e.prev_hash.slice(0, 16) + "  hash " + e.hash.slice(0, 16);
@@ -101,7 +101,7 @@ async function loadCopy() {
     d.item.alignment, d.item.nature].filter(Boolean).join(" \u00b7 ");
   c.append(facts); if (d.item.note) { const n = document.createElement("div"); n.className = "m"; n.textContent = d.item.note; c.append(n); }
   $("#card").append(c);
-  $("#head").textContent = "Everything that has happened to this copy, oldest first.";
+  $("#head").textContent = "Everything that has happened to this copy, newest first.";
   for (const e of d.entries) $("#list").append(row(e));
   const back = document.createElement("a"); back.href = "/ledger"; back.textContent = "The whole ledger"; $("#list").append(back);
 }

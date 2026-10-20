@@ -5,7 +5,7 @@
 //   GET /api/registry/head    the registry ledger's newest hash and entry count, for the outside anchor (88x31-anchors).
 //                             Counts and a hash only: no holders, no copies listed.
 //   GET /api/registry/ledger  the registry ledger itself, newest first (?before=ID&limit=N, up to 100); no player ids.
-//   GET /api/registry/copy    one copy's story: ?item=ID&copy=N, its item and every ledger entry about it, oldest first.
+//   GET /api/registry/copy    one copy's story: ?item=ID&copy=N, its item and every ledger entry about it, newest first.
 //   GET /ledger               the ledger as a page; /ledger?item=ID&copy=N shows one copy.
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
