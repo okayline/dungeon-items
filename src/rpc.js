@@ -11,6 +11,7 @@
 // load it with a stand-in for that module (test/rpc.test.mjs).
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { birth, moveCopy, spendCopy, heldBy, whereIs, verify, addMark, marksOf } from "./registry.js";
+import { copyStory } from "./public-ledger.js";
 import * as A from "./accounts.js";
 
 export class Registry extends WorkerEntrypoint {
@@ -22,6 +23,7 @@ export class Registry extends WorkerEntrypoint {
   verify() { return verify(this.env.DB); }
   addMark(args) { return addMark(this.env.DB, args); }
   marksOf(itemId, copy) { return marksOf(this.env.DB, itemId, copy); }
+  copyStory(itemId, copy) { return copyStory(this.env.DB, itemId, copy); }   // one copy's public story (what /ledger shows), for a game's own screen
 }
 
 // The shared accounts, also through a service binding:

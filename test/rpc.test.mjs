@@ -31,6 +31,20 @@ test("the entrypoint runs the registry on the bound database: birth, move, heldB
   assert.equal(v.ok, true); assert.equal(v.count, 2);
 });
 
+test("copyStory gives a copy's public story: how many exist, when it was made, newest entry first, no player ids", async () => {
+  const db = withItems();
+  const reg = new Registry({}, { DB: db });
+  await reg.birth({ itemId: 1, game: "4dungeon", playerId: 7001, key: "a" });
+  await reg.birth({ itemId: 1, game: "4dungeon", playerId: 7002, key: "b" });
+  await reg.addMark({ itemId: 1, copy: 2, holder: { game: "4dungeon", playerId: 7002 }, kind: "deed", value: "found_wall", key: "m1" });
+  const s = await reg.copyStory(1, 2);
+  assert.deepEqual([s.copy, s.of, s.born_game, s.moves, s.used_up], [2, 2, "4dungeon", 0, false]);
+  assert.equal(s.born_at, q(db, "SELECT born_at FROM copies WHERE copy = 2")[0].born_at);
+  assert.deepEqual(s.entries.map((e) => e.kind), ["mark", "copy"]);
+  assert.ok(!JSON.stringify(s).includes("7002"));
+  assert.equal(await reg.copyStory(1, 9), null);
+});
+
 test("the entrypoint refuses what the registry refuses", async () => {
   const db = withItems();
   const reg = new Registry({}, { DB: db });

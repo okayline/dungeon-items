@@ -31,19 +31,20 @@ export async function publicLedger(db, params) {
   return { genesis: GENESIS, entries: await shape(db, results) };
 }
 
-// One copy's whole story: the item, the game that made it, and every ledger entry about it (made, moved, marked, used
-// up), newest first. Who holds it now is not shown. Returns null when there is no such copy.
-export async function copyHistory(db, params) {
-  const item = Number(params.get("item")), copy = Number(params.get("copy"));
+// One copy's whole story: the item, the game that made it, when, how many copies of the item exist, and every ledger
+// entry about it (made, moved, marked, used up), newest first. Who holds it now is not shown. Returns null when there is
+// no such copy. The games call copyStory through the registry service binding; the web routes call copyHistory.
+export async function copyStory(db, item, copy) {
   if (!Number.isInteger(item) || !Number.isInteger(copy) || item < 1 || copy < 1) return null;
-  const c = await db.prepare("SELECT c.born_game, c.moves, c.spent, i.id, i.name, i.note, i.rarity, i.source, i.type, i.image, i.alignment, i.nature FROM copies c JOIN items i ON i.id = c.item_id WHERE c.item_id = ? AND c.copy = ?").bind(item, copy).first();
+  const c = await db.prepare("SELECT c.born_game, c.born_at, c.moves, c.spent, i.id, i.name, i.note, i.rarity, i.source, i.type, i.image, i.alignment, i.nature, (SELECT MAX(copy) FROM copies WHERE item_id = c.item_id) AS made FROM copies c JOIN items i ON i.id = c.item_id WHERE c.item_id = ? AND c.copy = ?").bind(item, copy).first();
   if (!c) return null;
   const { results } = await db.prepare(`SELECT ${COLS} FROM ledger WHERE json_extract(record, '$.item') = ? AND json_extract(record, '$.copy') = ? ORDER BY id DESC`).bind(item, copy).all();
   return {
     item: { id: c.id, name: c.name, note: c.note, rarity: c.rarity, source: c.source, type: c.type, image: c.image, alignment: c.alignment, nature: c.nature },
-    copy, born_game: c.born_game, moves: c.moves, used_up: !!c.spent, entries: await shape(db, results),
+    copy, of: c.made, born_game: c.born_game, born_at: c.born_at, moves: c.moves, used_up: !!c.spent, entries: await shape(db, results),
   };
 }
+export const copyHistory = (db, params) => copyStory(db, Number(params.get("item")), Number(params.get("copy")));
 
 export const LEDGER_PAGE = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark">

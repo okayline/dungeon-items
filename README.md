@@ -59,6 +59,7 @@ story belongs to the copy, so it follows the copy into any game.
   stamps a mark on a copy the holder holds: `{ ok: true, n, created }` (a retry with the same key gives back the same
   mark) or `{ error }`. `await env.REGISTRY.marksOf(itemId, copy)` is `[{ kind, value, game, at }]`, oldest first, and
   `heldBy` now carries each copy's `marks` too. The HTTP door (88x31) has no mark calls yet.
+  `await env.REGISTRY.copyStory(itemId, copy)` is one copy's public story (the item, `of` copies exist, `born_game`, `born_at`, `moves`, `used_up`, and every ledger entry about it, newest first; no holder), the same thing the `/ledger` page shows; `null` when there is no such copy.
 
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.
