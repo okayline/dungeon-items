@@ -107,6 +107,5 @@ test("addMarks: one ledger entry for everything a move did to many copies; each 
   assert.equal(q(db, "SELECT COUNT(*) AS c FROM ledger")[0].c, before + 1);
   assert.ok((await copyStory(db, 1, 1)).entries.some((e) => e.record === rec));    // each copy's story has the shared entry
   assert.equal((await addMarks(db, { holder: P, marks: [{ kind: "moon", value: "blessed", copies: [{ itemId: 1, copy: 1, key: "x" }] }] })).error, "Only the moon's answer goes on many copies at once.");
-  const old = await addMarks(db, { holder: P, kind: "deed", value: "fled_fight", t: 70, copies: [{ itemId: 2, copy: 1, key: "f2" }] });   // the v1.38 call, until 4Dungeon v1.39 is live
-  assert.deepEqual(old.marked, [{ itemId: 2, copy: 1, n: 3, value: "fled_fight" }]);
+  assert.equal((await addMarks(db, { holder: P, kind: "deed", value: "fled_fight", copies: [{ itemId: 2, copy: 1, key: "f2" }] })).error, "Which marks?");   // the v1.38 call is gone
 });

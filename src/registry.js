@@ -283,8 +283,8 @@ export async function addMark(db, { itemId, copy, holder, kind, value, key, t = 
   throw busy();
 }
 
-// What one move did to several copies at once, such as a find's moon, place and level, or a fight everything in the
-// bag lived through:
+// Several marks on several copies in one entry, such as the moon, place and level two finds share, or a fight
+// everything in the bag lived through (4Dungeon sends one call per set of copies with the same marks):
 //   addMarks(db, { holder, marks: [{ kind, value, copies: [{ itemId, copy, key }] }], t? })
 //        -> { ok: true, marked: [{ itemId, copy, n, value }], already, skipped: [{ itemId, copy, value, error }] } or { error }.
 // Each copy gets its own marks, numbered as addMark numbers them (a copy with three marks in one move gets three numbers
@@ -292,12 +292,10 @@ export async function addMark(db, { itemId, copy, holder, kind, value, key, t = 
 // { k: "mark", marks: [{ kind, value, copies: [{ item, copy, n }] }], game }. A mark whose key already made it counts in
 // `already`; one on a copy that is used up, not the holder's or unknown is skipped with the reason. Nothing new, no entry.
 // No blessings here: a blessing climbs one copy's ladder, so it goes through addMark.
-// (Until 4Dungeon v1.39 is live, the v1.38 call { holder, kind, value, copies } is read as a move with one mark.)
 export const MARKS_AT_ONCE = 300;
 const EACH = (col) => `json_extract(j.value, '$.${col}')`;
-export async function addMarks(db, { holder, marks, kind, value, copies, t = now() } = {}) {
+export async function addMarks(db, { holder, marks, t = now() } = {}) {
   if (!holderOk(holder)) return { error: "Whose copies? A game and a player id are needed." };
-  if (marks === undefined && kind !== undefined) marks = [{ kind, value, copies }];
   if (!Array.isArray(marks) || !marks.length) return { error: "Which marks?" };
   const list = [], keys = new Set();
   for (const [m, g] of marks.entries()) {

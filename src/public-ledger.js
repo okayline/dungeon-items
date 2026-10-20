@@ -186,8 +186,8 @@ function momentWords(r) {
   }
   return null;
 }
-// marks naming copies (addMarks): one moment many copies share ({ copies, kind, value }, 4Dungeon v1.38), or everything one
-// move did ({ marks: [{ kind, value, copies }] }, v1.39). Copies with the same marks share a sentence: "a scratched data
+// marks naming copies (addMarks): one moment many copies share ({ copies, kind, value }, 4Dungeon v1.38), or several marks
+// at once ({ marks: [{ kind, value, copies }] }, v1.39). Copies with the same marks share a sentence: "a scratched data
 // disc #2 and a neon tube fragment #3 were found under a waxing gibbous moon and came from a demon; a cracked phone #2
 // saw a demon fall, in irl-dungeon."
 const were = (w) => w.replace(/^was /, "were ").replace(/^is /, "are ").replace(/^has /, "have ");
