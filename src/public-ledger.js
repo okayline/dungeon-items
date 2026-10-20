@@ -129,7 +129,7 @@ const DEED = { found_wall: "was found in a wall", from_demon: "came from a demon
   made_compiler: "was made by COMPILER", copied_cache: "was copied by CACHE", kit: "was brought along", moon_gift: "was a gift from the Moon",
   found_inside: "was found inside something", carried_up: "was carried up a level", first_copy: "is the very first one ever made", hundredth_copy: "is the hundredth one made",
   in_locker: "was in a hidden locker", in_archive: "was in the Archive", deep_stone: "was deep in the stone",   // 4Dungeon v1.33
-  beat_demon: "saw a demon fall", talked_down: "saw a demon talked down", fled_fight: "ran from a fight", through_door: "went through a locked door",
+  beat_demon: "saw a demon fall", talked_down: "saw a demon talked down", fled_fight: "escaped a fight", through_door: "went through a locked door",
   found_outside: "was found outside, in the real world",                                                  // irl-dungeon v0.22
   pulled_pack: "was pulled from a pack", free_pack: "came in a Free Pack", welcome_gift: "was a welcome gift", daily_pick: "was a daily pick",   // 88x31 v0.46
   passed_on: "was passed on by another player", set_reward: "was a reward for a finished set", from_webmaster: "came from the webmaster",
