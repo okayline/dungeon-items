@@ -279,7 +279,8 @@ function row(e) {
   const nw = ns.length === 1 ? "mark " + ns[0] : ns.every((n, i) => !i || n === ns[i - 1] + 1) ? "marks " + ns[0] + "\u2013" + ns[ns.length - 1] : "marks " + andList(ns.map(String));
   p.append(el("div", "top", "#" + e.id + " · " + when(e.at) + (ns.length ? " · " + nw + " on this copy" : "")));
   const s = el("div", "say"), lead = e.item || (e.items || []).find(Boolean);   // a shared mark wears its first thing's look
-  if (e.item && e.item.image) { const im = el("img"); im.src = e.item.image; im.alt = e.item.name; s.append(im); }
+  const pic = e.item || (mine && mine.look);   // a mark on one copy (one or several marks) shows its picture too
+  if (pic && pic.image) { const im = el("img"); im.src = pic.image; im.alt = pic.name; s.append(im); }
   if (dun(lead)) s.append("> ");
   if (shared(r)) {   // each thing links to its own story
     groupsOf(e, r).forEach((group, gi) => {
