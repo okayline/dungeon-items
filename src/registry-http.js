@@ -4,7 +4,7 @@
 //
 // This door belongs to one game: HTTP_GAME. Every call acts as that game, whatever the arguments say, so the key can only
 // ever make, move, spend, add or retire what is that game's to touch. Other games use the Registry entrypoint (rpc.js).
-import { birth, moveCopy, spendCopy, heldBy, whereIs, addItems, retireItems, itemIds, addMark, marksOf } from "./registry.js";
+import { birth, moveCopy, spendCopy, heldBy, whereIs, addItems, retireItems, itemIds, addMark, addMarks, marksOf } from "./registry.js";
 
 const HTTP_GAME = "88x31";
 const sameKey = (a, b) => a.length === b.length && [...a].reduce((x, c, i) => x | (c.charCodeAt(0) ^ b.charCodeAt(i)), 0) === 0;
@@ -18,6 +18,8 @@ const CALLS = {
   heldBy: (db, [playerId]) => heldBy(db, HTTP_GAME, playerId),
   // a mark on a copy one of this game's players holds (the mark is stamped as made in this game); a copy's marks are public
   addMark: (db, [a]) => (mine(a && a.holder) ? addMark(db, a) : { error: "Only " + HTTP_GAME + " players' copies are marked from here." }),
+  // several marks in one ledger entry (a copy's moon, how it came and its finish, one line)
+  addMarks: (db, [a]) => (mine(a && a.holder) ? addMarks(db, a) : { error: "Only " + HTTP_GAME + " players' copies are marked from here." }),
   marksOf: (db, [itemId, copy]) => marksOf(db, itemId, copy),
   // where one of this game's own copies is now (88x31 notices a button coming home); other games' copies aren't its to look up
   whereIs: async (db, [itemId, copy]) => {

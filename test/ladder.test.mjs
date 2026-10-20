@@ -76,6 +76,10 @@ test("the HTTP door marks only 88x31 players' copies, as 88x31, and reads any co
   assert.equal((await mark({ game: "88x31", playerId: 2 }, "k3")).error, "That copy isn't theirs to mark.");
   assert.deepEqual((await call("marksOf", [3, 1])).map((m) => [m.kind, m.value, m.game]), [["deed", "pulled_pack", "88x31"]]);
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM ledger WHERE kind = 'mark'").get().n, 1);
+  const many = (holder) => call("addMarks", [{ holder, marks: [{ kind: "night", value: "full", copies: [{ itemId: 3, copy: 1, key: "k4" }] }, { kind: "deed", value: "first_print", copies: [{ itemId: 3, copy: 1, key: "k5" }] }] }]);
+  assert.equal((await many({ game: "4dungeon", playerId: 1 })).error, "Only 88x31 players' copies are marked from here.");
+  assert.deepEqual((await many({ game: "88x31", playerId: 1 })).marked.map((m) => m.n), [2, 3]);                 // two marks, one more entry
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM ledger WHERE kind = 'mark'").get().n, 2);
 });
 
 test("migration 004 runs on the old layout and keeps every item, copy and ledger row", () => {
