@@ -185,8 +185,8 @@ function ascii(p) { p.classList.add("ascii"); p.prepend(rule()); p.append(rule()
 // game it went to ("arrive"). A game or kind missing here gets the plain words in ANY.
 const ANY = { copy: "new copy", move: "copy changed hands", arrive: "copy arrived", spend: "copy used up", mark: "copy marked", checkpoint: "checkpoint" };
 const HEAD = {
-  "88x31": { copy: "new button", move: "button changed hands", arrive: "button arrived", spend: "button gone", mark: "button marked" },
-  "4dungeon": { copy: "ITEM FOUND", move: "ITEM CHANGED HANDS", arrive: "ITEM INTO THE BAG", spend: "ITEM LEFT THE BAG", mark: "ITEM MARKED", checkpoint: "CHECKPOINT" },
+  "88x31": { copy: "new button", move: "button traveled", arrive: "button arrived", spend: "button gone", mark: "button marked" },
+  "4dungeon": { copy: "ITEM FOUND", move: "ITEM CHANGED HANDS", arrive: "ITEM IN BAG", spend: "ITEM LEFT BAG", mark: "ITEM MARKED", checkpoint: "CHECKPOINT" },
   "irl-dungeon": { copy: "new find", move: "find changed hands", arrive: "find arrived", spend: "find used up", mark: "find marked" },
   "dawn-baton": { copy: "BATON MADE", move: "BATON CHANGED HANDS", arrive: "BATON ARRIVED", spend: "BATON USED UP", mark: "BATON MARKED", checkpoint: "LAP CAME HOME" },
   "scoundrel": { checkpoint: (d) => d && d.status === "won" ? "run cleared" : d && Number.isInteger(d.score) ? "run deleted" : "run" },
