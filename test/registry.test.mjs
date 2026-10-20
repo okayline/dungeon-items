@@ -257,3 +257,24 @@ test("GET /api/registry/head gives the entry count, the newest hash and the copy
   assert.equal(r.status, 200);
   assert.deepEqual(body, { ok: true, entries: 2, head: last, copies: 2 });
 });
+
+test("GET /api/registry/ledger lists entries newest first with item names, never a player id, and the hashes rebuild from the records", async () => {
+  const db = setup();
+  await birth(db, irl(424242, "p1"));
+  await birth(db, irl(424243, "p2", 3));
+  await moveCopy(db, { itemId: 1, copy: 1, from: { game: "irl-dungeon", playerId: 424242 }, to: { game: "4dungeon", playerId: 555111 } });
+  const get = async (path) => { const r = await worker.fetch(new Request("https://items.example" + path), { DB: db }); return { status: r.status, text: await r.text() }; };
+  const all = await get("/api/registry/ledger");
+  assert.equal(all.status, 200);
+  for (const word of ["424242", "424243", "555111", "player"]) assert.ok(!all.text.includes(word), word);
+  const body = JSON.parse(all.text);
+  assert.deepEqual(body.entries.map((e) => e.id), [3, 2, 1]);
+  assert.deepEqual(body.entries.map((e) => e.item.name), ["item a", "item c", "item a"]);
+  let p = GENESIS;                                              // oldest first, chained by hand with node:crypto
+  for (const e of [...body.entries].reverse()) { assert.equal(e.prev_hash, p); p = sha(p + "|" + e.record); assert.equal(e.hash, p); }
+  const page = JSON.parse((await get("/api/registry/ledger?before=3&limit=1")).text);
+  assert.deepEqual(page.entries.map((e) => e.id), [2]);
+  const html = await get("/ledger");
+  assert.equal(html.status, 200);
+  assert.ok(html.text.includes("Item registry ledger"));
+});
