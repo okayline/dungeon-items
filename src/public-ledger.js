@@ -134,13 +134,14 @@ function markWords(r) {
   if (/^on_(b[0-9]|[0-9]+)f$/.test(r.value)) return "was picked up on " + r.value.slice(3).toUpperCase();   // the level (4Dungeon v1.33)
   return DEED[r.value] || finishWords(r.value);
 }
+// a mystery button's finish (foil_, pattern_, effect_) stays a mystery too: "came with some kind of foil"
 function say(e, r) {
   if (!r) return "An entry this page can't read.";
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world in " + g(r.game) + ".";
   if (r.k === "move") return r.from === r.to ? what + " changed hands in " + g(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";
   if (r.k === "spend") return what + " was used up in " + g(r.game) + ". It is gone.";
-  if (r.k === "mark") { const w = markWords(r); return w ? what + " " + w + ", in " + g(r.game) + "." : what + " got a mark in " + g(r.game) + ": " + r.value.replace(/_/g, " ") + "."; }
+  if (r.k === "mark") { const w = e.item && e.item.hidden && /^(foil|pattern|effect)_/.test(r.value) ? "came with some kind of " + r.value.split("_")[0] : markWords(r); return w ? what + " " + w + ", in " + g(r.game) + "." : what + " got a mark in " + g(r.game) + ": " + r.value.replace(/_/g, " ") + "."; }
   return "An entry this page doesn't know.";
 }
 const when = (t) => new Date(t * 1000).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
