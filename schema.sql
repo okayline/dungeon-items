@@ -68,7 +68,7 @@ CREATE INDEX IF NOT EXISTS copies_by_holder ON copies (holder_game, holder_id, i
 -- no player ids, no keys. Who did it is in game + player_id, which nothing publishes.
 CREATE TABLE IF NOT EXISTS ledger (
   id          INTEGER PRIMARY KEY,
-  kind        TEXT NOT NULL,          -- 'copy' (born), 'move', 'spend', 'mark', 'checkpoint' or 'run' (a run's end, sealRun)
+  kind        TEXT NOT NULL,          -- 'copy' (born), 'move', 'spend', 'mark', 'checkpoint' or 'run' (a run's moment, sealRun)
   game        TEXT NOT NULL,          -- the game of whoever did it
   player_id   INTEGER NOT NULL,
   record      TEXT NOT NULL,          -- the sealed JSON record

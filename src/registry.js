@@ -17,7 +17,7 @@
 //
 // The ladder (migration 004): common < uncommon < rare < prototype < relic < ultra, plus moon. Ultra is 1-of-1, and
 // prototype, relic and ultra are only born in their home game (items.source): triggers in schema.sql enforce both.
-//   sealRun(db, { game, playerId, run, detail, t? })  a run's end, for a game with no ledger of its own (see above whereIs).
+//   sealRun(db, { game, playerId, run, moment, detail, t? })  a run's moment, for a game with no ledger of its own (see above whereIs).
 //   verify(db)                                        checks the whole ledger: { ok, count, head } or { ok: false, at }.
 //
 // `key` is the game's own name for the moment the copy was made (irl-dungeon: its find, by player, cell, spot and day).
@@ -207,18 +207,21 @@ export async function checkpoint(db, { game, entries, head: h, detail, name = nu
   throw busy();
 }
 
-// (Oct 20) A RUN'S END, for a game that keeps no ledger of its own (4Dungeon): one sealed entry with a few public facts.
-//   sealRun(db, { game, playerId, run, detail, t? })   `run` is the game's own fingerprint of the run (8 to 64 lowercase
-//   letters and digits, never its real id), so the same run is sealed once and a board can check a score against it.
-//   `detail` is the same shape as a checkpoint's. -> { ok: true, created } or { error }. Nothing names the player.
-export async function sealRun(db, { game, playerId, run, detail, t = now() } = {}) {
+// (Oct 20) A RUN'S MOMENTS, for a game that keeps no ledger of its own (4Dungeon): one sealed entry per moment, with a
+// few public facts. sealRun(db, { game, playerId, run, moment, detail, t? }): `run` is the game's own fingerprint of the
+// run (8 to 64 lowercase letters and digits, never its real id); `moment` is a short word (4Dungeon: enter, talked_down,
+// joined, climbed, offering, leave, end); `detail` is the same shape as a checkpoint's, with the turn it happened on in
+// `turn`. A run's moment on one turn is sealed once: the same again answers { ok: true, created: false }, other facts are
+// refused. -> { ok: true, created } or { error }. Nothing names the player.
+export async function sealRun(db, { game, playerId, run, moment, detail, t = now() } = {}) {
   if (!holderOk({ game, playerId })) return { error: "Whose run? A game and a player id are needed." };
   if (!(typeof run === "string" && /^[a-z0-9]{8,64}$/.test(run))) return { error: "A run needs its fingerprint: 8 to 64 lowercase letters and digits." };
-  if (!detail || !detailOk(detail)) return { error: "A run's detail is up to 12 short public facts: whole numbers, short words, or lists of them." };
-  const record = JSON.stringify({ k: "run", game, run, detail });
+  if (!(typeof moment === "string" && /^[a-z_]{1,20}$/.test(moment))) return { error: "Which moment? A short word." };
+  if (!detail || !detailOk(detail) || !Number.isInteger(detail.turn) || detail.turn < 0) return { error: "A moment's detail is up to 12 short public facts, with the turn it happened on." };
+  const record = JSON.stringify({ k: "run", game, run, moment, detail });
   for (let i = 0; i < TRIES; i++) {
-    const have = await db.prepare("SELECT record FROM ledger WHERE kind = 'run' AND game = ? AND json_extract(record, '$.run') = ?").bind(game, run).first();
-    if (have) return have.record === record ? { ok: true, created: false } : { error: "That run was already sealed, with other facts." };
+    const have = await db.prepare("SELECT record FROM ledger WHERE kind = 'run' AND game = ? AND json_extract(record, '$.run') = ? AND json_extract(record, '$.moment') = ? AND json_extract(record, '$.detail.turn') = ?").bind(game, run, moment, detail.turn).first();
+    if (have) return have.record === record ? { ok: true, created: false } : { error: "That moment was already sealed, with other facts." };
     try {
       await db.batch([await chainInsert(db, await head(db), { kind: "run", game, playerId, record, t })]);
       return { ok: true, created: true };

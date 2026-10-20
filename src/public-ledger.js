@@ -158,20 +158,31 @@ function runWords(r, who) {
   if (d.status === "won") return day + who + " CLEARED the deck! " + (isInt(d.hp) ? d.hp + " HP left. " : "") + end;
   return day + who + " was DELETED" + (isInt(d.room) ? " in Room " + d.room : "") + ". " + (isInt(d.demons_left) ? plural(d.demons_left, "Demon", "Demons") + " still in the deck. " : "") + end;
 }
-// a 4Dungeon run's end (sealRun): where and how KURA's run ended, and what it came to
-function endWords(r) {
+// a 4Dungeon run's moments (sealRun): what happened, where, on which day and under which moon
+function momentWords(r) {
   const d = r.detail;
-  if (r.game !== "4dungeon" || !d || !isInt(d.days)) return null;
-  const at = typeof d.level === "string" && d.level ? " on " + d.level : "", day = " on day " + d.days;
-  const how = d.end === "fell" ? "KURA fell" + at + (typeof d.killer === "string" && d.killer ? " to " + d.killer : "") + day + "."
-    : "The dark rose over KURA" + at + day + ".";
-  const more = [isInt(d.climbed) ? plural(d.climbed, "level", "levels") + " climbed" : null, isInt(d.demons) ? plural(d.demons, "demon", "demons") + " beaten" : null, isInt(d.turns) ? plural(d.turns, "turn", "turns") : null].filter(Boolean);
-  return how + (more.length ? " " + more.join(", ") + "." : "");
+  if (r.game !== "4dungeon" || !d) return null;
+  const lv = typeof d.level === "string" && d.level ? d.level : null, on = lv ? " on " + lv : "", day = isInt(d.day) ? ", day " + d.day : "";
+  const sky = PHASE[d.moon] ? ", under " + PHASE[d.moon] : "", when = day + sky + ".", who = typeof d.demon === "string" && d.demon ? d.demon : "A demon";
+  switch (r.moment) {
+    case "enter": return "KURA woke at the bottom of the pit" + on + when;
+    case "talked_down": return who + " was appeased" + on + when;
+    case "joined": return who + " joined KURA's party" + on + when;
+    case "climbed": return "KURA climbed" + (lv ? " to " + lv : "") + when;
+    case "offering": return "KURA made an offering to the Moon" + on + when + (d.blessed === 1 ? " The Moon blessed one of her things." : "");
+    case "leave": return "KURA climbed out of the pit, into open air" + when;
+    case "end": {
+      const how = d.end === "fell" ? "KURA fell" + on + (typeof d.killer === "string" && d.killer ? " to " + d.killer : "") : "The dark rose over KURA" + on;
+      const more = [isInt(d.climbed) ? plural(d.climbed, "level", "levels") + " climbed" : null, isInt(d.demons) ? plural(d.demons, "demon", "demons") + " beaten" : null, isInt(d.turn) ? plural(d.turn, "turn", "turns") : null].filter(Boolean);
+      return how + when + (more.length ? " " + more.join(", ") + "." : "");
+    }
+  }
+  return null;
 }
 // a mystery button's finish (foil_, pattern_, effect_) stays a mystery too: "came with some kind of foil"
 function say(e, r) {
   if (!r) return "An entry this page can't read.";
-  if (r.k === "run") return endWords(r) || g(r.game) + " sealed a run's end.";
+  if (r.k === "run") return momentWords(r) || g(r.game) + " sealed a moment of a run.";
   if (r.k === "checkpoint") return lapWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world in " + g(r.game) + ".";
@@ -194,10 +205,11 @@ function ascii(p) { p.classList.add("ascii"); p.prepend(rule()); p.append(rule()
 // the heading above the entry number: the game, then what happened, in that game's own words (88x31, irl-dungeon and
 // scoundrel.exe lowercase; 4Dungeon in capitals, like its screen; Dawn Baton as a sentence). A move between games is headed by the
 // game it went to ("arrive"). A game or kind missing here gets the plain words in ANY.
-const ANY = { copy: "new copy", move: "copy changed hands", arrive: "copy arrived", spend: "copy used up", mark: "copy marked", checkpoint: "checkpoint", run: "run over" };
+const ANY = { copy: "new copy", move: "copy changed hands", arrive: "copy arrived", spend: "copy used up", mark: "copy marked", checkpoint: "checkpoint", run: "run" };
 const HEAD = {
   "88x31": { copy: "new button", move: "button traveled", arrive: "button arrived", spend: "button gone", mark: "button marked" },
-  "4dungeon": { copy: "ITEM FOUND", move: "ITEM CHANGED HANDS", arrive: "ITEM IN BAG", spend: "ITEM LEFT BAG", mark: "ITEM MARKED", checkpoint: "CHECKPOINT", run: "RUN OVER" },
+  "4dungeon": { copy: "ITEM FOUND", move: "ITEM CHANGED HANDS", arrive: "ITEM IN BAG", spend: "ITEM LEFT BAG", mark: "ITEM MARKED", checkpoint: "CHECKPOINT",
+    run_enter: "INTO THE PIT", run_talked_down: "DEMON APPEASED", run_joined: "DEMON JOINED", run_climbed: "LEVEL CLIMBED", run_offering: "OFFERING", run_leave: "OUT OF THE PIT", run_end: "RUN OVER" },
   "irl-dungeon": { copy: "new find", move: "find changed hands", arrive: "find arrived", spend: "find used up", mark: "find marked" },
   "dawn-baton": { copy: "Baton made", move: "Baton changed hands", arrive: "Baton arrived", spend: "Baton used up", mark: "Baton marked", checkpoint: "Baton came home" },
   "scoundrel": { checkpoint: (d) => d && d.status === "won" ? "run cleared" : d && Number.isInteger(d.score) ? "run deleted" : "run" },
@@ -206,7 +218,7 @@ const CAPS = { "4dungeon": "4DUNGEON" };
 function heading(r) {
   if (!r) return null;
   const at = r.k === "move" ? r.to : r.game, k = r.k === "move" && r.from !== r.to ? "arrive" : r.k;
-  let w = (HEAD[at] && HEAD[at][k]) || ANY[k];
+  let w = (HEAD[at] && (HEAD[at][k + "_" + r.moment] || HEAD[at][k])) || ANY[k];   // a run's moment has its own heading (run_enter ...)
   if (typeof w === "function") w = w(r.detail);
   if (!w) return null;
   if (CAPS[at] && w === ANY[k]) w = w.toUpperCase();
@@ -242,7 +254,7 @@ function row(e) {
     if (d && int(d.score)) { s.classList.add("run"); if (d.status === "won") s.classList.add("won"); }   // the sentence wears the run's colour
     return ascii(p);
   }
-  if (r && r.k === "run" && r.game === "4dungeon") { s.prepend("> "); return ascii(p); }   // a run's end wears 4Dungeon's ASCII frame
+  if (r && r.k === "run" && r.game === "4dungeon") { s.prepend("> "); return ascii(p); }   // a run's moment wears 4Dungeon's ASCII frame
   return dun(e.item) ? ascii(p) : p;
 }
 let last = null;
