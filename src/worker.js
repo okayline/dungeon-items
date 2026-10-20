@@ -10,10 +10,10 @@
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
 import { verify } from "./registry.js";
-import { publicLedger, copyHistory, LEDGER_PAGE } from "./public-ledger.js";
+import { publicLedger, copyHistory, LEDGER_PAGE, isMystery, mysteryItem } from "./public-ledger.js";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-methods": "GET, OPTIONS", "access-control-allow-headers": "if-none-match" };
 const RARITIES = ["common", "uncommon", "rare", "prototype", "relic", "ultra", "moon", "mythic"];
-const shape = (r) => ({
+const shape = (r) => (isMystery(r) ? { id: r.id, ...mysteryItem(r), retired: !!r.retired } : {
   id: r.id, source: r.source, source_key: r.source_key, rarity: r.rarity, name: r.name, note: r.note,
   alignment: r.alignment, nature: r.nature, type: r.type, image: r.image, extra: JSON.parse(r.extra || "{}"),
   retired: !!r.retired, updated_at: r.updated_at,
