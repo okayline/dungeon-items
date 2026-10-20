@@ -104,18 +104,22 @@ body.dun .head,body.dun #list>p{font-family:"VT323",ui-monospace,monospace;font-
 const $ = (s) => document.querySelector(s);
 const sayGame = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "irl-dungeon", "scoundrel": "scoundrel.exe", "dawn-baton": "Dawn Baton" };
 const g = (x) => sayGame[x] || x;
-// mark words, after 4Dungeon's own (rules.js DEED_WORDS, PHASE_WORDS, OCC_WORDS, MOON_WORDS)
+// mark words, after 4Dungeon's own (rules.js DEED_WORDS, PHASE_WORDS, OCC_WORDS, MOON_WORDS, MORE_WORDS) and irl-dungeon's
 const PHASE = { new: "a new moon", wax_cres: "a waxing crescent moon", first_q: "a first quarter moon", wax_gib: "a waxing gibbous moon",
   full: "a full moon", wan_gib: "a waning gibbous moon", last_q: "a last quarter moon", wan_cres: "a waning crescent moon" };
 const OCC = { thirteenth_moon: "under the Thirteenth Moon", eclipse_solar: "during a solar eclipse", eclipse_lunar: "during a lunar eclipse",
   blue_moon: "under a blue moon", supermoon: "under a supermoon", solstice: "on a solstice", equinox: "on an equinox", mirror_day: "on a mirror day" };
 const DEED = { found_wall: "was found in a wall", from_demon: "came from a demon", given_member: "was a gift from a friend", from_stranger: "was left by a stranger",
   made_compiler: "was made by COMPILER", copied_cache: "was copied by CACHE", kit: "was brought along", moon_gift: "was a gift from the Moon",
-  found_inside: "was found inside something", carried_up: "was carried up a level", first_copy: "is the very first one ever made", hundredth_copy: "is the hundredth one made" };
+  found_inside: "was found inside something", carried_up: "was carried up a level", first_copy: "is the very first one ever made", hundredth_copy: "is the hundredth one made",
+  in_locker: "was in a hidden locker", in_archive: "was in the Archive", deep_stone: "was deep in the stone",   // 4Dungeon v1.33
+  beat_demon: "saw a demon fall", talked_down: "saw a demon talked down", fled_fight: "ran from a fight", through_door: "went through a locked door",
+  found_outside: "was found outside, in the real world" };                                                // irl-dungeon v0.22
 const MOON = { answered: "answered the Moon", blessed: "was blessed by the Moon" };
 function markWords(r) {
   if (r.kind === "night") return PHASE[r.value] ? "was found under " + PHASE[r.value] : OCC[r.value] ? "was found " + OCC[r.value] : null;
   if (r.kind === "moon") return MOON[r.value] || null;
+  if (/^on_(b[0-9]|[0-9]+)f$/.test(r.value)) return "was picked up on " + r.value.slice(3).toUpperCase();   // the level (4Dungeon v1.33)
   return DEED[r.value] || null;
 }
 function say(e, r) {

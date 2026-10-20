@@ -65,6 +65,19 @@ test("the HTTP door needs the key and always acts as 88x31", async () => {
   assert.equal(db.raw.prepare("SELECT source FROM items WHERE source_key = 'RELIC:2'").get().source, "88x31");
 });
 
+test("the HTTP door marks only 88x31 players' copies, as 88x31, and reads any copy's marks", async () => {
+  const db = setup(), env = { DB: db, ACCOUNTS_KEY: "k".repeat(20) };
+  const call = async (m, args) => (await worker.fetch(new Request("https://x/rpc/registry/" + m, { method: "POST", headers: { "x-accounts-key": env.ACCOUNTS_KEY }, body: JSON.stringify(args) }), env)).json();
+  await birth(db, b("88x31", 1, "m1", 3));
+  const mark = (holder, key) => call("addMark", [{ itemId: 3, copy: 1, holder, kind: "deed", value: "pulled_pack", key }]);
+  assert.deepEqual(await mark({ game: "88x31", playerId: 1 }, "k1"), { ok: true, n: 1, created: true });
+  assert.deepEqual(await mark({ game: "88x31", playerId: 1 }, "k1"), { ok: true, n: 1, created: false });          // a retry
+  assert.equal((await mark({ game: "4dungeon", playerId: 1 }, "k2")).error, "Only 88x31 players' copies are marked from here.");
+  assert.equal((await mark({ game: "88x31", playerId: 2 }, "k3")).error, "That copy isn't theirs to mark.");
+  assert.deepEqual((await call("marksOf", [3, 1])).map((m) => [m.kind, m.value, m.game]), [["deed", "pulled_pack", "88x31"]]);
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM ledger WHERE kind = 'mark'").get().n, 1);
+});
+
 test("migration 004 runs on the old layout and keeps every item, copy and ledger row", () => {
   const db = new DatabaseSync(":memory:");
   db.exec(execSync("git show dd6d80c^:schema.sql", { encoding: "utf8" }));

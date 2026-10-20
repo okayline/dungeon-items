@@ -40,7 +40,7 @@ forward only (4Dungeon's old `mythic` items keep `mythic`). Enforced by the data
 
 `Registry` gains `spendCopy`. **88x31 over HTTP** (it's a Pages site): `POST /rpc/registry/<method>` with the same
 `x-accounts-key` as the accounts route (`src/registry-http.js`): `birth`, `moveCopy`, `spendCopy`, `heldBy`, `addItems`,
-`retireItems`, `itemIds`. That door always acts as 88x31, whatever the arguments say, so the key can only touch 88x31's
+`retireItems`, `itemIds`, `addMark`, `marksOf`. That door always acts as 88x31, whatever the arguments say, so the key can only touch 88x31's
 own items and its players' copies. 88x31 keeps its own ledger as the master and mirrors into this one.
 
 ## Marks (migration 005, 2026-10-17)
@@ -59,9 +59,9 @@ story belongs to the copy, so it follows the copy into any game.
 - **Calls** (`Registry` entrypoint): `await env.REGISTRY.addMark({ itemId, copy, holder: { game, playerId }, kind, value, key })`
   stamps a mark on a copy the holder holds: `{ ok: true, n, created }` (a retry with the same key gives back the same
   mark) or `{ error }`. `await env.REGISTRY.marksOf(itemId, copy)` is `[{ kind, value, game, at }]`, oldest first, and
-  `heldBy` now carries each copy's `marks` too. The HTTP door (88x31) has no mark calls yet.
+  `heldBy` now carries each copy's `marks` too. The HTTP door (88x31) has `addMark` (only on a copy one of 88x31's players holds, stamped as made in 88x31) and `marksOf`.
   `await env.REGISTRY.copyStory(itemId, copy)` is one copy's public story (the item, `of` copies exist, `born_game`, `born_at`, `moves`, `used_up`, and every ledger entry about it, newest first; no holder), the same thing the `/ledger` page shows; `null` when there is no such copy.
 
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.
-- Only 4Dungeon stamps marks (since its v1.25). The HTTP door (88x31) has no mark calls.
+- 4Dungeon stamps marks (since its v1.25) and irl-dungeon (since its v0.22). 88x31 can (the HTTP door has `addMark`) but doesn't yet.
