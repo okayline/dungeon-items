@@ -171,6 +171,34 @@ export async function itemIds(db, game, keys) {
   return Object.fromEntries(results.map((r) => [r.source_key, r.id]));
 }
 
+// Checkpoints: another game's own ledger, written down here so the registry's hourly Bitcoin stamp covers it too.
+//   checkpoint(db, { game, entries, head, t? })   "that game's ledger had `entries` entries, newest fingerprint `head`".
+//        -> { ok: true, created } (created is false when that game's last checkpoint already says this) or { error }.
+// One fingerprint covers every entry before it, so a later checkpoint covers earlier ones. A game's ledger only grows:
+// fewer entries than its last checkpoint, or the same count with a different fingerprint, is refused. The registry
+// can't read the game's database, so a checkpoint is what that game reports. It names no copy and no player (player_id 0).
+const isHead = (h) => typeof h === "string" && /^[0-9a-f]{64}$/.test(h);
+export async function checkpoint(db, { game, entries, head: h, t = now() } = {}) {
+  if (!isText(game, 40) || !isInt(entries) || !isHead(h)) return { error: "A checkpoint needs a game, an entry count and a 64-character fingerprint." };
+  for (let i = 0; i < TRIES; i++) {
+    const prev = await db.prepare("SELECT record FROM ledger WHERE kind = 'checkpoint' AND game = ? ORDER BY id DESC LIMIT 1").bind(game).first();
+    if (prev) {
+      const p = JSON.parse(prev.record);
+      if (p.head === h && p.entries === entries) return { ok: true, created: false };
+      if (entries <= p.entries) return { error: "That ledger had " + p.entries + " entries at its last checkpoint: it can only grow." };
+    }
+    const record = JSON.stringify({ k: "checkpoint", game, entries, head: h });
+    try {
+      await db.batch([await chainInsert(db, await head(db), { kind: "checkpoint", game, playerId: 0, record, t })]);
+      return { ok: true, created: true };
+    } catch (e) {
+      if (chainClash(e)) continue;
+      throw e;
+    }
+  }
+  throw busy();
+}
+
 export async function whereIs(db, itemId, copy) {
   if (!isInt(itemId) || !isInt(copy)) return null;
   const r = await db.prepare("SELECT holder_game, holder_id, spent FROM copies WHERE item_id = ? AND copy = ?").bind(itemId, copy).first();

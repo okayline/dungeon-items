@@ -108,3 +108,20 @@ test("the Dawn Baton seed is one relic: the entrypoint finds its id by key, and 
   assert.deepEqual(await reg.birth({ itemId: 1, game: "dawn-baton", playerId: 3, key: "lap:1" }), { itemId: 1, copy: 1, created: false });
   assert.match((await reg.birth({ itemId: 1, game: "4dungeon", playerId: 3, key: "x" })).error, /home game/);
 });
+
+test("a checkpoint seals another game's ledger head on the chain: once per head, and a ledger can only grow", async () => {
+  const db = fakeD1();
+  const reg = new Registry({}, { DB: db });
+  const h1 = "a".repeat(64), h2 = "b".repeat(64);
+  assert.deepEqual(await reg.checkpoint({ game: "dawn-baton", entries: 5, head: h1 }), { ok: true, created: true });
+  assert.deepEqual(await reg.checkpoint({ game: "dawn-baton", entries: 5, head: h1 }), { ok: true, created: false });   // a retry adds nothing
+  assert.match((await reg.checkpoint({ game: "dawn-baton", entries: 4, head: h2 })).error, /only grow/);
+  assert.match((await reg.checkpoint({ game: "dawn-baton", entries: 5, head: h2 })).error, /only grow/);
+  assert.match((await reg.checkpoint({ game: "dawn-baton", entries: 6, head: "x" })).error, /fingerprint/);
+  assert.deepEqual(await reg.checkpoint({ game: "scoundrel", entries: 2, head: h2 }), { ok: true, created: true });   // each game counts on its own
+  assert.deepEqual(q(db, "SELECT kind, game, player_id, record FROM ledger ORDER BY id"), [
+    { kind: "checkpoint", game: "dawn-baton", player_id: 0, record: JSON.stringify({ k: "checkpoint", game: "dawn-baton", entries: 5, head: h1 }) },
+    { kind: "checkpoint", game: "scoundrel", player_id: 0, record: JSON.stringify({ k: "checkpoint", game: "scoundrel", entries: 2, head: h2 }) },
+  ]);
+  assert.equal((await reg.verify()).ok, true);
+});

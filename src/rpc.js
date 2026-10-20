@@ -10,7 +10,7 @@
 // This file imports "cloudflare:workers", which only exists on Cloudflare, so nothing else imports it; the tests
 // load it with a stand-in for that module (test/rpc.test.mjs).
 import { WorkerEntrypoint } from "cloudflare:workers";
-import { birth, moveCopy, spendCopy, heldBy, whereIs, verify, addMark, marksOf, itemIds } from "./registry.js";
+import { birth, moveCopy, spendCopy, heldBy, whereIs, verify, addMark, marksOf, itemIds, checkpoint } from "./registry.js";
 import { copyStory } from "./public-ledger.js";
 import * as A from "./accounts.js";
 
@@ -24,7 +24,8 @@ export class Registry extends WorkerEntrypoint {
   addMark(args) { return addMark(this.env.DB, args); }
   marksOf(itemId, copy) { return marksOf(this.env.DB, itemId, copy); }
   copyStory(itemId, copy) { return copyStory(this.env.DB, itemId, copy); }   // one copy's public story (what /ledger shows), for a game's own screen
-  itemIds(game, keys) { return itemIds(this.env.DB, game, keys); }   // a game's own item ids by source_key: { "<key>": id } (Dawn Baton finds its baton this way)
+  itemIds(game, keys) { return itemIds(this.env.DB, game, keys); }
+  checkpoint(args) { return checkpoint(this.env.DB, args); }   // a game's own ledger head, so the registry's Bitcoin stamp covers it   // a game's own item ids by source_key: { "<key>": id } (Dawn Baton finds its baton this way)
 }
 
 // The shared accounts, also through a service binding:
