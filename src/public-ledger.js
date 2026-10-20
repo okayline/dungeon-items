@@ -62,8 +62,8 @@ hr{border:0;height:6px;margin:16px 0;background:linear-gradient(90deg,#f00,#f90,
 a{color:var(--link)}a:visited{color:#ff99ff}
 .panel{background:var(--panel);border:3px ridge var(--edge);padding:10px;margin:12px 0;box-shadow:6px 6px 0 rgba(0,0,0,.6)}
 .top{font-size:13px;color:var(--ink)}
-.say{margin:4px 0;font-size:17px}
-.name{text-align:center;font-weight:bold;font-size:24px;color:var(--ink);margin:0 0 8px}
+.say{margin:4px 0;font-size:16px}
+.name{text-align:center;font-weight:bold;font-size:22px;color:var(--ink);margin:0 0 8px}
 .say img{float:left;width:88px;height:31px;margin:2px 10px 4px 0;image-rendering:pixelated;border:0}
 .facts{clear:both;font-size:13px;color:#ff99ff}
 .note{font-size:13px;font-style:italic}
@@ -71,19 +71,19 @@ a{color:var(--link)}a:visited{color:#ff99ff}
 .head{text-align:center;font:12px "Courier New",Courier,monospace;word-break:break-all;color:var(--link)}
 button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer;color:#000;background:var(--edge);border:2px outset #fff;display:block;margin:12px auto}
 /* 4Dungeon's things: its black screen and ASCII frame (colours from daily-dungeon index.html) */
-@font-face{font-family:"VT323";src:url("https://dungeon.88x31.app/fonts/VT323-Regular.ttf") format("truetype");font-display:swap}
+@font-face{font-family:"VT323";src:url("https://dungeon.88x31.app/fonts/VT323-Regular.ttf") format("truetype");font-display:swap;size-adjust:130%}
 .ascii{--bg:#07090a;--fg:#e4e4df;--trail:#8f8f8a;--gold:#e3b341;--moon:#9fc4ff;background:var(--bg) linear-gradient(var(--trail),var(--trail)) .5ch 0/2px 100% no-repeat;color:var(--fg);
-  font:19px/1.15 "VT323",ui-monospace,Menlo,Consolas,monospace;font-variant-ligatures:none;border:0;box-shadow:none;padding:0 2ch;text-shadow:0 0 4px rgba(228,228,223,.2)}
+  font:16px/1.2 "VT323",ui-monospace,Menlo,Consolas,monospace;font-variant-ligatures:none;border:0;box-shadow:none;padding:0 2ch}
 .ascii::after{content:"";position:absolute;top:0;bottom:0;right:.5ch;width:2px;background:var(--trail)}
 .ascii{position:relative}
 .ascii .rule{display:flex;margin:0 -2ch;color:var(--trail);background:var(--bg);position:relative;z-index:1}.ascii .rule i{flex:1;overflow:hidden;white-space:nowrap;font-style:normal}
-.ascii .top{color:var(--trail);font-size:inherit}.ascii .say{font-size:inherit}.ascii .facts{color:var(--trail);font-size:inherit;text-transform:uppercase}
-.ascii .note{font-size:inherit;font-style:normal;color:var(--fg)}.ascii .seal{font:15px/1.2 "VT323",ui-monospace,monospace;color:var(--trail)}
-.ascii a,.ascii a:visited{color:#fff;text-decoration:none;text-shadow:0 0 6px #fff}.ascii a:hover{background:var(--fg);color:var(--bg)}
-.ascii .name{font:inherit;font-size:28px;color:#fff;text-shadow:0 0 6px #fff;text-transform:uppercase}
+.ascii .top{color:var(--trail);font-size:13px}.ascii .say{font-size:16px}.ascii .facts{color:var(--trail);font-size:13px;text-transform:uppercase}
+.ascii .note{font-size:13px;font-style:normal;color:var(--fg)}.ascii .seal{font:11px/1.35 "VT323",ui-monospace,monospace;color:var(--trail)}
+.ascii a,.ascii a:visited{color:#fff;text-decoration:none}.ascii a:hover{background:var(--fg);color:var(--bg)}
+.ascii .name{font:inherit;font-size:22px;color:#fff;text-transform:uppercase}
 .q-rare{color:#6aa6e8!important}.q-mythic,.q-relic,.q-ultra,.q-prototype{color:#f5c542!important}.q-moon{color:#c9b6ff!important}
 body.dun{background:#07090a}body.dun::before{display:none}
-body.dun h1{font:44px "VT323",ui-monospace,monospace;color:#fff;text-shadow:0 0 6px #fff}body.dun .sub{font:20px "VT323",ui-monospace,monospace;color:#8f8f8a;font-weight:normal}
+body.dun h1{font:44px "VT323",ui-monospace,monospace;color:#fff}body.dun .sub{font:20px "VT323",ui-monospace,monospace;color:#8f8f8a;font-weight:normal}
 body.dun hr{height:auto;background:none;margin:8px 0}body.dun hr::before{content:"";display:none}
 body.dun .head,body.dun #list>p{font-family:"VT323",ui-monospace,monospace;font-size:19px}body.dun #list>p a{color:#fff}
 </style></head><body><main>
