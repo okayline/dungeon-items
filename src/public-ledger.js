@@ -88,6 +88,11 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 .ascii a,.ascii a:visited{color:#fff;text-decoration:none}.ascii a:hover{background:var(--fg);color:var(--bg)}
 .ascii .name{font:inherit;font-size:22px;color:#fff;text-transform:uppercase}
 .q-rare{color:#6aa6e8!important}.q-mythic,.q-relic,.q-ultra,.q-prototype{color:#f5c542!important}.q-moon{color:#c9b6ff!important}
+/* Dawn Baton's checkpoints: its own page's navy panel, rainbow bar and gold heading (dawn-baton public/index.html) */
+.baton{background:#1d1d63;border:2px solid #6c6cff;border-radius:6px;box-shadow:none;padding:0 12px 10px;color:#f2f2ff;font:14px/1.35 "Trebuchet MS",Verdana,sans-serif;overflow:hidden}
+.baton .bar{height:6px;margin:0 -12px 8px;background:linear-gradient(90deg,#ff5d5d,#ffb84d,#ffe066,#6be08a,#5dc8ff,#8a7bff,#ff7bd0)}
+.baton .h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#ffe066;font-weight:700;margin:0 0 4px}
+.baton .top{color:#b9b9ff;font-size:12px}.baton .say{font-size:15px}.baton .seal{color:#b9b9ff;font-family:"Courier New",Courier,monospace}
 body.dun{background:#07090a}body.dun::before{display:none}
 body.dun h1{font:44px "VT323",ui-monospace,monospace;color:#fff}body.dun .sub{font:20px "VT323",ui-monospace,monospace;color:#8f8f8a;font-weight:normal}
 body.dun hr{height:auto;background:none;margin:8px 0}body.dun hr::before{content:"";display:none}
@@ -137,7 +142,7 @@ function markWords(r) {
 // a mystery button's finish (foil_, pattern_, effect_) stays a mystery too: "came with some kind of foil"
 function say(e, r) {
   if (!r) return "An entry this page can't read.";
-  if (r.k === "checkpoint") return g(r.game) + "'s own ledger reached " + r.entries + " entries. Its newest fingerprint is now sealed here.";
+  if (r.k === "checkpoint") return g(r.game) + "'s own ledger reached " + r.entries + " entries. Its newest fingerprint is now sealed here.";   // the record's head is shown in the seal lines
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world in " + g(r.game) + ".";
   if (r.k === "move") return r.from === r.to ? what + " changed hands in " + g(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";
@@ -168,6 +173,9 @@ function row(e) {
   if (e.item && !one) { p.append(el("div", "facts", facts(e.item))); p.lastChild.classList.add("q-" + e.item.rarity); if (e.item.note) p.append(el("div", "note", "“" + e.item.note + "”")); }
   p.append(el("div", "seal", "record " + e.record + "\\nprev " + e.prev_hash + "\\nhash " + e.hash));
   p.lastChild.style.whiteSpace = "pre-wrap";
+  // a game's checkpoint wears that game's own look: Dawn Baton's panel, scoundrel.exe's ASCII frame (the same as 4Dungeon's)
+  if (r && r.k === "checkpoint" && r.game === "dawn-baton") { p.classList.add("baton"); p.prepend(el("div", "bar"), el("div", "h", "Dawn Baton \u00b7 checkpoint")); return p; }
+  if (r && r.k === "checkpoint" && r.game === "scoundrel") { s.prepend("> "); return ascii(p); }
   return dun(e.item) ? ascii(p) : p;
 }
 let last = null;
