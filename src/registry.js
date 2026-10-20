@@ -283,6 +283,61 @@ export async function addMark(db, { itemId, copy, holder, kind, value, key, t = 
   throw busy();
 }
 
+// One thing that happened to several copies at once, such as a fight everything in the bag lived through:
+//   addMarks(db, { copies: [{ itemId, copy, key }], holder, kind, value, t? })
+//        -> { ok: true, marked: [{ itemId, copy, n }], already, skipped: [{ itemId, copy, error }] } or { error }.
+// Each copy gets its own mark, numbered as addMark numbers them, but the ledger gets ONE entry naming them all:
+// { k: "mark", copies: [{ item, copy, n }], kind, value, game }. A copy whose key already made its mark counts in
+// `already`; one that is used up, not the holder's or unknown is skipped with the reason. Nothing new, no entry.
+// No blessings here: a blessing climbs one copy's ladder, so it goes through addMark.
+export const MARKS_AT_ONCE = 300;
+const EACH = (col) => `json_extract(j.value, '$.${col}')`;
+export async function addMarks(db, { copies, holder, kind, value, t = now() } = {}) {
+  if (!holderOk(holder)) return { error: "Whose copies? A game and a player id are needed." };
+  if (!MARK_KINDS.has(kind) || !markValue(value)) return { error: "A mark needs a kind (night, deed or moon) and a value." };
+  if (kind === "moon" && value !== "answered") return { error: "Only the moon's answer goes on many copies at once." };
+  if (!Array.isArray(copies) || !copies.length || copies.length > MARKS_AT_ONCE) return { error: `Between 1 and ${MARKS_AT_ONCE} copies.` };
+  const seen = new Set();
+  for (const c of copies) {
+    if (!c || !isInt(c.itemId) || !isInt(c.copy) || !isText(c.key, 200)) return { error: "Each copy needs an item, a copy number and a key." };
+    if (seen.has(c.itemId + ":" + c.copy)) return { error: "A copy is named twice." };
+    seen.add(c.itemId + ":" + c.copy);
+  }
+  const list = JSON.stringify(copies.map((c) => ({ item: c.itemId, copy: c.copy, key: c.key })));
+  for (let i = 0; i < TRIES; i++) {
+    // one read for every copy: is it theirs and alive, did its key already make a mark, and its next number
+    const { results } = await db.prepare(`SELECT ${EACH("item")} AS item, ${EACH("copy")} AS copy, ${EACH("key")} AS mkey, c.holder_game, c.holder_id, c.spent,
+        (SELECT m.item_id || ':' || m.copy FROM marks m WHERE m.game = ? AND m.mark_key = ${EACH("key")}) AS had,
+        (SELECT COALESCE(MAX(m.n), 0) + 1 FROM marks m WHERE m.item_id = ${EACH("item")} AND m.copy = ${EACH("copy")}) AS n
+      FROM json_each(?) j LEFT JOIN copies c ON c.item_id = ${EACH("item")} AND c.copy = ${EACH("copy")} ORDER BY j.key`).bind(holder.game, list).all();
+    const marked = [], skipped = [];
+    let already = 0;
+    for (const r of results) {
+      const no = (error) => skipped.push({ itemId: r.item, copy: r.copy, error });
+      if (r.had) { if (r.had === r.item + ":" + r.copy) already++; else no("That key already made a different mark."); }
+      else if (!r.holder_game) no("No such copy.");
+      else if (r.spent) no("That copy was used up.");
+      else if (r.holder_game !== holder.game || r.holder_id !== holder.playerId) no("That copy isn't theirs to mark.");
+      else marked.push({ item: r.item, copy: r.copy, n: r.n, key: r.mkey });
+    }
+    const out = { ok: true, marked: marked.map((m) => ({ itemId: m.item, copy: m.copy, n: m.n })), already, skipped };
+    if (!marked.length) return out;
+    const record = JSON.stringify({ k: "mark", copies: marked.map((m) => ({ item: m.item, copy: m.copy, n: m.n })), kind, value, game: holder.game });
+    try {
+      await db.batch([
+        db.prepare(`INSERT INTO marks (item_id, copy, n, kind, value, game, mark_key, made_at) SELECT ${EACH("item")}, ${EACH("copy")}, ${EACH("n")}, ?, ?, ?, ${EACH("key")}, ? FROM json_each(?) j`)
+          .bind(kind, value, holder.game, t, JSON.stringify(marked)),
+        await chainInsert(db, await head(db), { kind: "mark", game: holder.game, playerId: holder.playerId, record, t }),
+      ]);
+      return out;
+    } catch (e) {
+      if (isUnique(e) || /no gaps|not used up/.test(String(e && e.message))) continue;   // someone took a number, a key or the head, or used a copy up: read again
+      throw e;
+    }
+  }
+  throw busy();
+}
+
 export async function marksOf(db, itemId, copy) {
   if (!isInt(itemId) || !isInt(copy)) return [];
   const { results } = await db.prepare("SELECT kind, value, game, made_at FROM marks WHERE item_id = ? AND copy = ? ORDER BY n").bind(itemId, copy).all();
