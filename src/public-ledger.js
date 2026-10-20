@@ -94,7 +94,7 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 .baton .h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#ffe066;font-weight:700;margin:0 0 4px}
 .baton .grad{display:flex;height:22px;border:2px solid #fff;margin:6px 0 2px}.baton .grad i{flex:1}.baton .grad i.none{background:#0b0b2b}
 .baton .tune{display:flex;color:#ffe066;font-size:13px}.baton .tune span{flex:1;text-align:center}
-.ascii .run{font-size:15px;color:var(--fg)}.ascii > .h{color:var(--gold);letter-spacing:.08em;margin:0 0 4px}.ascii .run.won{color:var(--gold)}
+.ascii .run{font-size:15px;color:var(--fg)}.ascii > .h{font-size:11px;color:var(--gold);letter-spacing:.08em;font-weight:700;margin:0 0 4px}.ascii .run.won{color:var(--gold)}
 .baton .top{color:#b9b9ff;font-size:12px}.baton .say{font-size:15px}.baton .seal{color:#b9b9ff;font-family:"Courier New",Courier,monospace}
 body.dun{background:#07090a}body.dun::before{display:none}
 body.dun h1{font:44px "VT323",ui-monospace,monospace;color:#fff}body.dun .sub{font:20px "VT323",ui-monospace,monospace;color:#8f8f8a;font-weight:normal}
@@ -204,7 +204,7 @@ function row(e) {
     return p;
   }
   if (r && r.k === "checkpoint" && r.game === "scoundrel") {
-    s.prepend("> "); p.prepend(el("div", "h", "SCOUNDREL.EXE \u00a0 RUN"));   // the game's own screen titles ("SCOUNDREL.EXE   LEDGER")
+    s.prepend("> "); p.prepend(el("div", "h", "scoundrel.exe \u00b7 run"));   // the same size and place as Dawn Baton's heading
     if (d && int(d.score)) { s.classList.add("run"); if (d.status === "won") s.classList.add("won"); }   // the sentence wears the run's colour
     return ascii(p);
   }
