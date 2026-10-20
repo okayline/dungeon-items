@@ -189,7 +189,7 @@ function momentWords(r) {
 // marks naming copies (addMarks): one moment many copies share ({ copies, kind, value }, 4Dungeon v1.38), or everything one
 // move did ({ marks: [{ kind, value, copies }] }, v1.39). Copies with the same marks share a sentence: "a scratched data
 // disc #2 and a neon tube fragment #3 were found under a waxing gibbous moon and came from a demon; a cracked phone #2
-// saw a demon fall, in 4Dungeon."
+// saw a demon fall, in irl-dungeon."
 const were = (w) => w.replace(/^was /, "were ").replace(/^is /, "are ").replace(/^has /, "have ");
 const shared = (r) => !!r && r.k === "mark" && (Array.isArray(r.copies) || Array.isArray(r.marks));
 const andList = (xs) => xs.length > 1 ? xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1] : xs[0] || "";
@@ -222,18 +222,20 @@ function groupWords(cs) {
     return w ? (cs.length > 1 ? were(w) : w) : "got a mark: " + m.value.replace(/_/g, " ");
   }));
 }
+// where it happened, as the end of a line: " in scoundrel.exe". A 4Dungeon line leaves it out (its heading says 4DUNGEON).
+const inGame = (x, lead = " in ") => x === "4dungeon" ? "" : lead + g(x);
 const thisCopy = (e, r) => one ? copiesOf(e, r).find((c) => String(c.item) === qs.get("item") && String(c.copy) === qs.get("copy")) : null;
 // a mystery button's finish (foil_, pattern_, effect_) stays a mystery too: "came with some kind of foil"
 function say(e, r) {
   if (!r) return "An entry this page can't read.";
   if (r.k === "run") return momentWords(r) || g(r.game) + " sealed a moment of a run.";
-  if (shared(r)) return groupsOf(e, r).map((cs) => andList(cs.map(copyName)) + groupWords(cs)).join("; ") + ", in " + g(r.game) + ".";   // (row() writes it with links)
+  if (shared(r)) return groupsOf(e, r).map((cs) => andList(cs.map(copyName)) + groupWords(cs)).join("; ") + inGame(r.game, ", in ") + ".";   // (row() writes it with links)
   if (r.k === "checkpoint") return lapWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
-  if (r.k === "copy") return what + " came into the world in " + g(r.game) + ".";
-  if (r.k === "move") return r.from === r.to ? what + " changed hands in " + g(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";
-  if (r.k === "spend") return what + " was used up in " + g(r.game) + ". It is gone.";
-  if (r.k === "mark") { const w = e.item && e.item.hidden && /^(foil|pattern|effect)_/.test(r.value) ? "came with some kind of " + r.value.split("_")[0] : markWords(r); return w ? what + " " + w + ", in " + g(r.game) + "." : what + " got a mark in " + g(r.game) + ": " + r.value.replace(/_/g, " ") + "."; }
+  if (r.k === "copy") return what + " came into the world" + inGame(r.game) + ".";
+  if (r.k === "move") return r.from === r.to ? what + " changed hands" + inGame(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";
+  if (r.k === "spend") return what + " was used up" + inGame(r.game) + ". It is gone.";
+  if (r.k === "mark") { const w = e.item && e.item.hidden && /^(foil|pattern|effect)_/.test(r.value) ? "came with some kind of " + r.value.split("_")[0] : markWords(r); return w ? what + " " + w + inGame(r.game, ", in ") + "." : what + " got a mark" + inGame(r.game) + ": " + r.value.replace(/_/g, " ") + "."; }
   return "An entry this page doesn't know.";
 }
 const when = (t) => new Date(t * 1000).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
@@ -288,7 +290,7 @@ function row(e) {
       });
       s.append(groupWords(group));
     });
-    s.append(", in " + g(r.game) + ".");
+    s.append(inGame(r.game, ", in ") + ".");
   } else if (r && !one && Number.isInteger(r.item)) { const l = el("a", null, say(e, r)); l.href = "?item=" + r.item + "&copy=" + r.copy; s.append(l); } else s.append(say(e, r));
   p.append(s);
   if (e.item && !one) { p.append(el("div", "facts", facts(e.item))); p.lastChild.classList.add("q-" + e.item.rarity); if (e.item.note) p.append(el("div", "note", "“" + e.item.note + "”")); }
