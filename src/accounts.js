@@ -76,12 +76,16 @@ export async function loginCode(db, code, ip) {
 }
 
 // Is this save-code hash one we know? (a game's legacy code can be checked here once it's imported)
+// One batch, so one trip to the database instead of four (every game's account page waits on this).
 export async function info(db, accountId) {
-  if (!(await exists(db, accountId))) return bad("No such account.", 404);
-  const codes = (await db.prepare("SELECT id, created_at, last_used_at FROM account_codes WHERE account_id = ? ORDER BY id").bind(accountId).all()).results;
-  const passkeys = (await db.prepare("SELECT id, label, created_at, last_used_at FROM account_passkeys WHERE account_id = ? ORDER BY id").bind(accountId).all()).results;
-  const games = (await db.prepare("SELECT game FROM account_players WHERE account_id = ? ORDER BY game").bind(accountId).all()).results.map((r) => r.game);
-  return { codes, passkeys, games };
+  const [acct, codes, passkeys, games] = (await db.batch([
+    db.prepare("SELECT id FROM accounts WHERE id = ?").bind(Number(accountId)),
+    db.prepare("SELECT id, created_at, last_used_at FROM account_codes WHERE account_id = ? ORDER BY id").bind(accountId),
+    db.prepare("SELECT id, label, created_at, last_used_at FROM account_passkeys WHERE account_id = ? ORDER BY id").bind(accountId),
+    db.prepare("SELECT game FROM account_players WHERE account_id = ? ORDER BY game").bind(accountId),
+  ])).map((r) => r.results);
+  if (!acct.length) return bad("No such account.", 404);
+  return { codes, passkeys, games: games.map((r) => r.game) };
 }
 
 export async function waysIn(db, accountId) {

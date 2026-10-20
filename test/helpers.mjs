@@ -15,7 +15,9 @@ export function fakeD1() {
   const batch = async (stmts) => {
     db.exec("BEGIN");
     try {
-      const out = stmts.map((st) => ({ meta: { changes: Number(db.prepare(st.sql).run(...st.args).changes) } }));
+      const out = stmts.map((st) => /^\s*SELECT/i.test(st.sql)      // like D1: a read in a batch hands back its rows
+        ? { results: db.prepare(st.sql).all(...st.args), meta: { changes: 0 } }
+        : { meta: { changes: Number(db.prepare(st.sql).run(...st.args).changes) } });
       db.exec("COMMIT");
       return out;
     } catch (e) { db.exec("ROLLBACK"); throw e; }
