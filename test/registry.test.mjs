@@ -278,3 +278,19 @@ test("GET /api/registry/ledger lists entries newest first with item names, never
   assert.equal(html.status, 200);
   assert.ok(html.text.includes("Item registry ledger"));
 });
+
+test("GET /api/registry/copy gives one copy's entries oldest first, only that copy's, and no holder", async () => {
+  const db = setup();
+  await birth(db, irl(424242, "c1"));                       // item 1 copy 1
+  await birth(db, irl(424243, "c2"));                       // item 1 copy 2
+  await moveCopy(db, { itemId: 1, copy: 2, from: { game: "irl-dungeon", playerId: 424243 }, to: { game: "4dungeon", playerId: 555111 } });
+  const get = async (path) => { const r = await worker.fetch(new Request("https://items.example" + path), { DB: db }); return { status: r.status, text: await r.text() }; };
+  const r = await get("/api/registry/copy?item=1&copy=2");
+  assert.equal(r.status, 200);
+  for (const word of ["424242", "424243", "555111", "holder"]) assert.ok(!r.text.includes(word), word);
+  const body = JSON.parse(r.text);
+  assert.deepEqual([body.item.name, body.copy, body.born_game, body.moves, body.used_up], ["item a", 2, "irl-dungeon", 1, false]);
+  assert.deepEqual(body.entries.map((e) => e.id), [2, 3]);   // the birth of copy 2 and its move; copy 1's birth (id 1) is not here
+  assert.equal((await get("/api/registry/copy?item=1&copy=9")).status, 404);
+  assert.equal((await get("/api/registry/copy?item=x&copy=1")).status, 404);
+});

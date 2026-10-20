@@ -5,11 +5,12 @@
 //   GET /api/registry/head    the registry ledger's newest hash and entry count, for the outside anchor (88x31-anchors).
 //                             Counts and a hash only: no holders, no copies listed.
 //   GET /api/registry/ledger  the registry ledger itself, newest first (?before=ID&limit=N, up to 100); no player ids.
-//   GET /ledger               the same, as a page.
+//   GET /api/registry/copy    one copy's story: ?item=ID&copy=N, its item and every ledger entry about it, oldest first.
+//   GET /ledger               the ledger as a page; /ledger?item=ID&copy=N shows one copy.
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
 import { verify } from "./registry.js";
-import { publicLedger, LEDGER_PAGE } from "./public-ledger.js";
+import { publicLedger, copyHistory, LEDGER_PAGE } from "./public-ledger.js";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-methods": "GET, OPTIONS", "access-control-allow-headers": "if-none-match" };
 const RARITIES = ["common", "uncommon", "rare", "prototype", "relic", "ultra", "moon", "mythic"];
 const shape = (r) => ({
@@ -51,6 +52,10 @@ export default {
       return json(v.ok ? { ok: true, entries: v.count, head: v.head, copies } : { ok: false, broken_at: v.at }, 200, { "cache-control": "public, max-age=300" });
     }
     if (url.pathname === "/api/registry/ledger") return json(await publicLedger(env.DB, url.searchParams), 200, { "cache-control": "public, max-age=60" });
+    if (url.pathname === "/api/registry/copy") {
+      const c = await copyHistory(env.DB, url.searchParams);
+      return c ? json(c, 200, { "cache-control": "public, max-age=60" }) : json({ error: "No such copy." }, 404);
+    }
     if (url.pathname === "/ledger") return new Response(LEDGER_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     const m = url.pathname.match(/^\/api\/items\/(\d{1,12})$/);
     if (m) {
