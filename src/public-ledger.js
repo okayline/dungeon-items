@@ -78,7 +78,7 @@ const qs = new URLSearchParams(location.search), one = qs.get("item") && qs.get(
 function row(e) {
   const div = document.createElement("div"); div.className = "e";
   const a = document.createElement("div");
-  a.append("#" + e.id + " " + new Date(e.at * 1000).toLocaleString() + "  ");
+  a.append("#" + e.id + " " + new Date(e.at * 1000).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }) + "  ");
   let r; try { r = JSON.parse(e.record); } catch { r = null; }
   if (r && !one && Number.isInteger(r.item)) { const l = document.createElement("a"); l.href = "?item=" + r.item + "&copy=" + r.copy; l.textContent = say(e); a.append(l); } else a.append(say(e));
   const h = document.createElement("div"); h.className = "h"; h.textContent = "prev " + e.prev_hash.slice(0, 16) + "  hash " + e.hash.slice(0, 16);
