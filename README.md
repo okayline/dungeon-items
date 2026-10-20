@@ -26,6 +26,7 @@ Every numbered copy of an item, across all the games, and who holds it. Copy num
   - `await env.REGISTRY.birth({ itemId, game, playerId, key })` makes the next copy for that player: `{ itemId, copy, created }`, or `{ error }` (unknown or retired item, bad arguments, a key already used for another item). `key` is the game's own name for the moment (irl-dungeon: its find), so a retry returns the same copy with `created: false`.
   - `await env.REGISTRY.moveCopy({ itemId, copy, from: { game, playerId }, to: { game, playerId } })` hands a copy over: `{ ok: true, moves }` or `{ error }` (not the holder, no such copy, already theirs).
   - `await env.REGISTRY.heldBy(game, playerId)` lists what a player holds: `[{ itemId, copy, moves }]`. `await env.REGISTRY.verify()` checks the whole chain: `{ ok, count, head }`.
+  - `await env.REGISTRY.itemIds(game, keys)` gives a game's own item ids by `source_key`: `{ "<key>": id }`, so a game needn't hard-code an id.
 - **Limits.** The chain can't show that its newest entries were dropped; keep the `head` that `verify` returns somewhere else. A game names itself in each call and the entrypoint believes it. If more than eight writers race for the same head at the same instant, the last ones get "The registry is busy" and should try again.
 - **Going live.** Run `migrations/002_registry.sql` on `items-db`, then deploy this Worker (so the `Registry` entrypoint exists), and only then deploy a game that binds it.
 
@@ -61,6 +62,12 @@ story belongs to the copy, so it follows the copy into any game.
   mark) or `{ error }`. `await env.REGISTRY.marksOf(itemId, copy)` is `[{ kind, value, game, at }]`, oldest first, and
   `heldBy` now carries each copy's `marks` too. The HTTP door (88x31) has no mark calls yet.
   `await env.REGISTRY.copyStory(itemId, copy)` is one copy's public story (the item, `of` copies exist, `born_game`, `born_at`, `moves`, `used_up`, and every ledger entry about it, newest first; no holder), the same thing the `/ledger` page shows; `null` when there is no such copy.
+
+## Dawn Baton's baton (seed/dawn-baton.json)
+One item, **The Dawn Baton** (`dawn-baton` / `baton`, relic, so only Dawn Baton can make copies). When a lap closes, Dawn
+Baton makes one numbered copy for it (key `lap:<n>`) and gives it to one of that lap's human stampers. A lap with no human
+stamper makes no copy, so copy numbers count held laps, not days. Seed it with `node scripts/seed-sql.mjs seed/dawn-baton.json`
+and run the SQL on `items-db` before deploying the Dawn Baton version that binds `REGISTRY`.
 
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.

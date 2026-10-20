@@ -94,3 +94,17 @@ test("the Accounts entrypoint runs on the bound database", async () => {
   assert.deepEqual(await acc.link(accountId, "irl-dungeon", 3), { playerId: 3, linked: true });
   assert.deepEqual(await acc.playerFor(accountId, "irl-dungeon"), { playerId: 3 });
 });
+
+test("the Dawn Baton seed is one relic: the entrypoint finds its id by key, and only Dawn Baton can make copies", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { seedSql } = await import("../src/seed.js");
+  const db = fakeD1();
+  db.raw.exec(seedSql(JSON.parse(readFileSync(new URL("../seed/dawn-baton.json", import.meta.url), "utf8")), 1));
+  assert.deepEqual(q(db, "SELECT id, source, source_key, rarity FROM items"), [{ id: 1, source: "dawn-baton", source_key: "baton", rarity: "relic" }]);
+  const reg = new Registry({}, { DB: db });
+  assert.deepEqual(await reg.itemIds("dawn-baton", ["baton"]), { baton: 1 });
+  assert.deepEqual(await reg.itemIds("4dungeon", ["baton"]), {});
+  assert.deepEqual(await reg.birth({ itemId: 1, game: "dawn-baton", playerId: 3, key: "lap:1" }), { itemId: 1, copy: 1, created: true });
+  assert.deepEqual(await reg.birth({ itemId: 1, game: "dawn-baton", playerId: 3, key: "lap:1" }), { itemId: 1, copy: 1, created: false });
+  assert.match((await reg.birth({ itemId: 1, game: "4dungeon", playerId: 3, key: "x" })).error, /home game/);
+});
