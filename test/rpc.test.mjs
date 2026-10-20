@@ -11,6 +11,7 @@ register("data:text/javascript," + encodeURIComponent(
   `export async function resolve(spec, ctx, next) { if (spec === "cloudflare:workers") return { url: "data:text/javascript," + encodeURIComponent(${JSON.stringify(stub)}), shortCircuit: true }; return next(spec, ctx); }`));
 const { Registry, Accounts } = await import("../src/rpc.js");
 const index = await import("../src/index.js");
+const worker = index.default;
 
 const withItems = () => {
   const db = fakeD1();
@@ -47,13 +48,30 @@ test("copyStory gives a copy's public story: how many exist, when it was made, n
 
 test("the public ledger gives each entry its item's public details, and no player ids", async () => {
   const db = fakeD1();
-  db.raw.prepare("INSERT INTO items (source, source_key, rarity, name, note, alignment, nature, type, image, created_at, updated_at) VALUES ('88x31', 'd9', 'rare', 'Neon Nite', 'a note', 'LAW', 'tech', 'neon', 'https://88x31.app/api/img?d=9', 1, 1)").run();
+  db.raw.prepare("INSERT INTO items (source, source_key, rarity, name, note, alignment, nature, type, image, created_at, updated_at) VALUES ('88x31', 'd9', 'uncommon', 'Neon Nite', 'a note', 'LAW', 'tech', 'neon', 'https://88x31.app/api/img?d=9', 1, 1)").run();
   const reg = new Registry({}, { DB: db });
   await reg.birth({ itemId: 1, game: "88x31", playerId: 7003, key: "a" });
   const { publicLedger } = await import("../src/public-ledger.js");
   const d = await publicLedger(db, new URLSearchParams());
-  assert.deepEqual(d.entries[0].item, { name: "Neon Nite", rarity: "rare", note: "a note", alignment: "LAW", nature: "tech", type: "neon", image: "https://88x31.app/api/img?d=9", source: "88x31" });
+  assert.deepEqual(d.entries[0].item, { name: "Neon Nite", rarity: "uncommon", note: "a note", alignment: "LAW", nature: "tech", type: "neon", image: "https://88x31.app/api/img?d=9", source: "88x31" });
   assert.ok(!JSON.stringify(d).includes("7003"));
+});
+
+test("88x31's rares and up are mysteries on the public ledger, a copy's page and /api/items; commons and 4Dungeon's rares are not", async () => {
+  const db = fakeD1();
+  for (const [src, key, rarity, name] of [["88x31", "d1", "rare", "Secret Rare"], ["88x31", "d2", "common", "Plain One"], ["4dungeon", "RARE:1", "rare", "a dull blade"]])
+    db.raw.prepare("INSERT INTO items (source, source_key, rarity, name, image, created_at, updated_at) VALUES (?, ?, ?, ?, 'pic', 1, 1)").run(src, key, rarity, name);
+  const reg = new Registry({}, { DB: db });
+  for (const [itemId, game] of [[1, "88x31"], [2, "88x31"], [3, "4dungeon"]]) await reg.birth({ itemId, game, playerId: 1, key: "k" + itemId });
+  const { publicLedger } = await import("../src/public-ledger.js");
+  const d = await publicLedger(db, new URLSearchParams());
+  assert.deepEqual(d.entries.map((e) => e.item.name ?? null), ["a dull blade", "Plain One", null]);
+  assert.deepEqual(d.entries[2].item, { source: "88x31", hidden: true });
+  assert.deepEqual((await reg.copyStory(1, 1)).item, { id: 1, source: "88x31", hidden: true });
+  const all = JSON.stringify(await (await worker.fetch(new Request("https://x/api/items"), { DB: db })).json());
+  const one = JSON.stringify(await (await worker.fetch(new Request("https://x/api/items/1"), { DB: db })).json());
+  assert.ok(!all.includes("Secret Rare") && !one.includes("Secret Rare") && !JSON.stringify(d).includes("Secret Rare"));
+  assert.ok(all.includes("Plain One") && all.includes("a dull blade"));
 });
 
 test("the entrypoint refuses what the registry refuses", async () => {

@@ -9,6 +9,13 @@ import { GENESIS } from "./ledger.js";
 
 const COLS = "id, kind, game, record, prev_hash, hash, created_at";
 
+// 88x31's rares and up stay mysteries in public, the same rule as 88x31's own ledger for logged-out visitors
+// (88x31 functions/api/ledger.js): no name, picture, rarity or anything else, only that it is an 88x31 button.
+// The sealed records hold item ids only, so the hashes still check. Used by the ledger, a copy's story and /api/items.
+const MYSTERY = new Set(["rare", "prototype", "ultra"]);
+export const isMystery = (i) => !!i && i.source === "88x31" && MYSTERY.has(i.rarity);
+export const mysteryItem = (i) => ({ source: i.source, hidden: true });
+
 async function shape(db, results) {
   const ids = new Set();
   for (const r of results) { try { const n = JSON.parse(r.record).item; if (Number.isInteger(n)) ids.add(n); } catch { /* an unreadable record just has no name */ } }
@@ -16,7 +23,7 @@ async function shape(db, results) {
   if (ids.size) {
     const list = [...ids];
     const { results: items } = await db.prepare(`SELECT id, name, rarity, note, alignment, nature, type, image, source FROM items WHERE id IN (${list.map(() => "?").join(",")})`).bind(...list).all();
-    for (const i of items) names.set(i.id, { name: i.name, rarity: i.rarity, note: i.note, alignment: i.alignment, nature: i.nature, type: i.type, image: i.image, source: i.source });
+    for (const i of items) names.set(i.id, isMystery(i) ? mysteryItem(i) : { name: i.name, rarity: i.rarity, note: i.note, alignment: i.alignment, nature: i.nature, type: i.type, image: i.image, source: i.source });
   }
   return results.map((r) => {
     let item = null;
@@ -41,7 +48,7 @@ export async function copyStory(db, item, copy) {
   if (!c) return null;
   const { results } = await db.prepare(`SELECT ${COLS} FROM ledger WHERE json_extract(record, '$.item') = ? AND json_extract(record, '$.copy') = ? ORDER BY id DESC`).bind(item, copy).all();
   return {
-    item: { id: c.id, name: c.name, note: c.note, rarity: c.rarity, source: c.source, type: c.type, image: c.image, alignment: c.alignment, nature: c.nature },
+    item: isMystery(c) ? { id: c.id, ...mysteryItem(c) } : { id: c.id, name: c.name, note: c.note, rarity: c.rarity, source: c.source, type: c.type, image: c.image, alignment: c.alignment, nature: c.nature },
     copy, of: c.made, born_game: c.born_game, born_at: c.born_at, moves: c.moves, used_up: !!c.spent, entries: await shape(db, results),
   };
 }
@@ -114,7 +121,7 @@ function markWords(r) {
 }
 function say(e, r) {
   if (!r) return "An entry this page can't read.";
-  const what = (e.item ? e.item.name : "item " + r.item) + " #" + r.copy;
+  const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world in " + g(r.game) + ".";
   if (r.k === "move") return r.from === r.to ? what + " changed hands in " + g(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";
   if (r.k === "spend") return what + " was used up in " + g(r.game) + ". It is gone.";
@@ -124,6 +131,7 @@ function say(e, r) {
 const when = (t) => new Date(t * 1000).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
 const qs = new URLSearchParams(location.search), one = qs.get("item") && qs.get("copy");
 function el(tag, cls, text) { const x = document.createElement(tag); if (cls) x.className = cls; if (text != null) x.textContent = text; return x; }
+const nameOf = (i) => (i.hidden ? "a mystery button" : i.name);   // 88x31's rares and up (isMystery above)
 function facts(i) {
   return [i.rarity, i.type ? i.type + " button" : null, i.alignment, i.nature, i.source ? "from " + g(i.source) : null].filter(Boolean).join(" · ");
 }
@@ -157,16 +165,16 @@ async function loadCopy() {
   const res = await fetch("/api/registry/copy?item=" + encodeURIComponent(qs.get("item")) + "&copy=" + encodeURIComponent(qs.get("copy")));
   if (!res.ok) { $("#title").textContent = "No such copy."; $("#sub").textContent = ""; return; }
   const d = await res.json(), i = d.item;
-  document.title = i.name + " #" + d.copy;
+  document.title = nameOf(i) + " #" + d.copy;
   $("#sub").textContent = "Everything that has happened to this copy, newest first.";
   if (dun(i)) { document.body.classList.add("dun"); $("#title").textContent = "= ITEM REGISTRY ="; }
   const c = el("div", "panel");
-  const nm = el("div", "name", i.name + " #" + d.copy); c.append(nm);
+  const nm = el("div", "name", nameOf(i) + " #" + d.copy); c.append(nm);
   if (i.image) { const p = el("div"); p.style.textAlign = "center"; const im = el("img"); im.src = i.image; im.alt = i.name; im.style.cssText = "width:264px;height:93px;image-rendering:pixelated"; p.append(im); c.append(p); }
   c.append(el("div", "say", facts(i))); if (dun(i)) { c.lastChild.classList.add("q-" + i.rarity); c.lastChild.style.textTransform = "uppercase"; }
   if (i.note) c.append(el("div", "note", "\u201c" + i.note + "\u201d"));
   c.append(el("div", "facts", ["made in " + g(d.born_game) + " on " + when(d.born_at), d.moves + (d.moves === 1 ? " move" : " moves"), d.used_up ? "used up" : "still around"].join(" \u00b7 ")));
-  if (i.source === "88x31") { const p = el("div", "say"); const a = el("a", null, "See this button's page on 88x31 \u00bb"); a.href = "https://88x31.app/api/registry/button?item=" + i.id + "&copy=" + d.copy; p.append(a); c.append(p); }
+  if (i.source === "88x31" && !i.hidden) { const p = el("div", "say"); const a = el("a", null, "See this button's page on 88x31 \u00bb"); a.href = "https://88x31.app/api/registry/button?item=" + i.id + "&copy=" + d.copy; p.append(a); c.append(p); }
   $("#card").append(dun(i) ? ascii(c) : c);
   for (const e of d.entries) $("#list").append(row(e));
   const back = el("p"); back.style.textAlign = "center"; const a = el("a", null, "\u00ab The whole ledger"); a.href = location.pathname; back.append(a); $("#list").append(back);
