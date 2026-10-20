@@ -104,7 +104,7 @@ async function loadCopy() {
   $("#card").append(c);
   $("#head").textContent = "Everything that has happened to this copy, newest first.";
   for (const e of d.entries) $("#list").append(row(e));
-  const back = document.createElement("a"); back.href = "/ledger"; back.textContent = "The whole ledger"; $("#list").append(back);
+  const back = document.createElement("a"); back.href = location.pathname; back.textContent = "The whole ledger"; $("#list").append(back);
 }
 $("#more").onclick = load;
 one ? loadCopy() : load();
