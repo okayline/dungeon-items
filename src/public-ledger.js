@@ -106,7 +106,7 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 .baton .top{color:#b9b9ff;font-size:12px}.baton .say{font-size:15px}.baton .seal{color:#b9b9ff;font-family:"Courier New",Courier,monospace}
 /* Aura Farm's checkpoints: its own page's dark purple panel, glowing meme headings (aura-farm public/index.html) */
 .aura{background:radial-gradient(circle at 50% 0%,#2a1650 0%,#171226 70%);border:1px solid #3a2f5c;border-radius:16px;box-shadow:0 0 18px rgba(176,132,255,.25);padding:12px 14px;color:#f4f1ff;font:15px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.aura > .h{font:20px Impact,"Arial Black","Helvetica Neue",sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#f4f1ff;margin:0 0 4px;text-shadow:0 0 8px rgba(176,132,255,.6),0 0 16px rgba(255,111,207,.3)}
+.aura > .h{font:11px Impact,"Arial Black","Helvetica Neue",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#f4f1ff;margin:0 0 4px;text-shadow:0 0 8px rgba(176,132,255,.6),0 0 16px rgba(255,111,207,.3)}
 .aura a,.aura a:visited{color:#ff6fcf}.aura .top{color:#a99ccf;font-size:12px}.aura .say{font-size:15px;text-shadow:0 0 10px rgba(176,132,255,.5)}.aura .seal{color:#a99ccf}
 body.dun{background:#07090a}body.dun::before{display:none}
 body.dun h1{font:44px "VT323",ui-monospace,monospace;color:#fff}body.dun .sub{font:20px "VT323",ui-monospace,monospace;color:#8f8f8a;font-weight:normal}
