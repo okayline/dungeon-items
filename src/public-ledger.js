@@ -75,7 +75,7 @@ export const LEDGER_PAGE = `<!doctype html>
 body{margin:0;color:var(--text);font:16px/1.4 "Comic Sans MS","Comic Sans","Chalkboard SE","Times New Roman",serif;background:var(--sky)}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--sky) url("/deco/stars.gif");image-rendering:pixelated}
 main{max-width:720px;margin:0 auto;padding:16px}
-h1{margin:4px 0;text-align:center;white-space:nowrap;font:clamp(24px,8vw,40px) "Times New Roman",Times,serif;color:var(--ink);text-shadow:2px 2px 0 #ff00ff}
+h1{margin:4px 0;text-align:center;white-space:nowrap;font:clamp(24px,9.8vw,44px) "Times New Roman",Times,serif;color:var(--ink);text-shadow:2px 2px 0 #ff00ff}
 .sub{margin:0;text-align:center;color:#ff99ff;font-weight:bold}
 hr{border:0;height:6px;margin:16px 0;background:linear-gradient(90deg,#f00,#f90,#ff0,#0f0,#0ff,#00f,#f0f)}
 a{color:var(--link)}a:visited{color:#ff99ff}
