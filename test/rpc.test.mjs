@@ -164,3 +164,14 @@ test("a checkpoint's name sits beside the record: shown by the ledger API, never
   assert.equal(row.hash, createHash("sha256").update(row.prev_hash + "|" + row.record).digest("hex"));   // the hash covers the record alone
   assert.equal((await publicLedger(db, new URLSearchParams())).entries[0].name, "ryan");
 });
+
+test("the public ledger page tells an aura-farm checkpoint with its two styles, and no player", async () => {
+  const { LEDGER_PAGE } = await import("../src/public-ledger.js");
+  const src = LEDGER_PAGE.slice(LEDGER_PAGE.indexOf("function farmWords"), LEDGER_PAGE.indexOf("// a 4Dungeon run's moments"));
+  const farmWords = new Function("isInt", src + "; return farmWords;")(Number.isInteger);
+  const cp = (detail) => ({ game: "aura-farm", detail });
+  assert.equal(farmWords(cp({ day: "2026-10-21", farm: 14, result: "win", styles: ["RIZZ", "MOG"], winner: "poster", aura: [100000, -100000] })), "Farm #14: RIZZ beat MOG. +100,000 aura. MOG got COOKED.");
+  assert.equal(farmWords(cp({ day: "2026-10-21", farm: 15, result: "win", styles: ["MOG", "RIZZ"], winner: "taker", aura: [-100000, 100000] })), "Farm #15: RIZZ beat MOG. +100,000 aura. MOG got COOKED.");
+  assert.equal(farmWords(cp({ day: "2026-10-21", farm: 13, result: "tie", styles: ["DRIP", "DRIP"], winner: null, aura: [0, 0] })), "Farm #13: DRIP met DRIP. MUTUAL MOG. Nobody blinked.");
+  assert.equal(farmWords({ game: "aura-farm", detail: { farm: 1 } }), null);   // an entry in another shape falls back to the plain line
+});
