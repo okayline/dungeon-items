@@ -75,7 +75,7 @@ export const LEDGER_PAGE = `<!doctype html>
 body{margin:0;color:var(--text);font:16px/1.4 "Comic Sans MS","Comic Sans","Chalkboard SE","Times New Roman",serif;background:var(--sky)}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--sky) url("/deco/stars.gif");image-rendering:pixelated}
 main{max-width:720px;margin:0 auto;padding:16px}
-h1{margin:4px 0;text-align:center;font:48px "Times New Roman",Times,serif;color:var(--ink);text-shadow:3px 3px 0 #ff00ff}
+h1{margin:4px 0;text-align:center;white-space:nowrap;font:clamp(24px,8vw,40px) "Times New Roman",Times,serif;color:var(--ink);text-shadow:2px 2px 0 #ff00ff}
 .sub{margin:0;text-align:center;color:#ff99ff;font-weight:bold}
 hr{border:0;height:6px;margin:16px 0;background:linear-gradient(90deg,#f00,#f90,#ff0,#0f0,#0ff,#00f,#f0f)}
 a{color:var(--link)}a:visited{color:#ff99ff}
@@ -87,7 +87,7 @@ a{color:var(--link)}a:visited{color:#ff99ff}
 .say img{float:left;width:88px;height:31px;margin:2px 10px 4px 0;image-rendering:pixelated;border:0}
 .facts{clear:both;font-size:13px;color:#ff99ff}
 .note{font-size:13px;font-style:italic}
-.seal{margin-top:6px;font:11px/1.35 "Courier New",Courier,monospace;color:#c0c0c0;word-break:break-all}
+.seal{margin-top:8px;font:9px/1.4 "Courier New",Courier,monospace;color:#c0c0c0;word-break:break-all}.seal .k{display:block;margin-top:5px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;opacity:.65}.seal .k:first-child{margin-top:0}.seal .v{display:block}
 .head{text-align:center;font:12px "Courier New",Courier,monospace;word-break:break-all;color:var(--link)}
 button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer;color:#000;background:var(--edge);border:2px outset #fff;display:block;margin:12px auto}
 /* 4Dungeon's things: its black screen and ASCII frame (colours from daily-dungeon index.html) */
@@ -98,7 +98,7 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 .ascii{position:relative}
 .ascii .rule{display:flex;margin:0 -2ch;color:var(--trail);background:var(--bg);position:relative;z-index:1}.ascii .rule i{flex:1;overflow:hidden;white-space:nowrap;font-style:normal}
 .ascii .top{color:var(--trail);font-size:13px}.ascii .say{font-size:16px}.ascii .facts{color:var(--trail);font-size:13px;text-transform:uppercase}
-.ascii .note{font-size:13px;font-style:normal;color:var(--fg)}.ascii .seal{font:11px/1.35 "VT323",ui-monospace,monospace;color:var(--trail)}
+.ascii .note{font-size:13px;font-style:normal;color:var(--fg)}.ascii .seal{font:10px/1.35 "VT323",ui-monospace,monospace;color:var(--trail)}
 .ascii a,.ascii a:visited{color:#fff;text-decoration:none}.ascii a:hover{background:var(--fg);color:var(--bg)}
 .ascii .name{font:inherit;font-size:22px;color:#fff;text-transform:uppercase}
 .q-rare{color:#6aa6e8!important}.q-mythic,.q-relic,.q-ultra,.q-prototype{color:#f5c542!important}.q-moon{color:#c9b6ff!important}
@@ -323,8 +323,9 @@ function row(e) {
   if (end.nodeType === 3) end.textContent = end.textContent.replace(/[.]$/, "");
   p.append(s);
   if (e.item && !one) { p.append(el("div", "facts", facts(e.item))); p.lastChild.classList.add("q-" + e.item.rarity); if (e.item.note) p.append(el("div", "note", "“" + e.item.note + "”")); }
-  p.append(el("div", "seal", "record " + e.record + "\\nprev " + e.prev_hash + "\\nhash " + e.hash));
-  p.lastChild.style.whiteSpace = "pre-wrap";
+  const sl = el("div", "seal");   // record, prev and hash: each a small label with its value on the next line
+  for (const [k, v] of [["record", e.record], ["prev", e.prev_hash], ["hash", e.hash]]) sl.append(el("span", "k", k), el("span", "v", v));
+  p.append(sl);
   const h = heading(r); if (h) p.prepend(h);
   // a game's checkpoint wears that game's own look: Dawn Baton's panel, Aura Farm's purple glow, scoundrel.exe's ASCII frame (the same as 4Dungeon's)
   const d = r && r.k === "checkpoint" && r.detail && typeof r.detail === "object" ? r.detail : null, int = (v) => Number.isInteger(v);
