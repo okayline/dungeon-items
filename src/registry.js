@@ -181,7 +181,7 @@ export async function itemIds(db, game, keys) {
 // `detail` (optional) is a few public facts the game adds for the ledger page, such as Dawn Baton's lap or a scoundrel.exe
 // run's score: up to 12 keys of whole numbers, short words or lists of up to 24 of them. Never a player.
 const isHead = (h) => typeof h === "string" && /^[0-9a-f]{64}$/.test(h);
-const isWord = (v) => v === null || Number.isInteger(v) || (typeof v === "string" && /^[#A-Za-z0-9_ .-]{0,40}$/.test(v));
+const isWord = (v) => v === null || Number.isInteger(v) || (typeof v === "string" && /^[#A-Za-z0-9_ .,'-]{0,40}$/.test(v));   // ' and , for aura-farm's lines ("MOG couldn't handle the RIZZ.")
 const detailOk = (d) => d === undefined || (!!d && typeof d === "object" && !Array.isArray(d) && Object.keys(d).length <= 12
   && Object.entries(d).every(([k, v]) => /^[a-z_]{1,20}$/.test(k) && (isWord(v) || (Array.isArray(v) && v.length <= 24 && v.every(isWord)))));
 export async function checkpoint(db, { game, entries, head: h, detail, name = null, t = now() } = {}) {

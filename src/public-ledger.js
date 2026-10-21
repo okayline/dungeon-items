@@ -165,14 +165,19 @@ function runWords(r, who) {
   if (d.status === "won") return day + who + " CLEARED the deck! " + (isInt(d.hp) ? d.hp + " HP left. " : "") + end;
   return day + who + " was DELETED" + (isInt(d.room) ? " in Room " + d.room : "") + ". " + (isInt(d.demons_left) ? plural(d.demons_left, "Demon", "Demons") + " still in the deck. " : "") + end;
 }
-// an aura-farm farm, told with the two styles and never a player
+// an aura-farm farm, told with the two styles and never a player. From v0.9 a farm comes with its line ("MOG couldn't
+// handle the RIZZ."), which ends the entry; older farms end the way they always did.
 function farmWords(r) {
   const d = r.detail, ok = (v) => typeof v === "string" && v;
   if (r.game !== "aura-farm" || !d || !isInt(d.farm) || !Array.isArray(d.styles) || !ok(d.styles[0]) || !ok(d.styles[1])) return null;
   const n = "Farm #" + d.farm + ": ", amt = Array.isArray(d.aura) && isInt(d.aura[0]) && d.aura[0] !== 0 ? Math.abs(d.aura[0]).toLocaleString("en-US") : null;
-  if (d.winner !== "poster" && d.winner !== "taker") return n + d.styles[0] + " met " + d.styles[1] + ". MUTUAL MOG. Nobody blinked.";
+  if (d.winner !== "poster" && d.winner !== "taker") {
+    const met = d.styles[0] + " met " + d.styles[1] + ".";
+    if (!ok(d.line)) return n + met + " MUTUAL MOG. Nobody blinked.";
+    return d.line.startsWith(met) ? n + d.line + " MUTUAL MOG." : n + met + " MUTUAL MOG. " + d.line;   // never "DRIP met DRIP." twice
+  }
   const won = d.winner === "poster" ? 0 : 1;
-  return n + d.styles[won] + " beat " + d.styles[1 - won] + "." + (amt ? " +" + amt + " aura." : "") + " " + d.styles[1 - won] + " got COOKED.";
+  return n + d.styles[won] + " beat " + d.styles[1 - won] + "." + (amt ? " +" + amt + " aura." : "") + " " + (ok(d.line) ? d.line : d.styles[1 - won] + " got COOKED.");
 }
 // a 4Dungeon run's moments (sealRun): what happened, where, on which day and under which moon
 function momentWords(r) {

@@ -121,9 +121,15 @@ test("a checkpoint seals another game's ledger head on the chain: once per head,
   assert.match((await reg.checkpoint({ game: "dawn-baton", entries: 5, head: h2 })).error, /only grow/);
   assert.match((await reg.checkpoint({ game: "dawn-baton", entries: 6, head: "x" })).error, /fingerprint/);
   assert.deepEqual(await reg.checkpoint({ game: "scoundrel", entries: 2, head: h2 }), { ok: true, created: true });   // each game counts on its own
+  // a detail word may have ' and , (aura-farm's lines), but not other punctuation
+  assert.deepEqual(await reg.checkpoint({ game: "aura-farm", entries: 1, head: h1, detail: { line: "MOG blushed. gg, out-RIZZed." } }), { ok: true, created: true });
+  assert.deepEqual(await reg.checkpoint({ game: "aura-farm", entries: 2, head: h2, detail: { line: "MOG couldn't handle the RIZZ." } }), { ok: true, created: true });
+  assert.match((await reg.checkpoint({ game: "aura-farm", entries: 3, head: h1, detail: { line: "<b>MOG</b>" } })).error, /short public facts/);
   assert.deepEqual(q(db, "SELECT kind, game, player_id, record FROM ledger ORDER BY id"), [
     { kind: "checkpoint", game: "dawn-baton", player_id: 0, record: JSON.stringify({ k: "checkpoint", game: "dawn-baton", entries: 5, head: h1 }) },
     { kind: "checkpoint", game: "scoundrel", player_id: 0, record: JSON.stringify({ k: "checkpoint", game: "scoundrel", entries: 2, head: h2 }) },
+    { kind: "checkpoint", game: "aura-farm", player_id: 0, record: JSON.stringify({ k: "checkpoint", game: "aura-farm", entries: 1, head: h1, detail: { line: "MOG blushed. gg, out-RIZZed." } }) },
+    { kind: "checkpoint", game: "aura-farm", player_id: 0, record: JSON.stringify({ k: "checkpoint", game: "aura-farm", entries: 2, head: h2, detail: { line: "MOG couldn't handle the RIZZ." } }) },
   ]);
   assert.equal((await reg.verify()).ok, true);
 });
@@ -173,5 +179,9 @@ test("the public ledger page tells an aura-farm checkpoint with its two styles, 
   assert.equal(farmWords(cp({ day: "2026-10-21", farm: 14, result: "win", styles: ["RIZZ", "MOG"], winner: "poster", aura: [100000, -100000] })), "Farm #14: RIZZ beat MOG. +100,000 aura. MOG got COOKED.");
   assert.equal(farmWords(cp({ day: "2026-10-21", farm: 15, result: "win", styles: ["MOG", "RIZZ"], winner: "taker", aura: [-100000, 100000] })), "Farm #15: RIZZ beat MOG. +100,000 aura. MOG got COOKED.");
   assert.equal(farmWords(cp({ day: "2026-10-21", farm: 13, result: "tie", styles: ["DRIP", "DRIP"], winner: null, aura: [0, 0] })), "Farm #13: DRIP met DRIP. MUTUAL MOG. Nobody blinked.");
+  // from v0.9 the farm's line ends the entry
+  assert.equal(farmWords(cp({ farm: 16, result: "win", styles: ["RIZZ", "MOG"], winner: "poster", aura: [100000, -100000], line: "MOG couldn't handle the RIZZ." })), "Farm #16: RIZZ beat MOG. +100,000 aura. MOG couldn't handle the RIZZ.");
+  assert.equal(farmWords(cp({ farm: 17, result: "tie", styles: ["DRIP", "DRIP"], winner: null, aura: [0, 0], line: "Mirror match. No notes." })), "Farm #17: DRIP met DRIP. MUTUAL MOG. Mirror match. No notes.");
+  assert.equal(farmWords(cp({ farm: 18, result: "tie", styles: ["MOG", "MOG"], winner: null, aura: [0, 0], line: "MOG met MOG. Respect." })), "Farm #18: MOG met MOG. Respect. MUTUAL MOG.");
   assert.equal(farmWords({ game: "aura-farm", detail: { farm: 1 } }), null);   // an entry in another shape falls back to the plain line
 });
