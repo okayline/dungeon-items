@@ -189,6 +189,7 @@ export async function checkpoint(db, { game, entries, head: h, detail, name = nu
   if (!detailOk(detail)) return { error: "A checkpoint's detail is up to 12 short public facts: whole numbers, short words, or lists of them." };
   if (name !== null && !(typeof name === "string" && /^[A-Za-z0-9_. -]{1,40}$/.test(name))) return { error: "A checkpoint's name is up to 40 letters, numbers, spaces, - _ or ." };
   for (let i = 0; i < TRIES; i++) {
+    const top = await head(db);   // read before the last checkpoint: anything sealed after this makes our insert clash and retry
     const prev = await db.prepare("SELECT record FROM ledger WHERE kind = 'checkpoint' AND game = ? ORDER BY id DESC LIMIT 1").bind(game).first();
     if (prev) {
       const p = JSON.parse(prev.record);
@@ -197,7 +198,7 @@ export async function checkpoint(db, { game, entries, head: h, detail, name = nu
     }
     const record = JSON.stringify({ k: "checkpoint", game, entries, head: h, ...(detail ? { detail } : {}) });
     try {
-      await db.batch([await chainInsert(db, await head(db), { kind: "checkpoint", game, playerId: 0, record, t, name })]);
+      await db.batch([await chainInsert(db, top, { kind: "checkpoint", game, playerId: 0, record, t, name })]);
       return { ok: true, created: true };
     } catch (e) {
       if (chainClash(e)) continue;
