@@ -170,9 +170,9 @@ function farmWords(r) {
   const d = r.detail, ok = (v) => typeof v === "string" && v;
   if (r.game !== "aura-farm" || !d || !isInt(d.farm) || !Array.isArray(d.styles) || !ok(d.styles[0]) || !ok(d.styles[1])) return null;
   const n = "Farm #" + d.farm + ": ", amt = Array.isArray(d.aura) && isInt(d.aura[0]) && d.aura[0] !== 0 ? Math.abs(d.aura[0]).toLocaleString("en-US") : null;
-  if (d.winner !== "poster" && d.winner !== "taker") return n + d.styles[0] + " met " + d.styles[1] + ". MUTUAL MOG: no aura moved.";
+  if (d.winner !== "poster" && d.winner !== "taker") return n + d.styles[0] + " met " + d.styles[1] + ". MUTUAL MOG. Nobody blinked.";
   const won = d.winner === "poster" ? 0 : 1;
-  return n + d.styles[won] + " beat " + d.styles[1 - won] + "." + (amt ? " +" + amt + " aura." : "") + " " + d.styles[1 - won] + " got COOKED.";
+  return n + d.styles[won] + " beat " + d.styles[1 - won] + "." + (amt ? " +" + amt + " aura." : "") + " " + d.styles[1 - won] + " got COOKED, no cap.";
 }
 // a 4Dungeon run's moments (sealRun): what happened, where, on which day and under which moon
 function momentWords(r) {
