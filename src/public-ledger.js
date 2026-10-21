@@ -358,6 +358,13 @@ function row(e) {
   if (r && r.k === "checkpoint" && r.game === "scoundrel") {
     s.prepend("> ");
     if (d && int(d.score)) { s.classList.add("run"); if (d.status === "won") s.classList.add("won"); }   // the sentence wears the run's colour
+    // a run's checkpoint carries the fingerprint of its run entry as head: the whole panel opens that run's page in the game (it opens when the run's day ends)
+    if (d && int(d.score) && typeof r.head === "string" && /^[0-9a-f]{64}$/.test(r.head)) {
+      const url = "https://scoundrel.88x31.app/?run=" + r.head, t = s.textContent, m = d && int(d.day) && t.startsWith("> Day #" + d.day) ? "> Day #" + d.day : null;
+      if (m) { const l = el("a", null, m.slice(2)); l.href = url; s.replaceChildren("> ", l, t.slice(m.length)); }
+      p.style.cursor = "pointer";
+      p.onclick = (ev) => { if (!ev.target.closest("a, .seal")) location.href = url; };
+    }
     return ascii(p);
   }
   if (r && r.k === "run" && r.game === "4dungeon") { s.prepend("> "); return ascii(p); }   // a run's moment wears 4Dungeon's ASCII frame
