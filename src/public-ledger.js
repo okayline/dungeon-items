@@ -336,6 +336,11 @@ function row(e) {
       if (Array.isArray(d.colors) && d.colors.length) { const gr = el("div", "grad"); for (const c of d.colors) { const i = el("i"); if (typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c)) i.style.background = c; else i.className = "none"; gr.append(i); } add.push(gr); }
       if (typeof d.tune === "string" && d.tune.length) { const tn = el("div", "tune"); for (const ch of d.tune) tn.append(el("span", null, ch === "s" ? "\u266a" : ch === "l" ? "\u266d" : "\u00b7")); add.push(tn); }
       s.after(...add);
+      const t = s.textContent, m = t.startsWith("Lap " + d.lap) ? "Lap " + d.lap : null;
+      if (m) { const l = el("a", null, m); l.href = "https://dawn.88x31.app/?lap=" + d.lap; s.replaceChildren(l, t.slice(m.length)); }   // to the lap's own page in the game
+      // the whole panel opens the lap's page; the registry's own record, prev and hash stay here, and tapping them doesn't leave
+      p.style.cursor = "pointer";
+      p.onclick = (ev) => { if (!ev.target.closest("a, .seal")) location.href = "https://dawn.88x31.app/?lap=" + d.lap; };
     }
     return p;
   }
