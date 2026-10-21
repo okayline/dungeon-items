@@ -342,6 +342,12 @@ function row(e) {
     p.classList.add("aura");
     const t = s.textContent, m = d && int(d.farm) && t.startsWith("Farm #" + d.farm) ? "Farm #" + d.farm : null;
     if (m) { const l = el("a", null, m); l.href = "https://aura.88x31.app/?farm=" + d.farm; s.replaceChildren(l, t.slice(m.length)); }   // to the farm's own page in the game
+    if (d && int(d.farm)) {
+      // the whole panel opens the farm's page, which shows its sealed record and fingerprints; so the seal lines aren't repeated here
+      p.querySelector(".seal").remove();
+      p.style.cursor = "pointer";
+      p.onclick = (ev) => { if (!ev.target.closest("a")) location.href = "https://aura.88x31.app/?farm=" + d.farm; };
+    }
     return p;
   }
   if (r && r.k === "checkpoint" && r.game === "scoundrel") {
