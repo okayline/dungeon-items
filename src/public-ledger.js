@@ -1,6 +1,7 @@
 // The registry's ledger, open to everyone: every copy made, moved, used up or marked, newest first.
 //   GET /api/registry/ledger?before=ID&limit=N   JSON (N up to 100)
-//   GET /ledger                                  the same thing as a page
+//   GET /api/registry/ledger?head=HASH           from the checkpoint that names that game fingerprint down (`at` is its id)
+//   GET /ledger                                  the same thing as a page (?head=HASH opens at that checkpoint)
 // Records hold item ids, copy numbers and game names only (see ledger.js), never a player id. The player_id column is not
 // selected here. Each entry carries the time it was sealed (`at`, seconds). The item's public details (name, rarity,
 // note, alignment, nature, type, picture, home game) are added for reading; they are not part of the sealed record, so
@@ -36,10 +37,15 @@ async function shape(db, results) {
 }
 
 export async function publicLedger(db, params) {
-  const before = Number(params.get("before")) || Number.MAX_SAFE_INTEGER;
+  let before = Number(params.get("before")) || Number.MAX_SAFE_INTEGER, at;
   const limit = Math.min(100, Math.max(1, Number(params.get("limit")) || 50));
+  if (params.has("head")) {   // a game's own entry hash: the checkpoint it sent with that fingerprint, e.g. an Aura Farm farm's
+    const h = params.get("head"), c = /^[0-9a-f]{64}$/.test(h) && await db.prepare("SELECT id FROM ledger WHERE kind = 'checkpoint' AND json_extract(record, '$.head') = ? ORDER BY id LIMIT 1").bind(h).first();
+    if (!c) return { genesis: GENESIS, at: null, entries: [] };
+    at = c.id; before = c.id + 1;
+  }
   const { results } = await db.prepare(`SELECT ${COLS} FROM ledger WHERE id < ? ORDER BY id DESC LIMIT ?`).bind(before, limit).all();
-  return { genesis: GENESIS, entries: await shape(db, results) };
+  return { genesis: GENESIS, ...(at ? { at } : {}), entries: await shape(db, results) };
 }
 
 // One copy's whole story: the item, the game that made it, when, how many copies of the item exist, and every ledger
@@ -106,6 +112,7 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 .baton .top{color:#b9b9ff;font-size:12px}.baton .say{font-size:15px}.baton .seal{color:#b9b9ff;font-family:"Courier New",Courier,monospace}
 /* Aura Farm's checkpoints: its own page's dark purple panel, glowing meme headings (aura-farm public/index.html) */
 .aura{background:radial-gradient(circle at 50% 0%,#2a1650 0%,#171226 70%);border:1px solid #3a2f5c;border-radius:16px;box-shadow:0 0 18px rgba(176,132,255,.25);padding:12px 14px;color:#f4f1ff;font:15px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.here{outline:3px solid #ff6fcf;outline-offset:3px}
 .aura > .h{font:11px Impact,"Arial Black","Helvetica Neue",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#f4f1ff;margin:0 0 4px;text-shadow:0 0 8px rgba(176,132,255,.6),0 0 16px rgba(255,111,207,.3)}
 .aura a,.aura a:visited{color:#ff6fcf}.aura .top{color:#a99ccf;font-size:12px}.aura .say{font-size:15px;text-shadow:0 0 10px rgba(176,132,255,.5)}.aura .seal{color:#a99ccf}
 body.dun{background:#07090a}body.dun::before{display:none}
@@ -257,7 +264,7 @@ function say(e, r) {
   return "An entry this page doesn't know.";
 }
 const when = (t) => new Date(t * 1000).toLocaleString([], { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
-const qs = new URLSearchParams(location.search), one = qs.get("item") && qs.get("copy");
+const qs = new URLSearchParams(location.search), one = qs.get("item") && qs.get("copy"), head = !one && qs.get("head");
 function el(tag, cls, text) { const x = document.createElement(tag); if (cls) x.className = cls; if (text != null) x.textContent = text; return x; }
 const nameOf = (i) => (i.hidden ? "a mystery button" : i.name);   // 88x31's rares and up (isMystery above)
 function facts(i) {
@@ -347,9 +354,13 @@ function row(e) {
 }
 let last = null;
 async function load() {
-  const d = await (await fetch("/api/registry/ledger?limit=50" + (last ? "&before=" + last : ""))).json();
-  if (!last && d.entries.length) $("#head").textContent = "Newest fingerprint: " + d.entries[0].hash;
-  for (const e of d.entries) $("#list").append(row(e));
+  const first = !last && head;   // ?head=HASH: open at that game's checkpoint, outlined, with older entries below it
+  const d = await (await fetch("/api/registry/ledger?limit=50" + (first ? "&head=" + encodeURIComponent(head) : last ? "&before=" + last : ""))).json();
+  if (first) {
+    $("#sub").textContent = d.at ? "One game's checkpoint, and everything before it." : "That isn't on the registry yet. A game's next checkpoint covers it.";
+    const back = el("p"); back.style.textAlign = "center"; const a = el("a", null, "\u00ab The whole ledger"); a.href = location.pathname; back.append(a); $("#head").append(back);
+  } else if (!last && d.entries.length) $("#head").textContent = "Newest fingerprint: " + d.entries[0].hash;
+  for (const e of d.entries) { const r = row(e); $("#list").append(r); if (first && e.id === d.at) { r.classList.add("here"); setTimeout(() => r.scrollIntoView({ block: "center" }), 0); } }
   if (d.entries.length) last = d.entries[d.entries.length - 1].id;
   $("#more").hidden = d.entries.length < 50;
 }

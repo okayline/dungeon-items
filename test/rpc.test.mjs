@@ -185,3 +185,14 @@ test("the public ledger page tells an aura-farm checkpoint with its two styles, 
   assert.equal(farmWords(cp({ farm: 18, result: "tie", styles: ["MOG", "MOG"], winner: null, aura: [0, 0], line: "MOG met MOG. Respect." })), "Farm #18: MOG met MOG. Respect. MUTUAL MOG.");
   assert.equal(farmWords({ game: "aura-farm", detail: { farm: 1 } }), null);   // an entry in another shape falls back to the plain line
 });
+
+test("?head=HASH opens the public ledger at the checkpoint that sent that fingerprint", async () => {
+  const db = fakeD1(), reg = new Registry({}, { DB: db }), a = "a".repeat(64), b = "b".repeat(64);
+  await reg.checkpoint({ game: "aura-farm", entries: 1, head: a });
+  await reg.checkpoint({ game: "aura-farm", entries: 2, head: b });
+  const ids = db.raw.prepare("SELECT id FROM ledger WHERE kind = 'checkpoint' ORDER BY id").all().map((r) => r.id);   // raw SQL: [first, second]
+  const d = await publicLedger(db, new URLSearchParams("head=" + a));
+  assert.equal(d.at, ids[0]);
+  assert.equal(d.entries[0].id, ids[0]);
+  assert.deepEqual((await publicLedger(db, new URLSearchParams("head=" + "c".repeat(64)))).entries, []);
+});
