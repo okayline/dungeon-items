@@ -186,6 +186,17 @@ test("the public ledger page tells an aura-farm checkpoint with its two styles, 
   assert.equal(farmWords({ game: "aura-farm", detail: { farm: 1 } }), null);   // an entry in another shape falls back to the plain line
 });
 
+test("the public ledger page tells a clutch-feed-tilt checkpoint with its run, and no player", async () => {
+  const { LEDGER_PAGE } = await import("../src/public-ledger.js");
+  const src = LEDGER_PAGE.slice(LEDGER_PAGE.indexOf("function cftWords"), LEDGER_PAGE.indexOf("// an aura-farm farm"));
+  const cftWords = new Function("isInt", "plural", src + "; return cftWords;")(Number.isInteger, (v, one, many) => v + " " + (v === 1 ? one : many));
+  const cp = (detail) => ({ game: "clutch-feed-tilt", detail });
+  assert.equal(cftWords(cp({ day: "2026-10-21", label: "CLUTCH", hp: 2, hits: 3, shots: 5 })), "2026-10-21: A CLUTCH run. 3 hits from 5 shots, 2 HP left.");
+  assert.equal(cftWords(cp({ label: "FEED", hp: 0, hits: 1, shots: 1 })), "A FEED run. 1 hit from 1 shot, 0 HP left.");
+  assert.equal(cftWords({ game: "clutch-feed-tilt" }), null);   // a checkpoint with no detail falls back to the plain line
+  assert.ok(LEDGER_PAGE.includes('"clutch-feed-tilt": "CLUTCH FEED TILT"'), "the game has its name");
+});
+
 test("?head=HASH opens the public ledger at the checkpoint that sent that fingerprint", async () => {
   const db = fakeD1(), reg = new Registry({}, { DB: db }), a = "a".repeat(64), b = "b".repeat(64);
   await reg.checkpoint({ game: "aura-farm", entries: 1, head: a });

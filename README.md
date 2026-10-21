@@ -79,7 +79,7 @@ checkpoint is what that game reports. Dawn Baton sends one when each lap closes;
 An optional `detail` (up to 12 short public facts) and `name` go with it. `detail` is sealed in the record; `name`
 (`migrations/006_checkpoint_name.sql`, the `ledger.name` column) is the player's public name in that game, stored
 beside the record and not hashed, so no record names a player. The `/ledger` page tells each one as a sentence in its
-game's voice (Dawn Baton's lap, scoundrel.exe's run with the name or "A Scoundrel").
+game's voice (Dawn Baton's lap, scoundrel.exe's run with the name or "A Scoundrel", CLUTCH FEED TILT's run with its label, hits, shots and HP).
 
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.

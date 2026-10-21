@@ -129,7 +129,7 @@ body.dun .head,body.dun #list>p{font-family:"VT323",ui-monospace,monospace;font-
 <button id="more" hidden>Older</button>
 </main><script>
 const $ = (s) => document.querySelector(s);
-const sayGame = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "irl-dungeon", "scoundrel": "scoundrel.exe", "dawn-baton": "Dawn Baton", "aura-farm": "Aura Farm" };
+const sayGame = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "irl-dungeon", "scoundrel": "scoundrel.exe", "dawn-baton": "Dawn Baton", "aura-farm": "Aura Farm", "clutch-feed-tilt": "CLUTCH FEED TILT" };
 const g = (x) => sayGame[x] || x;
 // mark words, after 4Dungeon's own (rules.js DEED_WORDS, PHASE_WORDS, OCC_WORDS, MOON_WORDS, MORE_WORDS) and irl-dungeon's
 const PHASE = { new: "a new moon", wax_cres: "a waxing crescent moon", first_q: "a first quarter moon", wax_gib: "a waxing gibbous moon",
@@ -175,6 +175,12 @@ function runWords(r, who) {
   const day = isInt(d.day) ? "Day #" + d.day + ": " : "", end = "Score " + d.score + (isInt(d.moves) ? " after " + d.moves + " moves." : ".");
   if (d.status === "won") return day + who + " CLEARED the deck! " + (isInt(d.hp) ? d.hp + " HP left. " : "") + end;
   return day + who + " was DELETED" + (isInt(d.room) ? " in Room " + d.room : "") + ". " + (isInt(d.demons_left) ? plural(d.demons_left, "Demon", "Demons") + " still in the deck. " : "") + end;
+}
+// a clutch-feed-tilt run: its day, its label (CLUTCH, FEED or TILT), hits from shots and the HP left; never a player
+function cftWords(r) {
+  const d = r.detail;
+  if (r.game !== "clutch-feed-tilt" || !d || typeof d.label !== "string" || !/^[A-Z]{3,8}$/.test(d.label) || !isInt(d.hits) || !isInt(d.shots) || !isInt(d.hp)) return null;
+  return (typeof d.day === "string" && d.day ? d.day + ": " : "") + "A " + d.label + " run. " + plural(d.hits, "hit", "hits") + " from " + plural(d.shots, "shot", "shots") + ", " + d.hp + " HP left.";
 }
 // an aura-farm farm, told with the two styles and never a player. From v0.9 a farm comes with its line ("MOG couldn't
 // handle the RIZZ."), which ends the entry; older farms end the way they always did.
@@ -255,7 +261,7 @@ function say(e, r) {
   if (!r) return "An entry this page can't read.";
   if (r.k === "run") return momentWords(r) || g(r.game) + " sealed a moment of a run.";
   if (shared(r)) return groupsOf(e, r).map((cs) => andList(cs.map(copyName)) + groupWords(cs)).join("; ") + inGame(r.game, ", in ") + ".";   // (row() writes it with links)
-  if (r.k === "checkpoint") return lapWords(r) || farmWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
+  if (r.k === "checkpoint") return lapWords(r) || farmWords(r) || cftWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world" + inGame(r.game) + ".";
   if (r.k === "move") return r.from === r.to ? what + " changed hands" + inGame(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";
@@ -285,6 +291,7 @@ const HEAD = {
   "irl-dungeon": { copy: "new find", move: "find changed hands", arrive: "find arrived", spend: "find used up", mark: "find marked" },
   "dawn-baton": { copy: "Baton made", move: "Baton changed hands", arrive: "Baton arrived", spend: "Baton used up", mark: "Baton marked", checkpoint: "Baton came home" },
   "aura-farm": { checkpoint: "farm finished" },
+  "clutch-feed-tilt": { checkpoint: "run sealed" },
   "scoundrel": { checkpoint: (d) => d && d.status === "won" ? "run cleared" : d && Number.isInteger(d.score) ? "run deleted" : "run" },
 };
 const CAPS = { "4dungeon": "4DUNGEON" };
@@ -367,6 +374,7 @@ function row(e) {
     }
     return ascii(p);
   }
+  if (r && r.k === "checkpoint" && r.game === "clutch-feed-tilt") { s.prepend("> "); return ascii(p); }   // CLUTCH FEED TILT wears 4Dungeon's ASCII frame too (its own screen does)
   if (r && r.k === "run" && r.game === "4dungeon") { s.prepend("> "); return ascii(p); }   // a run's moment wears 4Dungeon's ASCII frame
   return dun(lead) ? ascii(p) : p;
 }
