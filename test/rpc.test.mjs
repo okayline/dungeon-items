@@ -128,6 +128,20 @@ test("a checkpoint seals another game's ledger head on the chain: once per head,
   assert.equal((await reg.verify()).ok, true);
 });
 
+test("two requests sending the same checkpoint at once seal it once (Oct 21: Dawn Baton lap 5 was sealed twice, #875 and #876)", async () => {
+  const db = fakeD1();
+  let sealed; const firstSealed = new Promise((r) => (sealed = r));
+  // the second request reads the last checkpoint before the first one writes, and carries on only after it has
+  const late = { ...db, prepare: (sql) => { const wrap = (st) => ({ ...st, bind: (...a) => wrap(st.bind(...a)),
+    first: async () => { const r = await st.first(); if (/kind = 'checkpoint'/.test(sql)) await firstSealed; return r; } }); return wrap(db.prepare(sql)); } };
+  const args = { game: "dawn-baton", entries: 125, head: "a".repeat(64), detail: { lap: 5 } };
+  const second = new Registry({}, { DB: late }).checkpoint(args);
+  assert.deepEqual(await new Registry({}, { DB: db }).checkpoint(args), { ok: true, created: true });
+  sealed();
+  assert.deepEqual(await second, { ok: true, created: false });
+  assert.deepEqual(q(db, "SELECT COUNT(*) AS n FROM ledger"), [{ n: 1 }]);
+});
+
 test("a checkpoint can carry a few public facts for the page, and nothing that isn't short and plain", async () => {
   const db = fakeD1();
   const reg = new Registry({}, { DB: db });
