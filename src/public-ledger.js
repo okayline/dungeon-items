@@ -87,7 +87,7 @@ a{color:var(--link)}a:visited{color:#ff99ff}
 .say img{float:left;width:88px;height:31px;margin:2px 10px 4px 0;image-rendering:pixelated;border:0}
 .facts{clear:both;font-size:13px;color:#ff99ff}
 .note{font-size:13px;font-style:italic}
-.seal{margin-top:8px;font:9px/1.4 "Courier New",Courier,monospace;color:#c0c0c0;word-break:break-all}.seal .k{display:block;margin-top:5px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;opacity:.65}.seal .k:first-child{margin-top:0}.seal .v{display:block}
+.seal{margin-top:8px;font:9px/1.4 "Courier New",Courier,monospace;color:#c0c0c0;word-break:break-all}.seal{display:grid;grid-template-columns:max-content 1fr;column-gap:.7em;row-gap:3px}.seal .k{text-transform:uppercase;letter-spacing:.08em;opacity:.65}.seal .v{min-width:0}
 .head{text-align:center;font:12px "Courier New",Courier,monospace;word-break:break-all;color:var(--link)}
 button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer;color:#000;background:var(--edge);border:2px outset #fff;display:block;margin:12px auto}
 /* 4Dungeon's things: its black screen and ASCII frame (colours from daily-dungeon index.html) */
@@ -323,8 +323,8 @@ function row(e) {
   if (end.nodeType === 3) end.textContent = end.textContent.replace(/[.]$/, "");
   p.append(s);
   if (e.item && !one) { p.append(el("div", "facts", facts(e.item))); p.lastChild.classList.add("q-" + e.item.rarity); if (e.item.note) p.append(el("div", "note", "“" + e.item.note + "”")); }
-  const sl = el("div", "seal");   // record, prev and hash: each a small label with its value on the next line
-  for (const [k, v] of [["record", e.record], ["prev", e.prev_hash], ["hash", e.hash]]) sl.append(el("span", "k", k), el("span", "v", v));
+  const sl = el("div", "seal");   // record, prev and hash: a small label, then its value beside it
+  for (const [k, v] of [["record", e.record], ["prev", e.prev_hash], ["hash", e.hash]]) sl.append(el("span", "k", k + ":"), el("span", "v", v));
   p.append(sl);
   const h = heading(r); if (h) p.prepend(h);
   // a game's checkpoint wears that game's own look: Dawn Baton's panel, Aura Farm's purple glow, scoundrel.exe's ASCII frame (the same as 4Dungeon's)
