@@ -194,7 +194,7 @@ test("the public ledger page tells a clutch-feed-tilt checkpoint with its run, a
   assert.equal(cftWords(cp({ day: "2026-10-21", label: "CLUTCH", hp: 2, hits: 3, shots: 5 })), "2026-10-21: A CLUTCH run. 3 hits from 5 shots, 2 HP left.");
   assert.equal(cftWords(cp({ label: "FEED", hp: 0, hits: 1, shots: 1 })), "A FEED run. 1 hit from 1 shot, 0 HP left.");
   assert.equal(cftWords({ game: "clutch-feed-tilt" }), null);   // a checkpoint with no detail falls back to the plain line
-  assert.ok(LEDGER_PAGE.includes('"clutch-feed-tilt": "CLUTCH FEED TILT"'), "the game has its name");
+  assert.ok(LEDGER_PAGE.includes('"clutch-feed-tilt": "TILT.EXE"'), "the game has its name");
 });
 
 test("?head=HASH opens the public ledger at the checkpoint that sent that fingerprint", async () => {
