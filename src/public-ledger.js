@@ -129,7 +129,7 @@ body.dun .head,body.dun #list>p{font-family:"VT323",ui-monospace,monospace;font-
 <button id="more" hidden>Older</button>
 </main><script>
 const $ = (s) => document.querySelector(s);
-const sayGame = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "irl-dungeon", "scoundrel": "scoundrel.exe", "dawn-baton": "Dawn Baton", "aura-farm": "Aura Farm", "clutch-feed-tilt": "CLUTCH FEED TILT" };
+const sayGame = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "irl-dungeon", "scoundrel": "scoundrel.exe", "dawn-baton": "Dawn Baton", "aura-farm": "Aura Farm", "clutch-feed-tilt": "TILT.EXE" };
 const g = (x) => sayGame[x] || x;
 // mark words, after 4Dungeon's own (rules.js DEED_WORDS, PHASE_WORDS, OCC_WORDS, MOON_WORDS, MORE_WORDS) and irl-dungeon's
 const PHASE = { new: "a new moon", wax_cres: "a waxing crescent moon", first_q: "a first quarter moon", wax_gib: "a waxing gibbous moon",
@@ -374,7 +374,7 @@ function row(e) {
     }
     return ascii(p);
   }
-  if (r && r.k === "checkpoint" && r.game === "clutch-feed-tilt") { s.prepend("> "); return ascii(p); }   // CLUTCH FEED TILT wears 4Dungeon's ASCII frame too (its own screen does)
+  if (r && r.k === "checkpoint" && r.game === "clutch-feed-tilt") { s.prepend("> "); return ascii(p); }   // TILT.EXE wears 4Dungeon's ASCII frame too (its own screen does)
   if (r && r.k === "run" && r.game === "4dungeon") { s.prepend("> "); return ascii(p); }   // a run's moment wears 4Dungeon's ASCII frame
   return dun(lead) ? ascii(p) : p;
 }
