@@ -197,6 +197,18 @@ test("the public ledger page tells a clutch-feed-tilt checkpoint with its run, a
   assert.ok(LEDGER_PAGE.includes('"clutch-feed-tilt": "TILT.EXE"'), "the game has its name");
 });
 
+test("the public ledger page tells a Daily Pitch checkpoint with its game and how it ended, and no player", async () => {
+  const { LEDGER_PAGE } = await import("../src/public-ledger.js");
+  const src = LEDGER_PAGE.slice(LEDGER_PAGE.indexOf("function pitchWords"), LEDGER_PAGE.indexOf("// an aura-farm farm"));
+  const pitchWords = new Function("isInt", "plural", src + "; return pitchWords;")(Number.isInteger, (v, one, many) => v + " " + (v === 1 ? one : many));
+  const cp = (detail) => ({ game: "nano-pitch", detail });
+  assert.equal(pitchWords(cp({ kind: "daily", game: 3, day: "2026-10-25", hands: 7, place: 1, score: 11, top: 11, pitched: 3, made: 2 })), "Daily game #3 (2026-10-25): Won with 11 points in 7 rounds. Pitched 3 rounds, made 2.");
+  assert.equal(pitchWords(cp({ kind: "game", game: 14, hands: 1, place: 3, score: -4, top: 11, pitched: 0, made: 0 })), "Game #14: Placed 3rd with -4 points (the winner had 11) in 1 round.");
+  assert.equal(pitchWords(cp({ kind: "game", game: 1 })), null);   // an entry in another shape falls back to the plain line
+  assert.equal(pitchWords({ game: "nano-pitch" }), null);
+  assert.ok(LEDGER_PAGE.includes('"nano-pitch": "Daily Pitch"'), "the game has its name");
+});
+
 test("?head=HASH opens the public ledger at the checkpoint that sent that fingerprint", async () => {
   const db = fakeD1(), reg = new Registry({}, { DB: db }), a = "a".repeat(64), b = "b".repeat(64);
   await reg.checkpoint({ game: "aura-farm", entries: 1, head: a });

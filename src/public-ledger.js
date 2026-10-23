@@ -112,6 +112,7 @@ button{font:bold 14px Arial,Helvetica,sans-serif;padding:3px 10px;cursor:pointer
 .baton .top{color:#b9b9ff;font-size:12px}.baton .say{font-size:15px}.baton .seal{color:#b9b9ff;font-family:"Courier New",Courier,monospace}
 /* Aura Farm's checkpoints: its own page's dark purple panel, glowing meme headings (aura-farm public/index.html) */
 .aura{background:radial-gradient(circle at 50% 0%,#2a1650 0%,#171226 70%);border:1px solid #3a2f5c;border-radius:16px;box-shadow:0 0 18px rgba(176,132,255,.25);padding:12px 14px;color:#f4f1ff;font:15px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.aura .rounds{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 2px}.aura .rounds span{font-size:12px;padding:1px 6px;border:1px solid #3a2f5c;border-radius:10px;color:#c9b8ff}
 .here{outline:3px solid #ff6fcf;outline-offset:3px}
 .aura > .h{font:11px Impact,"Arial Black","Helvetica Neue",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#f4f1ff;margin:0 0 4px;text-shadow:0 0 8px rgba(176,132,255,.6),0 0 16px rgba(255,111,207,.3)}
 .aura a,.aura a:visited{color:#ff6fcf}.aura .top{color:#a99ccf;font-size:12px}.aura .say{font-size:15px;text-shadow:0 0 10px rgba(176,132,255,.5)}.aura .seal{color:#a99ccf}
@@ -129,7 +130,7 @@ body.dun .head,body.dun #list>p{font-family:"VT323",ui-monospace,monospace;font-
 <button id="more" hidden>Older</button>
 </main><script>
 const $ = (s) => document.querySelector(s);
-const sayGame = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "irl-dungeon", "scoundrel": "scoundrel.exe", "dawn-baton": "Dawn Baton", "aura-farm": "Aura Farm", "clutch-feed-tilt": "TILT.EXE" };
+const sayGame = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "irl-dungeon", "scoundrel": "scoundrel.exe", "dawn-baton": "Dawn Baton", "aura-farm": "Aura Farm", "clutch-feed-tilt": "TILT.EXE", "nano-pitch": "Daily Pitch" };
 const g = (x) => sayGame[x] || x;
 // mark words, after 4Dungeon's own (rules.js DEED_WORDS, PHASE_WORDS, OCC_WORDS, MOON_WORDS, MORE_WORDS) and irl-dungeon's
 const PHASE = { new: "a new moon", wax_cres: "a waxing crescent moon", first_q: "a first quarter moon", wax_gib: "a waxing gibbous moon",
@@ -181,6 +182,15 @@ function cftWords(r) {
   const d = r.detail;
   if (r.game !== "clutch-feed-tilt" || !d || typeof d.label !== "string" || !/^[A-Z]{3,8}$/.test(d.label) || !isInt(d.hits) || !isInt(d.shots) || !isInt(d.hp)) return null;
   return (typeof d.day === "string" && d.day ? d.day + ": " : "") + "A " + d.label + " run. " + plural(d.hits, "hit", "hits") + " from " + plural(d.shots, "shot", "shots") + ", " + d.hp + " HP left.";
+}
+// a Daily Pitch game (a numbered one, or the day's Daily game), told with how it ended and never a player
+function pitchWords(r) {
+  const ORD = ["", "1st", "2nd", "3rd", "4th"];
+  const d = r.detail;
+  if (r.game !== "nano-pitch" || !d || (d.kind !== "game" && d.kind !== "daily") || !isInt(d.game) || !isInt(d.hands) || !isInt(d.place) || d.place < 1 || d.place > 4 || !isInt(d.score) || !isInt(d.top)) return null;
+  const name = d.kind === "daily" ? "Daily game #" + d.game + (typeof d.day === "string" && d.day ? " (" + d.day + ")" : "") : "Game #" + d.game;
+  const end = d.place === 1 ? "Won with " + plural(d.score, "point", "points") : "Placed " + ORD[d.place] + " with " + plural(d.score, "point", "points") + " (the winner had " + d.top + ")";
+  return name + ": " + end + " in " + plural(d.hands, "round", "rounds") + "." + (isInt(d.pitched) && d.pitched > 0 && isInt(d.made) ? " Pitched " + plural(d.pitched, "round", "rounds") + ", made " + d.made + "." : "");
 }
 // an aura-farm farm, told with the two styles and never a player. From v0.9 a farm comes with its line ("MOG couldn't
 // handle the RIZZ."), which ends the entry; older farms end the way they always did.
@@ -261,7 +271,7 @@ function say(e, r) {
   if (!r) return "An entry this page can't read.";
   if (r.k === "run") return momentWords(r) || g(r.game) + " sealed a moment of a run.";
   if (shared(r)) return groupsOf(e, r).map((cs) => andList(cs.map(copyName)) + groupWords(cs)).join("; ") + inGame(r.game, ", in ") + ".";   // (row() writes it with links)
-  if (r.k === "checkpoint") return lapWords(r) || farmWords(r) || cftWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
+  if (r.k === "checkpoint") return lapWords(r) || farmWords(r) || cftWords(r) || pitchWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world" + inGame(r.game) + ".";
   if (r.k === "move") return r.from === r.to ? what + " changed hands" + inGame(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";
@@ -292,6 +302,7 @@ const HEAD = {
   "dawn-baton": { copy: "Baton made", move: "Baton changed hands", arrive: "Baton arrived", spend: "Baton used up", mark: "Baton marked", checkpoint: "Baton came home" },
   "aura-farm": { checkpoint: "farm finished" },
   "clutch-feed-tilt": { checkpoint: "run sealed" },
+  "nano-pitch": { checkpoint: (d) => d && d.kind === "daily" ? "Daily game sealed" : "game sealed" },
   "scoundrel": { checkpoint: (d) => d && d.status === "won" ? "run cleared" : d && Number.isInteger(d.score) ? "run deleted" : "run" },
 };
 const CAPS = { "4dungeon": "4DUNGEON" };
@@ -360,6 +371,18 @@ function row(e) {
       p.style.cursor = "pointer";
       p.onclick = (ev) => { if (!ev.target.closest("a, .seal")) location.href = "https://aura.88x31.app/?farm=" + d.farm; };
     }
+    return p;
+  }
+  if (r && r.k === "checkpoint" && r.game === "nano-pitch") {   // Daily Pitch wears the same purple glow as Aura Farm (its page is the same look), with its rounds under the sentence
+    p.classList.add("aura");
+    const SUIT = ["\u2663", "\u2666", "\u2665", "\u2660"], ok = (a) => Array.isArray(a) && a.length > 0;
+    if (d && ok(d.bids) && ok(d.trumps)) {   // one chip a round: your bid (or pass), the trump it was played in, and a star when you pitched it
+      const rs = el("div", "rounds");
+      d.bids.forEach((b, i) => rs.append(el("span", null, (Array.isArray(d.pitchers) && d.pitchers[i] === 0 ? "\u2605" : "") + (b === 0 ? "pass" : String(b)) + " " + (SUIT[["C", "D", "H", "S"].indexOf(d.trumps[i])] || "?"))));
+      s.after(rs);
+    }
+    const t = s.textContent, m = d && int(d.game) ? (d.kind === "daily" ? "Daily game #" : "Game #") + d.game : null;
+    if (m && t.startsWith(m)) { const l = el("a", null, m); l.href = "https://pitch.88x31.app/"; s.replaceChildren(l, t.slice(m.length)); }   // to the game
     return p;
   }
   if (r && r.k === "checkpoint" && r.game === "scoundrel") {
