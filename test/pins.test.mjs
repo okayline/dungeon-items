@@ -54,3 +54,16 @@ test("the shared mark words are the ones the ledger page runs", () => {
   const page = new Function("document", "location", "fetch", js.replace(/\n\/\/ a checkpoint's detail[\s\S]*$/, "") + "\nreturn markWords;");
   assert.equal(page({}, {}, () => {})({ kind: "deed", value: "foil_holo" }), "has a Holo foil");
 });
+
+test("the carry window lists the account's copies with the carried one on top, and pins through the game's own route", async () => {
+  const db = await setup();
+  await markCarried(db, { itemId: 1, copy: 1, by: TILT, kind: "deed", value: "survived_clutch", key: "w1" });
+  const { carryWindow } = await import("../src/carry-window.js");
+  const html = await carryWindow(db, { ...TILT, frame: { title: "<CARRY>", paper: "red;}" }, pinUrl: "/api/pin" });
+  assert.ok(html.indexOf("CARRIED · 4Dungeon") < html.indexOf("item a #1"));   // item b (newest) is carried, on top
+  assert.ok(html.includes("It was carried through a CLUTCH run."));
+  assert.ok(html.includes('data-item="1" data-copy="1"') && !html.includes('data-item="2"'));
+  assert.ok(html.includes("&lt;CARRY&gt;") && !html.includes("red;}"));   // the frame is escaped and checked
+  assert.ok(html.includes('"/api/pin"'));
+  assert.ok(!html.includes("item c"));   // another player's copy
+});
