@@ -67,3 +67,11 @@ test("the carry window lists the account's copies with the carried one on top, a
   assert.ok(html.includes('"/api/pin"'));
   assert.ok(!html.includes("item c"));   // another player's copy
 });
+
+test("the carry window shows the ways in only when the game sends them", async () => {
+  const db = await setup();
+  const { carryWindow } = await import("../src/carry-window.js");
+  assert.ok(!(await carryWindow(db, TILT)).includes("Ways in"));
+  const html = await carryWindow(db, { ...TILT, ways: { player: true, codes: [{ id: 5, created_at: 86400 }], passkeys: [{ id: 2, label: "<Mac>" }] } });
+  assert.ok(html.includes("Ways in") && html.includes('data-forget="codes" data-id="5"') && html.includes("&lt;Mac&gt;") && html.includes('id="logout"'));
+});
