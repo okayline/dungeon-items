@@ -102,4 +102,4 @@ game's voice (Dawn Baton's lap, scoundrel.exe's run with the name or "A Scoundre
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.
 - 4Dungeon stamps marks (since its v1.25), irl-dungeon (since its v0.22) and 88x31 (since its v0.46, from its registry sync, through the HTTP door's `addMark`). TILT.EXE marks the pinned copy (`markCarried`).
-- No game has a screen for choosing the pinned copy yet (`pin`), so every game carries the newest copy for now. The HTTP door (88x31) has none of the pinned-copy calls.
+- No game has a screen for choosing the pinned copy yet (`pin`), so every game carries the newest copy for now. The HTTP door (88x31) has all four pinned-copy calls (`pinned`, `pin`, `heldAcross`, `markCarried`), each acting as an 88x31 player.
