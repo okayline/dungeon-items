@@ -11,6 +11,7 @@
 //        -> { ok: true } or { error }. Spending one already spent by the same holder answers { ok: true, already: true }.
 //   heldBy(db, game, playerId)                        the copies a player holds now (not spent): [{ itemId, copy, moves, born, item, marks }].
 //   addMark / marksOf                                 a copy's history (migration 005): see the bottom of this file.
+//   pinned / pin / heldAcross / markCarried           the copy an account carries into every game (migration 007): the bottom too.
 //   whereIs(db, itemId, copy)                         who holds a copy now: { game, playerId, spent } or null.
 //   addItems(db, game, items)                         a game adds its own items (source = game); INSERT OR IGNORE, so an item
 //        already there is never changed. -> { added } . retireItems(db, game, keys) retires its own items by source_key.
@@ -250,7 +251,14 @@ const MARK_KINDS = new Set(["night", "deed", "moon"]);
 const CLIMB = { common: 3, uncommon: 2, rare: 1 };
 const markValue = (v) => typeof v === "string" && /^[a-z0-9_]{1,40}$/.test(v);
 
-export async function addMark(db, { itemId, copy, holder, kind, value, key, t = now() } = {}) {
+export const addMark = (db, a) => markOne(db, a, false);
+// (Oct 26) A mark from a game the copy isn't held in: the pinned copy (or any copy) of the same account, carried into
+// another game. markCarried(db, { itemId, copy, by: { game, playerId }, kind, value, key, t? }): `by` is the player in
+// the game making the mark; the copy's holder must be that player or another player of the same account. The mark is
+// the marking game's (marks.game, and its ledger entry). Night and deed marks only: the Moon is 4Dungeon's.
+export const markCarried = (db, { by, ...a } = {}) => (a.kind === "moon" ? { error: "Only the Moon's own game makes moon marks." } : markOne(db, { ...a, holder: by }, true));
+
+async function markOne(db, { itemId, copy, holder, kind, value, key, t = now() } = {}, carried) {
   if (!isInt(itemId) || !isInt(copy)) return { error: "Which copy?" };
   if (!holderOk(holder)) return { error: "Whose copy? A game and a player id are needed." };
   if (!MARK_KINDS.has(kind) || !markValue(value)) return { error: "A mark needs a kind (night, deed or moon) and a value." };
@@ -259,10 +267,14 @@ export async function addMark(db, { itemId, copy, holder, kind, value, key, t = 
   for (let i = 0; i < TRIES; i++) {
     const have = await db.prepare("SELECT item_id, copy, n FROM marks WHERE game = ? AND mark_key = ?").bind(holder.game, key).first();
     if (have) return have.item_id === itemId && have.copy === copy ? { ok: true, n: have.n, created: false } : { error: "That key already made a different mark." };
-    const row = await db.prepare("SELECT c.holder_game, c.holder_id, c.spent, i.rarity FROM copies c JOIN items i ON i.id = c.item_id WHERE c.item_id = ? AND c.copy = ?").bind(itemId, copy).first();
+    const row = await db.prepare(`SELECT c.holder_game, c.holder_id, c.spent, i.rarity,
+        EXISTS (SELECT 1 FROM account_players a JOIN account_players b ON b.account_id = a.account_id
+                WHERE a.game = c.holder_game AND a.player_id = c.holder_id AND b.game = ? AND b.player_id = ?) AS kin
+      FROM copies c JOIN items i ON i.id = c.item_id WHERE c.item_id = ? AND c.copy = ?`).bind(holder.game, holder.playerId, itemId, copy).first();
     if (!row) return { error: "No such copy." };
     if (row.spent) return { error: "That copy was used up." };
-    if (row.holder_game !== holder.game || row.holder_id !== holder.playerId) return { error: "That copy isn't theirs to mark." };
+    const own = row.holder_game === holder.game && row.holder_id === holder.playerId;
+    if (!own && !(carried && row.kin)) return { error: "That copy isn't theirs to mark." };
     if (kind === "moon" && value === "blessed") {
       const b = (await db.prepare("SELECT COUNT(*) AS b FROM marks WHERE item_id = ? AND copy = ? AND kind = 'moon' AND value = 'blessed'").bind(itemId, copy).first()).b;
       if (b >= (CLIMB[row.rarity] || 0)) return { error: "That copy is already as high as a blessing can take it." };
@@ -356,4 +368,49 @@ export async function marksOf(db, itemId, copy) {
   if (!isInt(itemId) || !isInt(copy)) return [];
   const { results } = await db.prepare("SELECT kind, value, game, made_at FROM marks WHERE item_id = ? AND copy = ? ORDER BY n").bind(itemId, copy).all();
   return results.map((r) => ({ kind: r.kind, value: r.value, game: r.game, at: r.made_at }));
+}
+
+// (Oct 26) THE PINNED COPY: the one copy an account carries into every game (migration 007). A player in any game asks by
+// their own game and player id; the account behind them is found here (account_players), so a game never handles
+// account ids for this.
+//   heldAcross(db, game, playerId, limit = 50)   every copy the account holds, in any of its games, newest first (by when
+//        it came to them): [{ itemId, copy, game, pinned, item: { source, rarity, name } }]. A player with no account: their own.
+//   pinned(db, game, playerId)   the copy to carry: the pin if the account still holds it, else its newest copy, else null.
+//        -> { itemId, copy, game, pinned, item, marks: [{ kind, value, game, at }] }. Read it once when a run starts.
+//   pin(db, { game, playerId, itemId, copy, t? })   pin a copy the account holds. -> { ok: true } or { error }.
+async function holdersOf(db, game, playerId) {
+  const a = await db.prepare("SELECT account_id FROM account_players WHERE game = ? AND player_id = ?").bind(game, playerId).first();
+  return a ? { account: a.account_id, sql: "SELECT game, player_id FROM account_players WHERE account_id = ?", arg: a.account_id }
+    : { account: null, sql: "SELECT ? AS game, ? AS player_id", arg: [game, playerId] };
+}
+async function carriedList(db, game, playerId, limit, pinFirst = false) {
+  const h = await holdersOf(db, game, playerId);
+  const { results } = await db.prepare(
+    `SELECT c.item_id, c.copy, c.holder_game, i.source, i.rarity, i.name, (p.account_id IS NOT NULL) AS pinned
+     FROM (${h.sql}) a JOIN copies c ON c.holder_game = a.game AND c.holder_id = a.player_id AND c.spent = 0 JOIN items i ON i.id = c.item_id
+     LEFT JOIN account_pins p ON p.account_id = ? AND p.item_id = c.item_id AND p.copy = c.copy
+     ORDER BY ${pinFirst ? "pinned DESC, " : ""}c.moved_at DESC, c.item_id DESC, c.copy DESC LIMIT ?`).bind(...[h.arg].flat(), h.account, limit).all();
+  return { account: h.account, list: results.map((r) => ({ itemId: r.item_id, copy: r.copy, game: r.holder_game, pinned: !!r.pinned,
+    item: { source: r.source, rarity: r.rarity, name: r.name } })) };
+}
+export async function heldAcross(db, game, playerId, limit = 50) {
+  if (!holderOk({ game, playerId })) return [];
+  return (await carriedList(db, game, playerId, Math.min(200, Math.max(1, Number(limit) || 50)))).list;
+}
+export async function pinned(db, game, playerId) {
+  if (!holderOk({ game, playerId })) return null;
+  const r = (await carriedList(db, game, playerId, 1, true)).list[0];
+  return r ? { ...r, marks: await marksOf(db, r.itemId, r.copy) } : null;
+}
+export async function pin(db, { game, playerId, itemId, copy, t = now() } = {}) {
+  if (!holderOk({ game, playerId })) return { error: "Whose pin? A game and a player id are needed." };
+  if (!isInt(itemId) || !isInt(copy)) return { error: "Which copy?" };
+  const h = await holdersOf(db, game, playerId);
+  if (!h.account) return { error: "A pin belongs to an account. Make a save code or passkey first." };
+  const mine = await db.prepare(`SELECT 1 AS y FROM account_players a JOIN copies c ON c.holder_game = a.game AND c.holder_id = a.player_id
+    WHERE a.account_id = ? AND c.item_id = ? AND c.copy = ? AND c.spent = 0`).bind(h.account, itemId, copy).first();
+  if (!mine) return { error: "That copy isn't theirs to pin." };
+  await db.prepare("INSERT INTO account_pins (account_id, item_id, copy, pinned_at) VALUES (?, ?, ?, ?) ON CONFLICT (account_id) DO UPDATE SET item_id = excluded.item_id, copy = excluded.copy, pinned_at = excluded.pinned_at")
+    .bind(h.account, itemId, copy, t).run();
+  return { ok: true };
 }

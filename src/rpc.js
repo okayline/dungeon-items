@@ -10,7 +10,7 @@
 // This file imports "cloudflare:workers", which only exists on Cloudflare, so nothing else imports it; the tests
 // load it with a stand-in for that module (test/rpc.test.mjs).
 import { WorkerEntrypoint } from "cloudflare:workers";
-import { birth, moveCopy, spendCopy, heldBy, whereIs, verify, addMark, addMarks, marksOf, itemIds, checkpoint, sealRun } from "./registry.js";
+import { birth, moveCopy, spendCopy, heldBy, whereIs, verify, addMark, addMarks, marksOf, itemIds, checkpoint, sealRun, heldAcross, pinned, pin, markCarried } from "./registry.js";
 import { copyStory } from "./public-ledger.js";
 import * as A from "./accounts.js";
 
@@ -28,6 +28,11 @@ export class Registry extends WorkerEntrypoint {
   itemIds(game, keys) { return itemIds(this.env.DB, game, keys); }   // a game's own item ids by source_key: { "<key>": id } (Dawn Baton finds its baton this way)
   checkpoint(args) { return checkpoint(this.env.DB, args); }   // a game's own ledger head (and its player's public name, unsealed), so the registry's Bitcoin stamp covers it
   sealRun(args) { return sealRun(this.env.DB, args); }         // a run's moments, for a game with no ledger of its own (4Dungeon)
+  // the copy an account carries into every game (registry.js, migration 007): read once when a run starts, and mark it
+  pinned(game, playerId) { return pinned(this.env.DB, game, playerId); }
+  pin(args) { return pin(this.env.DB, args); }
+  heldAcross(game, playerId, limit) { return heldAcross(this.env.DB, game, playerId, limit); }
+  markCarried(args) { return markCarried(this.env.DB, args); }
 }
 
 // The shared accounts, also through a service binding:

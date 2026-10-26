@@ -227,6 +227,15 @@ CREATE TABLE IF NOT EXISTS account_players (
   UNIQUE (game, player_id)
 );
 
+-- the one copy each account has pinned to carry into every game (migration 007; registry.js pinned, pin)
+CREATE TABLE IF NOT EXISTS account_pins (
+  account_id  INTEGER PRIMARY KEY REFERENCES accounts(id),
+  item_id     INTEGER NOT NULL,
+  copy        INTEGER NOT NULL,
+  pinned_at   INTEGER NOT NULL,
+  FOREIGN KEY (item_id, copy) REFERENCES copies (item_id, copy)
+);
+
 -- slows down guessing save codes and passkeys (hashed addresses only)
 CREATE TABLE IF NOT EXISTS account_limits (
   key           TEXT NOT NULL,

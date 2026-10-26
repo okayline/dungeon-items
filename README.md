@@ -63,6 +63,24 @@ story belongs to the copy, so it follows the copy into any game.
   `heldBy` now carries each copy's `marks` too. The HTTP door (88x31) has `addMark` (only on a copy one of 88x31's players holds, stamped as made in 88x31) and `marksOf`.
   `await env.REGISTRY.copyStory(itemId, copy)` is one copy's public story (the item, `of` copies exist, `born_game`, `born_at`, `moves`, `used_up`, and every ledger entry about it, newest first; no holder), the same thing the `/ledger` page shows; `null` when there is no such copy.
 
+- **Mark words** (`src/mark-words.js`): the shared list of mark values and the words the `/ledger` page shows for each.
+  A game that writes a new value adds its words there; the page runs that same file. A value missing there still shows,
+  as "got a mark: ...". The words are placeholders until the owner rewrites them.
+
+## The pinned copy (migration 007)
+One copy per account that the player carries into every game. Table `account_pins` (`migrations/007_pins.sql`, also in
+`schema.sql`): account, item, copy, time. A game asks with its own game name and player id; the account behind them is
+found through `account_players`, so the game never handles an account id.
+- `await env.REGISTRY.pinned(game, playerId)`: the copy to carry, read once when a run starts. The pin if the account still
+  holds that copy, else the account's newest copy (by when it came to them), else `null`.
+  `{ itemId, copy, game, pinned, item: { source, rarity, name }, marks }`. A player with no account gets their own newest copy.
+- `await env.REGISTRY.pin({ game, playerId, itemId, copy })`: pin a copy the account holds in any of its games. `{ ok: true }` or `{ error }`.
+- `await env.REGISTRY.heldAcross(game, playerId, limit?)`: every copy the account holds, newest first (up to 200), for a picker.
+- `await env.REGISTRY.markCarried({ itemId, copy, by: { game, playerId }, kind, value, key })`: a night or deed mark from
+  the game the copy was carried into. The copy's holder must be `by` or another player of the same account. The mark and
+  its ledger entry are the marking game's. Same answers as `addMark`.
+- **Going live:** run `migrations/007_pins.sql` on `items-db`, then deploy this Worker, then the games that call these.
+
 ## Dawn Baton's baton (seed/dawn-baton.json)
 One item, **The Dawn Baton** (`dawn-baton` / `baton`, relic, so only Dawn Baton can make copies). When a lap closes, Dawn
 Baton makes one numbered copy for it (key `lap:<n>`) and gives it to one of that lap's human stampers. A lap with no human
@@ -83,4 +101,5 @@ game's voice (Dawn Baton's lap, scoundrel.exe's run with the name or "A Scoundre
 
 ## Not done yet
 - 4Dungeon reads the table through its generated `items.js` snapshot (v1.14), not live. A button that leaves 88x31's catalog isn't retired automatically.
-- 4Dungeon stamps marks (since its v1.25), irl-dungeon (since its v0.22) and 88x31 (since its v0.46, from its registry sync, through the HTTP door's `addMark`).
+- 4Dungeon stamps marks (since its v1.25), irl-dungeon (since its v0.22) and 88x31 (since its v0.46, from its registry sync, through the HTTP door's `addMark`). TILT.EXE marks the pinned copy (`markCarried`).
+- No game has a screen for choosing the pinned copy yet (`pin`), so every game carries the newest copy for now. The HTTP door (88x31) has none of the pinned-copy calls.

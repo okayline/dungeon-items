@@ -7,6 +7,7 @@
 // note, alignment, nature, type, picture, home game) are added for reading; they are not part of the sealed record, so
 // anyone can still rebuild the hashes from `record` alone.
 import { GENESIS } from "./ledger.js";
+import { WORDS_SCRIPT } from "./mark-words.js";
 
 const COLS = "id, kind, game, record, prev_hash, hash, created_at, name";
 
@@ -132,36 +133,8 @@ body.dun .head,body.dun #list>p{font-family:"VT323",ui-monospace,monospace;font-
 const $ = (s) => document.querySelector(s);
 const sayGame = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "irl-dungeon", "scoundrel": "scoundrel.exe", "dawn-baton": "Dawn Baton", "aura-farm": "Aura Farm", "clutch-feed-tilt": "TILT.EXE", "nano-pitch": "Daily Pitch" };
 const g = (x) => sayGame[x] || x;
-// mark words, after 4Dungeon's own (rules.js DEED_WORDS, PHASE_WORDS, OCC_WORDS, MOON_WORDS, MORE_WORDS) and irl-dungeon's
-const PHASE = { new: "a new moon", wax_cres: "a waxing crescent moon", first_q: "a first quarter moon", wax_gib: "a waxing gibbous moon",
-  full: "a full moon", wan_gib: "a waning gibbous moon", last_q: "a last quarter moon", wan_cres: "a waning crescent moon" };
-const OCC = { thirteenth_moon: "under the Thirteenth Moon", eclipse_solar: "during a solar eclipse", eclipse_lunar: "during a lunar eclipse",
-  blue_moon: "under a blue moon", supermoon: "under a supermoon", solstice: "on a solstice", equinox: "on an equinox", mirror_day: "on a mirror day" };
-const DEED = { found_wall: "was found in a wall", from_demon: "came from a demon", given_member: "was a gift from a friend", from_stranger: "was left by a stranger",
-  made_compiler: "was made by COMPILER", copied_cache: "was copied by CACHE", kit: "was brought along", moon_gift: "was a gift from the Moon",
-  found_inside: "was found inside something", carried_up: "was carried up a level", first_copy: "is the very first one ever made", hundredth_copy: "is the hundredth one made",
-  in_locker: "was in a hidden locker", in_archive: "was in the Archive", deep_stone: "was deep in the stone",   // 4Dungeon v1.33
-  beat_demon: "saw a demon fall", talked_down: "saw a demon talked down", fled_fight: "escaped a fight", through_door: "went through a locked door",
-  found_outside: "was found outside, in the real world",                                                  // irl-dungeon v0.22
-  pulled_pack: "was pulled from a pack", free_pack: "came in a Free Pack", welcome_gift: "was a welcome gift", daily_pick: "was a daily pick",   // 88x31 v0.46
-  passed_on: "was passed on by another player", set_reward: "was a reward for a finished set", from_webmaster: "came from the webmaster",
-  first_print: "is a First Print, made before foils", traded: "was traded", gifted: "was given as a gift", guestbook_gift: "was left in a guestbook",
-  filled_request: "filled a request", fused: "survived a fusion" };
-// an 88x31 finish (foil_holo, pattern_etched, effect_crt_vhs): its name from the id, except the effects that are written oddly
-const EFFECT = { dialup: "Dial-Up", crt: "CRT", vhs: "VHS", crt_vhs: "CRT+VHS" };
-const title = (id) => EFFECT[id] || id.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-const an = (w) => (/^[AEIOU]/.test(w) ? "an " : "a ") + w;
-function finishWords(v) {
-  const m = v.match(/^(foil|pattern|effect)_([a-z0-9_]+)$/);
-  return m ? "has " + an(title(m[2])) + " " + m[1] : null;
-}
-const MOON = { answered: "answered the Moon", blessed: "was blessed by the Moon" };
-function markWords(r) {
-  if (r.kind === "night") return PHASE[r.value] ? "was found under " + PHASE[r.value] : OCC[r.value] ? "was found " + OCC[r.value] : null;
-  if (r.kind === "moon") return MOON[r.value] || null;
-  if (/^on_(b[0-9]|[0-9]+)f$/.test(r.value)) return "was picked up on " + r.value.slice(3).toUpperCase();   // the level (4Dungeon v1.33)
-  return DEED[r.value] || finishWords(r.value);
-}
+// mark words: the shared list in src/mark-words.js
+${WORDS_SCRIPT}
 // a checkpoint's detail, told in its game's own voice
 const isInt = (v) => Number.isInteger(v), plural = (v, one, many) => v + " " + (v === 1 ? one : many);
 function lapWords(r) {
