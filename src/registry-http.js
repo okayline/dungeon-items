@@ -4,7 +4,7 @@
 //
 // This door belongs to one game: HTTP_GAME. Every call acts as that game, whatever the arguments say, so the key can only
 // ever make, move, spend, add or retire what is that game's to touch. Other games use the Registry entrypoint (rpc.js).
-import { birth, moveCopy, spendCopy, heldBy, whereIs, addItems, retireItems, itemIds, addMark, addMarks, marksOf } from "./registry.js";
+import { birth, moveCopy, spendCopy, heldBy, whereIs, addItems, retireItems, itemIds, addMark, addMarks, marksOf, pinned, pin, heldAcross, markCarried } from "./registry.js";
 
 const HTTP_GAME = "88x31";
 const sameKey = (a, b) => a.length === b.length && [...a].reduce((x, c, i) => x | (c.charCodeAt(0) ^ b.charCodeAt(i)), 0) === 0;
@@ -26,6 +26,11 @@ const CALLS = {
     const it = await db.prepare("SELECT source FROM items WHERE id = ?").bind(itemId).first();
     return it && it.source === HTTP_GAME ? whereIs(db, itemId, copy) : null;
   },
+  // the carried copy — every call acts as an HTTP_GAME player
+  pinned: (db, [playerId]) => pinned(db, HTTP_GAME, playerId),
+  pin: (db, [a]) => pin(db, { ...a, game: HTTP_GAME }),
+  heldAcross: (db, [playerId, limit]) => heldAcross(db, HTTP_GAME, playerId, limit),
+  markCarried: (db, [a]) => markCarried(db, { ...a, by: { game: HTTP_GAME, playerId: a && a.by && a.by.playerId } }),
   addItems: (db, [items]) => addItems(db, HTTP_GAME, items),
   retireItems: (db, [keys]) => retireItems(db, HTTP_GAME, keys),
   itemIds: (db, [keys]) => itemIds(db, HTTP_GAME, keys),
