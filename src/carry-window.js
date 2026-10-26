@@ -144,7 +144,7 @@ body{margin:0;background:${f.paper};color:${f.ink};font:15px/1.4 ${f.font}}
 .ways .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ways button{font:bold 13px Arial,sans-serif;padding:3px 10px;cursor:pointer;color:#000;background:#c0c0c0;border:2px outset #fff}
 .ways input{flex:1;min-width:0;font:14px "Courier New",monospace;padding:3px}#code{margin:8px 0;padding:8px;background:#000;color:#0f0;font:18px "Courier New",monospace;text-align:center;word-break:break-all}
 ${THEMES[game] || ""}
-${embed ? "body{background:transparent}.frame{padding:0}" : ""}
+${embed ? "body{background:transparent}.frame{padding:0}.window{max-height:300px;overflow:auto}" : ""}
 </style></head><body><div class="frame">
 ${embed ? "" : `<h1>${f.title}</h1>`}
 <p>The one on top goes with you into every game. Pick another to carry it instead.</p>
