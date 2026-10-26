@@ -151,7 +151,6 @@ ${THEMES[game] || ""}
 ${embed ? "body{background:transparent}.frame{padding:0}.window{max-height:200px;overflow:auto}" : ""}
 </style></head><body><div class="frame">
 ${embed ? "" : `<h1>${f.title}</h1>`}
-<p>The one on top goes with you into every game. Pick another to carry it instead.</p>
 ${waysPanel(ways)}
 <div class="window"><div class="t">~*~ The Registry ~*~</div>
 ${cards || `<p class="empty">Nothing here yet. Things you find, win or make in any game show up here.</p>`}
