@@ -22,6 +22,38 @@ const GAME_NAME = { "4dungeon": "4Dungeon", "88x31": "88x31", "irl-dungeon": "ir
   "aura-farm": "Aura Farm", "nano-pitch": "Nano Pitch", "moba-beat": "moba-beat", "tilt": "TILT.EXE", "clutch-feed-tilt": "TILT.EXE",
   "scatter-exe": "SCATTER.EXE", "triviamoba": "TriviaMoba" };
 
+// (Oct 26) THE HOST GAME'S LOOK: when a game has a theme here, the whole window (panels, buttons, cards, type) wears the look
+// of the game it is opened from, after that game's own page (its index.html colours and fonts); each card keeps its home
+// game's name as a tag. A game with no theme gets the registry's look, cards in their home games' looks.
+const THEMES = {
+  "aura-farm": `
+body{background:radial-gradient(circle at 50% 0%,#2a1650 0%,#0b0a12 60%) fixed,#0b0a12;color:#f4f1ff;font:15px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.frame > h1{font-family:Impact,"Arial Black",sans-serif;letter-spacing:.5px;text-shadow:0 0 8px rgba(176,132,255,.6),0 0 16px rgba(255,111,207,.3);color:#f4f1ff}
+.frame > p,.ways .small,.ways small{color:#c9b8ff}
+.window,.ways,.card{background:#171226;border:1px solid #3a2f5c;border-radius:16px;color:#f4f1ff;font:inherit;box-shadow:none;outline:0}
+.window,.ways{padding:14px}.card{border-left:1px solid #3a2f5c;border-right:1px solid #3a2f5c;border-top:1px solid #3a2f5c}
+.window > .t,.ways > .t{font:20px Impact,"Arial Black",sans-serif;color:#f4f1ff;text-shadow:0 0 10px rgba(176,132,255,.75),0 0 24px rgba(176,132,255,.35)}
+.card .h{color:#c9b8ff;font-family:inherit}.card .facts{color:#a99ccf;text-transform:none}.card b{text-transform:none;text-shadow:0 0 10px rgba(176,132,255,.5)}
+.here{border-color:#ff6fcf;box-shadow:0 0 18px rgba(255,111,207,.45)}
+button,.card button,.ways button{font:13px system-ui,sans-serif;color:#f4f1ff;background:#1b1530;border:1px solid #3a2f5c;border-radius:999px;padding:5px 12px}
+.ways input{background:#1b1530;color:#f4f1ff;border:1px solid #3a2f5c;border-radius:999px;padding:5px 10px}#code{background:#1b1530;color:#ff6fcf;border-radius:12px}
+.frame > a{color:#c9b8ff;font-size:12px}`,
+  "scoundrel": `
+@font-face{font-family:"VT323";src:url("/fonts/VT323-Regular.ttf") format("truetype");font-display:swap}
+body{background:#07090a;color:#e4e4df;font:18px/1.2 "VT323",ui-monospace,monospace;font-variant-ligatures:none}
+.frame > h1{font:28px "VT323",ui-monospace,monospace;color:#ffffff;text-transform:uppercase}
+.frame > p,.ways .small,.ways small{color:#8f8f8a}
+.window,.ways,.card{background:#07090a;color:#e4e4df;font:inherit;border:0;border-left:2px solid #8f8f8a;border-right:2px solid #8f8f8a;border-radius:0;box-shadow:none;outline:0}
+.window,.ways{border-top:2px dashed #8f8f8a;border-bottom:2px dashed #8f8f8a;padding:10px 2ch}
+.window > .t,.ways > .t{font:22px "VT323",ui-monospace,monospace;color:#e3b341;text-shadow:none;text-transform:uppercase}
+.card{border-left-color:#4f5d52;border-right-color:#4f5d52}.card .h{color:#e3b341;font:inherit;font-size:15px}.card .facts{color:#8f8f8a;text-transform:uppercase}.card b{text-transform:uppercase;color:#ffffff}
+.card .note{font-size:17px}.here{border-left-color:#e3b341;border-right-color:#e3b341}
+button,.card button,.ways button{font:18px "VT323",ui-monospace,monospace;color:#e4e4df;background:none;border:0;padding:0 4px;text-transform:uppercase}
+button:hover{background:#e4e4df;color:#07090a}button::before{content:"["}button::after{content:"]"}
+.ways input{background:#07090a;color:#ffffff;border:0;border-bottom:2px solid #8f8f8a;font:18px "VT323",monospace}#code{background:#07090a;color:#e3b341;font:24px "VT323",monospace}
+.frame > a{color:#e4e4df}`,
+};
+
 async function marksFor(db, list) {
   const by = new Map(list.map((c) => [c.itemId + ":" + c.copy, []]));
   if (!list.length) return by;
@@ -32,8 +64,8 @@ async function marksFor(db, list) {
   return by;
 }
 
-function card(c, marks, images) {
-  const look = LOOK[c.item.source] || "panel", blessed = marks.filter((m) => m.kind === "moon" && m.value === "blessed").length;
+function card(c, marks, images, themed) {
+  const look = themed ? "" : LOOK[c.item.source] || "panel", blessed = marks.filter((m) => m.kind === "moon" && m.value === "blessed").length;
   const words = marks.map(markWords).filter(Boolean);
   const img = images.get(c.itemId);
   return `<div class="${look} card${c.carried ? " here" : ""}">
@@ -76,7 +108,7 @@ export async function carryWindow(db, { game, playerId, frame = {}, pinUrl, back
   }
   const f = { title: esc(frame.title || "Carry"), paper: colour(frame.paper, "#000033"), ink: colour(frame.ink, "#ffffff"),
     edge: colour(frame.edge, "#c0c0c0"), accent: colour(frame.accent, "#ffff00"), font: font(frame.font, "system-ui, sans-serif") };
-  const cards = list.map((c) => card(c, by.get(c.itemId + ":" + c.copy) || [], images)).join("\n");
+  const cards = list.map((c) => card(c, by.get(c.itemId + ":" + c.copy) || [], images, !!THEMES[game])).join("\n");
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${f.title}</title>
@@ -110,6 +142,7 @@ body{margin:0;background:${f.paper};color:${f.ink};font:15px/1.4 ${f.font}}
 .ways .small,.ways small{font-size:12px;color:#ff99ff}.ways .way{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:6px 0}
 .ways .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ways button{font:bold 13px Arial,sans-serif;padding:3px 10px;cursor:pointer;color:#000;background:#c0c0c0;border:2px outset #fff}
 .ways input{flex:1;min-width:0;font:14px "Courier New",monospace;padding:3px}#code{margin:8px 0;padding:8px;background:#000;color:#0f0;font:18px "Courier New",monospace;text-align:center;word-break:break-all}
+${THEMES[game] || ""}
 </style></head><body><div class="frame">
 <h1>${f.title}</h1>
 <p>The one on top goes with you into every game. Pick another to carry it instead.</p>
