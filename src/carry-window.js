@@ -3,7 +3,8 @@
 // A game passes it through (Registry entrypoint carryWindow) for a player it has already signed in, so the window needs
 // no login of its own. Inside: the registry's look, and each copy's card in its home game's look (the same looks the
 // /ledger page gives checkpoints). Around it: the game's frame (a title and a few colours the game sends).
-//   carryWindow(db, { game, playerId, frame?: { title, paper, ink, edge, accent, font }, pinUrl?, back?, ways? }) -> HTML string
+//   carryWindow(db, { game, playerId, frame?: { title, paper, ink, edge, accent, font }, pinUrl?, back?, ways?, embed? }) -> HTML string
+// embed: the window sits inside the game's own user page (an iframe), so it leaves out its title and back link.
 // The pin button POSTs { itemId, copy } to pinUrl (the game's own pin route, default /api/pin) and reloads.
 // (Oct 26) WAYS IN: with `ways` ({ player, codes, passkeys }, what the game's GET /api/account answers), the window also
 // shows the shared account's save codes and passkeys, above the registry, and makes, removes and logs in with them through
@@ -95,7 +96,7 @@ ${w.player && has ? `<div class="row"><button type="button" id="logout">log out 
 </div>`;
 }
 
-export async function carryWindow(db, { game, playerId, frame = {}, pinUrl, back, ways } = {}) {
+export async function carryWindow(db, { game, playerId, frame = {}, pinUrl, back, ways, embed } = {}) {
   // the carried one (the pin, else the newest) goes on top, even when nothing is pinned
   const [all, p] = await Promise.all([heldAcross(db, game, playerId, 50), pinned(db, game, playerId)]);
   const list = all.map((c) => ({ ...c, carried: !!p && c.itemId === p.itemId && c.copy === p.copy })).sort((a, b) => b.carried - a.carried);
@@ -143,17 +144,20 @@ body{margin:0;background:${f.paper};color:${f.ink};font:15px/1.4 ${f.font}}
 .ways .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ways button{font:bold 13px Arial,sans-serif;padding:3px 10px;cursor:pointer;color:#000;background:#c0c0c0;border:2px outset #fff}
 .ways input{flex:1;min-width:0;font:14px "Courier New",monospace;padding:3px}#code{margin:8px 0;padding:8px;background:#000;color:#0f0;font:18px "Courier New",monospace;text-align:center;word-break:break-all}
 ${THEMES[game] || ""}
+${embed ? "body{background:transparent}.frame{padding:0}" : ""}
 </style></head><body><div class="frame">
-<h1>${f.title}</h1>
+${embed ? "" : `<h1>${f.title}</h1>`}
 <p>The one on top goes with you into every game. Pick another to carry it instead.</p>
 ${waysPanel(ways)}
 <div class="window"><div class="t">~*~ The Registry ~*~</div>
 ${cards || `<p class="empty">Nothing here yet. Things you find, win or make in any game show up here.</p>`}
 </div>
 <p id="say"></p>
-${back ? `<a href="${esc(path(back, "/"))}">back</a>` : ""}
+${back && !embed ? `<a href="${esc(path(back, "/"))}">back</a>` : ""}
 </div>
 <script>
+// embedded in the game's own page, a change (a pin, a log in or out) reloads the whole page, so the game shows it too
+var reload = function () { try { (window.top !== window ? window.top : window).location.reload(); } catch (e) { location.reload(); } };
 document.querySelectorAll("button[data-item]").forEach(function (b) { b.onclick = async function () {
   b.disabled = true;
   try {
@@ -161,7 +165,7 @@ document.querySelectorAll("button[data-item]").forEach(function (b) { b.onclick 
       body: JSON.stringify({ itemId: Number(b.dataset.item), copy: Number(b.dataset.copy) }) });
     var j = await r.json().catch(function () { return {}; });
     if (!r.ok || j.error) { document.getElementById("say").textContent = j.error || "That didn't work. Try again."; b.disabled = false; return; }
-    location.reload();
+    location.reload();   // a pin only changes the window
   } catch (e) { document.getElementById("say").textContent = "That didn't work. Try again."; b.disabled = false; }
 }; });
 // ways in (only when the game sent them): the same calls every game's own account screen makes
@@ -178,8 +182,8 @@ var pkOops = function (e) { return new Error(e && e.name === "NotAllowedError" ?
 function on(id, fn) { var b = document.getElementById(id); if (b) b.onclick = async function () { b.disabled = true; try { await fn(); } catch (e) { say(e.message); } b.disabled = false; }; }
 if (!(window.PublicKeyCredential && navigator.credentials)) document.querySelectorAll("[data-pk]").forEach(function (b) { b.hidden = true; });
 on("newcode", async function () { var j = await call("/api/codes", { action: "new" }); var c = document.getElementById("code"); c.hidden = false; c.textContent = j.code; say("Write it down or keep it in a password manager. It won't be shown again."); });
-on("loadcode", async function () { var j = await call("/api/load", { code: document.getElementById("typed").value.trim() }); say("Logged in as " + (j.name || "your player") + "."); setTimeout(function () { location.reload(); }, 600); });
-on("logout", async function () { await call("/api/logout", {}); location.reload(); });
+on("loadcode", async function () { var j = await call("/api/load", { code: document.getElementById("typed").value.trim() }); say("Logged in as " + (j.name || "your player") + "."); setTimeout(function () { reload(); }, 600); });
+on("logout", async function () { await call("/api/logout", {}); reload(); });
 on("addkey", async function () {
   try { var o = await call("/api/passkey", { action: "register_options" });
     var cr = await navigator.credentials.create({ publicKey: Object.assign({}, o, { challenge: B(o.challenge), user: Object.assign({}, o.user, { id: B(o.user.id) }),
@@ -187,18 +191,18 @@ on("addkey", async function () {
     await call("/api/passkey", { action: "register", label: /iPhone/.test(navigator.userAgent) ? "iPhone" : /Android/.test(navigator.userAgent) ? "Android" : /Mac/.test(navigator.userAgent) ? "Mac" : /Windows/.test(navigator.userAgent) ? "Windows PC" : "this device",
       credential: { id: cr.id, response: { clientDataJSON: U(cr.response.clientDataJSON), attestationObject: U(cr.response.attestationObject) } } });
   } catch (e) { throw pkOops(e); }
-  location.reload();
+  reload();
 });
 on("loadkey", async function () {
   try { var o = await call("/api/passkey", { action: "login_options" });
     var cr = await navigator.credentials.get({ publicKey: Object.assign({}, o, { challenge: B(o.challenge) }) });
     await call("/api/passkey", { action: "login", credential: { id: cr.id, response: { clientDataJSON: U(cr.response.clientDataJSON), authenticatorData: U(cr.response.authenticatorData), signature: U(cr.response.signature) } } });
   } catch (e) { throw pkOops(e); }
-  location.reload();
+  reload();
 });
 document.querySelectorAll("[data-forget]").forEach(function (b) { b.onclick = async function () {
   if (!confirm(b.dataset.forget === "codes" ? "Forget this save code? It stops working everywhere." : "Remove this passkey? It stops working everywhere.")) return;
-  try { await call("/api/" + b.dataset.forget, { action: "remove", id: Number(b.dataset.id) }); location.reload(); } catch (e) { say(e.message); }
+  try { await call("/api/" + b.dataset.forget, { action: "remove", id: Number(b.dataset.id) }); reload(); } catch (e) { say(e.message); }
 }; });
 </script></body></html>`;
 }

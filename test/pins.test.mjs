@@ -75,3 +75,10 @@ test("the carry window shows the ways in only when the game sends them", async (
   const html = await carryWindow(db, { ...TILT, ways: { player: true, codes: [{ id: 5, created_at: 86400 }], passkeys: [{ id: 2, label: "<Mac>" }] } });
   assert.ok(html.includes("Ways in") && html.includes('data-forget="codes" data-id="5"') && html.includes("&lt;Mac&gt;") && html.includes('id="logout"'));
 });
+
+test("an embedded carry window leaves out its title and back link", async () => {
+  const db = await setup();
+  const { carryWindow } = await import("../src/carry-window.js");
+  const html = await carryWindow(db, { ...TILT, frame: { title: "TILT CARRY" }, back: "/", embed: true });
+  assert.ok(!html.includes("<h1>") && !html.includes(">back</a>"));
+});
