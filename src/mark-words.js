@@ -25,6 +25,8 @@ export const DEED = { found_wall: "was found in a wall", from_demon: "came from 
   rode_with_baton: "rode along with the baton",                 // Dawn Baton v0.27
   first_in_wing: "was first through a wing",                    // irl-dungeon v0.23
   kept_one_of_one: "was there when a 1-of-1 was kept",          // 88x31 v0.47
+  filled_sheet: "was carried through a full sheet",             // SCATTER.EXE v0.2.0
+  wrote_crowd: "was there when the crowd got its answers",       // TriviaMoba v0.19
 };
 // an 88x31 finish (foil_holo, pattern_etched, effect_crt_vhs): its name from the id, except the effects that are written oddly
 export const EFFECT = { dialup: "Dial-Up", crt: "CRT", vhs: "VHS", crt_vhs: "CRT+VHS" };
