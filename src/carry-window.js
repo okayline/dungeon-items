@@ -41,18 +41,19 @@ button,.card button,.ways button{font:13px system-ui,sans-serif;color:#f4f1ff;ba
 .frame > a{color:#c9b8ff;font-size:12px}`,
   "scoundrel": `
 @font-face{font-family:"VT323";src:url("/fonts/VT323-Regular.ttf") format("truetype");font-display:swap}
-body{background:#07090a;color:#e4e4df;font:18px/1.2 "VT323",ui-monospace,monospace;font-variant-ligatures:none}
-.frame > h1{font:28px "VT323",ui-monospace,monospace;color:#ffffff;text-transform:uppercase}
+body{background:#07090a;color:#e4e4df;font:15px/1.2 "VT323",ui-monospace,monospace;font-variant-ligatures:none}
+.frame > h1{font:22px "VT323",ui-monospace,monospace;color:#ffffff;text-transform:uppercase}
 .frame > p,.ways .small,.ways small{color:#8f8f8a}
 .window,.ways,.card{background:#07090a;color:#e4e4df;font:inherit;border:0;border-left:2px solid #8f8f8a;border-right:2px solid #8f8f8a;border-radius:0;box-shadow:none;outline:0}
 .window,.ways{border-top:2px dashed #8f8f8a;border-bottom:2px dashed #8f8f8a;padding:10px 2ch}
-.window > .t,.ways > .t{font:22px "VT323",ui-monospace,monospace;color:#e3b341;text-shadow:none;text-transform:uppercase}
-.card{border-left-color:#4f5d52;border-right-color:#4f5d52}.card .h{color:#e3b341;font:inherit;font-size:15px}.card .facts{color:#8f8f8a;text-transform:uppercase}.card b{text-transform:uppercase;color:#ffffff}
-.card .note{font-size:17px}.here{border-left-color:#e3b341;border-right-color:#e3b341}
-button,.card button,.ways button{font:18px "VT323",ui-monospace,monospace;color:#e4e4df;background:none;border:0;padding:0 4px;text-transform:uppercase}
+.window > .t,.ways > .t{font:18px "VT323",ui-monospace,monospace;color:#e3b341;text-shadow:none;text-transform:uppercase}
+.card{border-left-color:#4f5d52;border-right-color:#4f5d52}.card .h{color:#e3b341;font:inherit;font-size:13px}.card .facts{color:#8f8f8a;text-transform:uppercase}.card b{text-transform:uppercase;color:#ffffff}
+.card .note{font-size:14px}.here{border-left-color:#e3b341;border-right-color:#e3b341}
+button,.card button,.ways button{font:15px "VT323",ui-monospace,monospace;color:#e4e4df;background:none;border:0;padding:0 4px;text-transform:uppercase}
 button:hover{background:#e4e4df;color:#07090a}button::before{content:"["}button::after{content:"]"}
-.ways input{background:#07090a;color:#ffffff;border:0;border-bottom:2px solid #8f8f8a;font:18px "VT323",monospace}#code{background:#07090a;color:#e3b341;font:24px "VT323",monospace}
-.frame > a{color:#e4e4df}`,
+.ways input{background:#07090a;color:#ffffff;border:0;border-bottom:2px solid #8f8f8a;font:15px "VT323",monospace}#code{background:#07090a;color:#e3b341;font:20px "VT323",monospace}
+.frame > a{color:#e4e4df}
+.ways .small,.ways small,.frame > p{font-size:11px}.card .facts{font-size:11px}`,
 };
 
 async function marksFor(db, list) {
@@ -144,7 +145,7 @@ body{margin:0;background:${f.paper};color:${f.ink};font:15px/1.4 ${f.font}}
 .ways .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ways button{font:bold 13px Arial,sans-serif;padding:3px 10px;cursor:pointer;color:#000;background:#c0c0c0;border:2px outset #fff}
 .ways input{flex:1;min-width:0;font:14px "Courier New",monospace;padding:3px}#code{margin:8px 0;padding:8px;background:#000;color:#0f0;font:18px "Courier New",monospace;text-align:center;word-break:break-all}
 ${THEMES[game] || ""}
-${embed ? "body{background:transparent}.frame{padding:0}.window{max-height:300px;overflow:auto}" : ""}
+${embed ? "body{background:transparent}.frame{padding:0}.window{max-height:200px;overflow:auto}" : ""}
 </style></head><body><div class="frame">
 ${embed ? "" : `<h1>${f.title}</h1>`}
 <p>The one on top goes with you into every game. Pick another to carry it instead.</p>
