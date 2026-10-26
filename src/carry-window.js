@@ -91,7 +91,6 @@ function waysPanel(w) {
     <button type="button" data-forget="passkey" data-id="${Number(k.id)}">remove</button></div>`)].join("");
   const has = (w.codes || []).length + (w.passkeys || []).length > 0;
   return `<div class="ways"><div class="t">Ways in</div>
-<p class="small">A save code or passkey logs you in as this player anywhere, in every 88x31 game.</p>
 ${rows || `<p class="small">No save codes or passkeys yet.</p>`}
 <div id="code" hidden></div>
 <div class="row"><button type="button" id="newcode">🔑 New code</button><button type="button" id="addkey" data-pk>👆 Add passkey</button><button type="button" id="loadkey" data-pk>👆 Use passkey</button></div>
