@@ -76,7 +76,7 @@ body{margin:0;background:${f.paper};color:${f.ink};font:15px/1.4 ${f.font}}
 .card button{display:block;margin:8px 0 0 auto;font:bold 13px Arial,sans-serif;padding:3px 10px;cursor:pointer;color:#000;background:#c0c0c0;border:2px outset #fff}
 .gold{color:#e3b341}.here{outline:3px solid #ff6fcf;outline-offset:2px}
 .panel{background:#000080;border:3px ridge #c0c0c0;color:#fff}.panel .h{color:#ffff00}.panel .facts{color:#ff99ff}
-@font-face{font-family:"VT323";src:url("https://dungeon.88x31.app/fonts/VT323-Regular.ttf") format("truetype");font-display:swap;size-adjust:130%}
+@font-face{font-family:"VT323";src:url("/fonts/VT323-Regular.ttf") format("truetype"),url("https://dungeon.88x31.app/fonts/VT323-Regular.ttf") format("truetype");font-display:swap;size-adjust:130%}
 .ascii{background:#07090a;color:#e4e4df;border-left:2px solid #8f8f8a;border-right:2px solid #8f8f8a;font:16px/1.2 "VT323",ui-monospace,monospace}
 .ascii .h{color:#e3b341}.ascii .facts{text-transform:uppercase;color:#8f8f8a}.ascii b{text-transform:uppercase}
 .baton{background:#1d1d63;border:2px solid #6c6cff;border-radius:6px;color:#f2f2ff;font:14px/1.35 "Trebuchet MS",Verdana,sans-serif;border-top:6px solid #ffb84d}.baton .h{color:#ffe066}
