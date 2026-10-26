@@ -5,6 +5,8 @@
 // /ledger page gives checkpoints). Around it: the game's frame (a title and a few colours the game sends).
 //   carryWindow(db, { game, playerId, frame?: { title, paper, ink, edge, accent, font }, pinUrl?, back?, ways?, embed? }) -> HTML string
 // embed: the window sits inside the game's own user page (an iframe), so it leaves out its title and back link.
+// preview: the localStorage key where the game keeps a guest's signed name (Nano Pitch "np-preview"); a new code or
+// passkey sends it as `preview`, so the guest keeps that name, and the key is cleared after.
 // The pin button POSTs { itemId, copy } to pinUrl (the game's own pin route, default /api/pin) and reloads.
 // (Oct 26) WAYS IN: with `ways` ({ player, codes, passkeys }, what the game's GET /api/account answers), the window also
 // shows the shared account's save codes and passkeys, above the registry, and makes, removes and logs in with them through
@@ -55,6 +57,7 @@ button:hover{background:#e4e4df;color:#07090a}button::before{content:"["}button:
 .frame > a{color:#e4e4df}
 .ways .small,.ways small,.frame > p{font-size:11px}.card .facts{font-size:11px}`,
 };
+THEMES["nano-pitch"] = THEMES["aura-farm"];   // Nano Pitch's page follows Aura Farm's look (its style.css says so)
 
 async function marksFor(db, list) {
   const by = new Map(list.map((c) => [c.itemId + ":" + c.copy, []]));
@@ -97,7 +100,7 @@ ${w.player && has ? `<div class="row"><button type="button" id="logout">log out 
 </div>`;
 }
 
-export async function carryWindow(db, { game, playerId, frame = {}, pinUrl, back, ways, embed } = {}) {
+export async function carryWindow(db, { game, playerId, frame = {}, pinUrl, back, ways, embed, preview } = {}) {
   // the carried one (the pin, else the newest) goes on top, even when nothing is pinned
   const [all, p] = await Promise.all([heldAcross(db, game, playerId, 50), pinned(db, game, playerId)]);
   const list = all.map((c) => ({ ...c, carried: !!p && c.itemId === p.itemId && c.copy === p.copy })).sort((a, b) => b.carried - a.carried);
@@ -170,6 +173,9 @@ document.querySelectorAll("button[data-item]").forEach(function (b) { b.onclick 
   } catch (e) { document.getElementById("say").textContent = "That didn't work. Try again."; b.disabled = false; }
 }; });
 // ways in (only when the game sent them): the same calls every game's own account screen makes
+var PREVIEW = ${JSON.stringify(typeof preview === "string" && /^[a-z0-9-]{1,40}$/.test(preview) ? preview : "")};
+var withPreview = function (b) { try { var p = PREVIEW && JSON.parse(localStorage.getItem(PREVIEW)); if (p && p.name && p.sig) b.preview = p; } catch (e) {} return b; };
+var dropPreview = function () { try { if (PREVIEW) localStorage.removeItem(PREVIEW); } catch (e) {} };
 var say = function (t) { document.getElementById("say").textContent = t; };
 async function call(path, body) {
   var r = await fetch(path, { method: "POST", headers: { "content-type": "application/json" }, credentials: "same-origin", body: JSON.stringify(body) });
@@ -182,15 +188,15 @@ var U = function (b) { return btoa(String.fromCharCode.apply(null, new Uint8Arra
 var pkOops = function (e) { return new Error(e && e.name === "NotAllowedError" ? "Passkey cancelled (or it timed out)." : e && e.name === "InvalidStateError" ? "This device already has a passkey for you." : (e && e.message) || "The passkey didn't work."); };
 function on(id, fn) { var b = document.getElementById(id); if (b) b.onclick = async function () { b.disabled = true; try { await fn(); } catch (e) { say(e.message); } b.disabled = false; }; }
 if (!(window.PublicKeyCredential && navigator.credentials)) document.querySelectorAll("[data-pk]").forEach(function (b) { b.hidden = true; });
-on("newcode", async function () { var j = await call("/api/codes", { action: "new" }); var c = document.getElementById("code"); c.hidden = false; c.textContent = j.code; say("Write it down or keep it in a password manager. It won't be shown again."); });
+on("newcode", async function () { var j = await call("/api/codes", withPreview({ action: "new" })); dropPreview(); var c = document.getElementById("code"); c.hidden = false; c.textContent = j.code; say("Write it down or keep it in a password manager. It won't be shown again."); });
 on("loadcode", async function () { var j = await call("/api/load", { code: document.getElementById("typed").value.trim() }); say("Logged in as " + (j.name || "your player") + "."); setTimeout(function () { reload(); }, 600); });
 on("logout", async function () { await call("/api/logout", {}); reload(); });
 on("addkey", async function () {
-  try { var o = await call("/api/passkey", { action: "register_options" });
+  try { var o = await call("/api/passkey", withPreview({ action: "register_options" }));
     var cr = await navigator.credentials.create({ publicKey: Object.assign({}, o, { challenge: B(o.challenge), user: Object.assign({}, o.user, { id: B(o.user.id) }),
       excludeCredentials: o.excludeCredentials.map(function (c) { return Object.assign({}, c, { id: B(c.id) }); }) }) });
-    await call("/api/passkey", { action: "register", label: /iPhone/.test(navigator.userAgent) ? "iPhone" : /Android/.test(navigator.userAgent) ? "Android" : /Mac/.test(navigator.userAgent) ? "Mac" : /Windows/.test(navigator.userAgent) ? "Windows PC" : "this device",
-      credential: { id: cr.id, response: { clientDataJSON: U(cr.response.clientDataJSON), attestationObject: U(cr.response.attestationObject) } } });
+    await call("/api/passkey", withPreview({ action: "register", label: /iPhone/.test(navigator.userAgent) ? "iPhone" : /Android/.test(navigator.userAgent) ? "Android" : /Mac/.test(navigator.userAgent) ? "Mac" : /Windows/.test(navigator.userAgent) ? "Windows PC" : "this device",
+      credential: { id: cr.id, response: { clientDataJSON: U(cr.response.clientDataJSON), attestationObject: U(cr.response.attestationObject) } } })); dropPreview();
   } catch (e) { throw pkOops(e); }
   reload();
 });
