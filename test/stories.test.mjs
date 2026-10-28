@@ -28,6 +28,6 @@ test("the main page of a stories.* address is the stories page; other addresses 
   const env = { DB: fakeD1() };
   const home = await worker.fetch(new Request("https://stories.88x31.app/"), env);
   assert.equal(home.status, 200);
-  assert.match(await home.text(), /Stories from the servers/);
+  assert.match(await home.text(), /Tales from the Safe Room/);
   assert.equal((await worker.fetch(new Request("https://dungeon-items.example.dev/"), env)).status, 404);
 });

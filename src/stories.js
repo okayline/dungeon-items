@@ -50,7 +50,7 @@ export async function listStories(db, params) {
 }
 
 export const STORIES_PAGE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stories</title><style>
+<title>Tales from the Safe Room</title><style>
 :root{--bg:#0e0d0d;--fg:#dcd6cf;--dim:#8d857c;--line:#3a2a28;--red:#b3261e}
 body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.75 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;text-wrap:pretty}
 header{border-bottom:3px solid var(--red);background:#151212}
@@ -65,7 +65,7 @@ h2{font:italic 400 1.6rem/1.3 "Iowan Old Style","Palatino Linotype",Palatino,"Bo
 p{margin:.9rem 0;white-space:pre-wrap}
 a,button{color:#d9534a;background:none;border:0;font:inherit;cursor:pointer;padding:0;margin-top:1.6rem}
 a:hover,button:hover{text-decoration:underline}
-</style></head><body><header><div><h1>Stories from the servers</h1><div class="sub">Stories from the past week</div></div></header><main><div id="list"></div><button id="more" hidden>&laquo; Older chapters</button></main>
+</style></head><body><header><div><h1>Tales from the Safe Room</h1><div class="sub">Stories from the past week</div></div></header><main><div id="list"></div><button id="more" hidden>&laquo; Older chapters</button></main>
 <script>
 var next=null,all=false,held=[],list=document.getElementById("list"),more=document.getElementById("more");
 function ld(t){return new Date(t*1000).toLocaleDateString("en-CA")}   // the visitor's own date (YYYY-MM-DD)
