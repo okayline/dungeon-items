@@ -52,7 +52,7 @@ export async function listStories(db, params) {
 export const STORIES_PAGE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Stories</title><style>
 :root{--bg:#0e0d0d;--fg:#dcd6cf;--dim:#8d857c;--line:#3a2a28;--red:#b3261e}
-body{margin:0;background:var(--bg);color:var(--fg);font:19px/1.75 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;text-wrap:pretty}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.75 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;text-wrap:pretty}
 header{border-bottom:3px solid var(--red);background:#151212}
 header>div{max-width:42rem;margin:0 auto;padding:1.6rem 16px}
 h1{font:400 1.8rem/1.2 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;letter-spacing:.14em;text-transform:uppercase;margin:0}
