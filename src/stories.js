@@ -87,7 +87,7 @@ export async function addPictures(env, a) {
   if (!(await env.DB.prepare("SELECT 1 FROM stories WHERE id = ?").bind(id).first())) return { error: "No such chapter." };
   if (await env.PICTURES.head(`story-${id}/1`)) return { error: "This chapter already has pictures." };
   try {
-    const made = await Promise.all(prompts.map((p, i) => makePicture(env.AI, i + 1, p)));   // all three first, so a failure saves none
+    const made = await Promise.all(prompts.map((p, i) => makePicture(env.AI, i + 1, p).catch((e) => { throw new Error("picture " + (i + 1) + " (" + (i ? "flux" : "phoenix") + "): " + String((e && e.message) || e)); })));   // all three first, so a failure saves none
     await Promise.all(made.map((m, i) => env.PICTURES.put(`story-${id}/${i + 1}`, m.bytes, { httpMetadata: { contentType: m.type }, customMetadata: { prompt: prompts[i], model: i ? FLUX : PHOENIX } })));
     return { ok: true, id, pictures: 3 };
   } catch (e) { return { error: String((e && e.message) || "Something broke.") }; }
