@@ -11,7 +11,7 @@
 //   GET /ledger               the ledger as a page; /ledger?item=ID&copy=N shows one copy.
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
-import { storiesCall, listStories, servePicture, serveVoice, STORIES_PAGE } from "./stories.js";
+import { storiesCall, listStories, servePicture, STORIES_PAGE } from "./stories.js";
 import { verify } from "./registry.js";
 import { publicLedger, copyHistory, LEDGER_PAGE, isMystery, mysteryItem } from "./public-ledger.js";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-methods": "GET, OPTIONS", "access-control-allow-headers": "if-none-match" };
@@ -61,7 +61,6 @@ export default {
       return c ? json(c, 200, { "cache-control": "public, max-age=60" }) : json({ error: "No such copy." }, 404);
     }
     if (url.pathname.startsWith("/api/stories/picture/")) return (await servePicture(env, url.pathname)) || json({ error: "No such picture." }, 404);
-    if (url.pathname.startsWith("/api/stories/voice/")) return (await serveVoice(env, url.pathname)) || json({ error: "No such voice." }, 404);
     if (url.pathname === "/api/stories") { const r = await listStories(env.DB, url.searchParams); return r.error ? json(r, 400) : json(r, 200, { "cache-control": "public, max-age=60" }); }
     if (url.pathname === "/stories" || (url.pathname === "/" && url.hostname.startsWith("stories."))) return new Response(STORIES_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     if (url.pathname === "/ledger") return new Response(LEDGER_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });

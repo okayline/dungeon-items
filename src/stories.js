@@ -6,8 +6,6 @@
 //   POST /rpc/stories/seal   (same key) seals any chapter that is not on the ledger yet (the ones saved before sealing existed); safe to repeat.
 //   POST /rpc/stories/picture-file?id=<id>&slot=<1-3> (same key) with a PNG or JPEG as the body saves that picture as is (one made elsewhere).
 //   GET  /api/stories/picture/<id>/<1|2|3>   public, the picture itself (404 if the chapter has none).
-//   POST /rpc/stories/voice  (same key) with [{ id }] reads the chapter aloud (Aura 2) and keeps the mp3 in R2; [{ id, redo: true }] replaces it; { speaker } is optional; { sentences: 2 } reads only the first 2 sentences (a short test; redo replaces it).
-//   GET  /api/stories/voice/<id>   public, the narration (audio/mpeg; 404 if the chapter has none).
 // Every chapter is sealed on the registry's one ledger in the same D1 batch that saves it (kind "story", game "l4d", no player):
 // the record holds the day, chapter, server, map and a SHA-256 fingerprint of the title and text, never the text itself.
 // A chapter holds titles and character names only. Anything that looks like a Steam ID or an address is refused.
@@ -84,60 +82,15 @@ export async function servePicture(env, pathname) {
   return o ? new Response(o.body, { headers: { "content-type": (o.httpMetadata && o.httpMetadata.contentType) || "image/png", "cache-control": "public, max-age=300" } }) : null;
 }
 
-// Voice: one narration per chapter (the story text read aloud by Aura 2), kept in R2 as story-<id>/voice (never in D1).
-//   { id } makes it (refused if the chapter already has one); { id, redo: true } replaces it. { speaker } picks one of Aura's voices (optional).
-const AURA = "@cf/deepgram/aura-2-en", VOICE_CHUNK = 1500;
-function voiceChunks(text) {   // whole paragraphs, grouped up to VOICE_CHUNK characters (a long paragraph is cut at sentence ends)
-  const out = []; let cur = "";
-  const add = (s) => { if (cur && cur.length + 2 + s.length > VOICE_CHUNK) { out.push(cur); cur = s; } else cur = cur ? cur + "\n\n" + s : s; };
-  for (const p of text.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean)) {
-    if (p.length <= VOICE_CHUNK) add(p); else for (const s of p.match(/[^.!?]+[.!?]*\s*/g) || [p]) add(s.trim());
-  }
-  if (cur) out.push(cur);
-  return out;
-}
-export async function addVoice(env, a) {
-  a = a || {};
-  const id = Number(a.id), speaker = a.speaker == null ? null : String(a.speaker);
-  if (!Number.isInteger(id) || id < 1 || (speaker !== null && !/^[a-z]{2,20}$/.test(speaker))) return { error: "id is needed (speaker, if given, is one lowercase word)." };
-  if (!env.AI || !env.PICTURES) return { error: "Voice is not set up." };
-  const row = await env.DB.prepare("SELECT body FROM stories WHERE id = ?").bind(id).first();
-  if (!row) return { error: "No such chapter." };
-  const has = !!(await env.PICTURES.head(`story-${id}/voice`));
-  if (has && !a.redo) return { error: "This chapter already has a voice (use redo: true to replace it)." };
-  try {
-    const parts = [];
-    const first = Number.isInteger(a.sentences) && a.sentences >= 1 && a.sentences <= 10 ? a.sentences : 0;   // a short test: just the first few sentences
-    const body = first ? (row.body.match(/[^.!?]+[.!?]+["”]?\s*/g) || [row.body]).slice(0, first).join("").trim() : row.body;
-    for (const text of voiceChunks(body)) {   // one at a time, in order
-      const out = await env.AI.run(AURA, speaker ? { text, speaker, encoding: "mp3" } : { text, encoding: "mp3" });   // answers with the audio bytes
-      const bytes = new Uint8Array(await new Response(out).arrayBuffer());
-      if (bytes.length < 100) throw new Error("A piece of the voice came back empty.");
-      parts.push(bytes);
-    }
-    const all = new Uint8Array(parts.reduce((n, p) => n + p.length, 0)); let at = 0;
-    for (const p of parts) { all.set(p, at); at += p.length; }
-    await env.PICTURES.put(`story-${id}/voice`, all, { httpMetadata: { contentType: "audio/mpeg" }, customMetadata: { model: AURA, speaker: speaker || "default" } });
-    return { ok: true, id, pieces: parts.length, bytes: all.length, redone: has };
-  } catch (e) { return { error: "voice: " + String((e && e.message) || e) }; }
-}
-
-export async function serveVoice(env, pathname) {
-  const m = pathname.match(/^\/api\/stories\/voice\/(\d{1,9})$/);
-  if (!m || !env.PICTURES) return null;
-  const o = await env.PICTURES.get(`story-${m[1]}/voice`);
-  return o ? new Response(o.body, { headers: { "content-type": "audio/mpeg", "cache-control": "public, max-age=300" } }) : null;
-}
-
 export async function storiesCall(req, env) {
-  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal|picture-file|voice)$/);
+  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal|picture-file)$/);
   if (!m) return null;
   const key = req.headers.get("x-stories-key") || "";
   if (req.method !== "POST" || !env.STORIES_KEY || env.STORIES_KEY.length < 16 || !sameKey(key, env.STORIES_KEY)) return null;
   if (m[1] === "picture-file") return Response.json(await uploadPicture(env, new URL(req.url).searchParams, await req.arrayBuffer()), { headers: { "cache-control": "no-store" } });
   let args;
   try { args = await req.json(); if (!Array.isArray(args)) throw 0; } catch { return Response.json({ error: "Send a JSON array." }, { status: 400 }); }
-  return Response.json(m[1] === "seal" ? await sealStories(env.DB) : m[1] === "voice" ? await addVoice(env, args[0]) : await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });
+  return Response.json(m[1] === "seal" ? await sealStories(env.DB) : await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });
 }
 
 export async function listStories(db, params) {
