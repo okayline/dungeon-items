@@ -12,6 +12,7 @@
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { birth, moveCopy, spendCopy, heldBy, whereIs, verify, addMark, addMarks, marksOf, itemIds, checkpoint, sealRun, heldAcross, pinned, pin, markCarried } from "./registry.js";
 import { copyStory } from "./public-ledger.js";
+import { worldEvents } from "./stories.js";
 import { carryWindow } from "./carry-window.js";
 import * as A from "./accounts.js";
 
@@ -26,6 +27,7 @@ export class Registry extends WorkerEntrypoint {
   addMarks(args) { return addMarks(this.env.DB, args); }   // one entry for everything a move did to many copies
   marksOf(itemId, copy) { return marksOf(this.env.DB, itemId, copy); }
   copyStory(itemId, copy) { return copyStory(this.env.DB, itemId, copy); }   // one copy's public story (what /ledger shows), for a game's own screen
+  worldEvents() { return worldEvents(this.env.DB); }   // what happened in the l4d chapters today and yesterday: { events: ["tank_fell", "witch_fell"] }, for a game to stamp as a `night` mark
   itemIds(game, keys) { return itemIds(this.env.DB, game, keys); }   // a game's own item ids by source_key: { "<key>": id } (Dawn Baton finds its baton this way)
   checkpoint(args) { return checkpoint(this.env.DB, args); }   // a game's own ledger head (and its player's public name, unsealed), so the registry's Bitcoin stamp covers it
   sealRun(args) { return sealRun(this.env.DB, args); }         // a run's moments, for a game with no ledger of its own (4Dungeon)

@@ -36,9 +36,10 @@ export function finishWords(v) {
   const m = v.match(/^(foil|pattern|effect)_([a-z0-9_]+)$/);
   return m ? "has " + an(title(m[2])) + " " + m[1] : null;
 }
+export const WORLD = { tank_fell: "the day a Tank fell", witch_fell: "the day a Witch fell" };   // l4d chapters (Registry.worldEvents)
 export const MOON = { answered: "answered the Moon", blessed: "was blessed by the Moon" };
 export function markWords(r) {
-  if (r.kind === "night") return PHASE[r.value] ? "was found under " + PHASE[r.value] : OCC[r.value] ? "was found " + OCC[r.value] : null;
+  if (r.kind === "night") return PHASE[r.value] ? "was found under " + PHASE[r.value] : OCC[r.value] ? "was found " + OCC[r.value] : WORLD[r.value] ? "was found on " + WORLD[r.value] : null;
   if (r.kind === "moon") return MOON[r.value] || null;
   if (/^on_(b[0-9]|[0-9]+)f$/.test(r.value)) return "was picked up on " + r.value.slice(3).toUpperCase();   // the level (4Dungeon v1.33)
   if (/^dawn_band_[0-9]+$/.test(r.value)) return "was born at dawn, band " + r.value.slice(10);   // Dawn Baton v0.27
@@ -47,6 +48,6 @@ export function markWords(r) {
 }
 
 // the page's copy of the above, as script text
-export const WORDS_SCRIPT = [["PHASE", PHASE], ["OCC", OCC], ["DEED", DEED], ["EFFECT", EFFECT], ["MOON", MOON]]
+export const WORDS_SCRIPT = [["PHASE", PHASE], ["OCC", OCC], ["WORLD", WORLD], ["DEED", DEED], ["EFFECT", EFFECT], ["MOON", MOON]]
   .map(([k, v]) => "const " + k + " = " + JSON.stringify(v) + ";").join("\n")
   + "\nconst title = " + title + ";\nconst an = " + an + ";\n" + finishWords + "\n" + markWords;

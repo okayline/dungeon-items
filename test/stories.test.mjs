@@ -49,3 +49,19 @@ test("every chapter is sealed on the ledger as it is saved, and older ones can b
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS c FROM ledger WHERE kind = 'story'").get().c, 2);
   assert.equal((await verify(db)).ok, true);
 });
+
+test("worldEvents reads the Tank and Witch from today's and yesterday's chapters only, and the mark words show", async () => {
+  const { worldEvents } = await import("../src/stories.js");
+  const { markWords } = await import("../src/mark-words.js");
+  const db = fakeD1(), add = (day, moments) => addStory(db, { day, server: "versus", map: "m", title: "T", body: "Zoey held the hallway.", facts: { moments } });
+  const noon = Date.UTC(2026, 9, 28, 22, 0);   // 12:00 Hawaii, Oct 28
+  assert.deepEqual(await worldEvents(db, noon), { events: [] });
+  await add("2026-10-20", [[1, "Zoey, the Calm Scout", "killed the tank with rifle"]]);
+  assert.deepEqual(await worldEvents(db, noon), { events: [] });
+  await add("2026-10-27", [[1, "Zoey, the Calm Scout", "killed the witch with shotgun"]]);
+  assert.deepEqual(await worldEvents(db, noon), { events: ["witch_fell"] });
+  await add("2026-10-28", [[1, "Bill, the Brave Falcon", "killed the tank with rifle"]]);
+  assert.deepEqual(await worldEvents(db, noon), { events: ["tank_fell", "witch_fell"] });
+  assert.equal(markWords({ kind: "night", value: "tank_fell" }), "was found on the day a Tank fell");
+  assert.equal(markWords({ kind: "night", value: "witch_fell" }), "was found on the day a Witch fell");
+});

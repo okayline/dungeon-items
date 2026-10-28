@@ -80,6 +80,20 @@ export async function listStories(db, params) {
   return { stories: results, next: results.length === limit ? results[results.length - 1].id : null };
 }
 
+// What happened in the world, for the games to stamp on the copies they make (a `night` mark, like the moon): the
+// events in the chapters of today and yesterday (Hawaii dates). Read from the chapters' facts ("killed the tank with ...").
+// -> { events: ["tank_fell", "witch_fell"] }, only the ones that happened, in that order. No chapter text, no players.
+const WORLD = [["tank_fell", "%killed the tank%"], ["witch_fell", "%killed the witch%"]];
+const hawaii = (ms) => new Date(ms - 10 * 3600 * 1000).toISOString().slice(0, 10);
+export async function worldEvents(db, nowMs = Date.now()) {
+  const days = [hawaii(nowMs), hawaii(nowMs - 86400000)], events = [];
+  for (const [id, like] of WORLD) {
+    const row = await db.prepare("SELECT 1 AS hit FROM stories WHERE day IN (?, ?) AND facts LIKE ? LIMIT 1").bind(days[0], days[1], like).first();
+    if (row) events.push(id);
+  }
+  return { events };
+}
+
 export const STORIES_PAGE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tales from the Safe Room</title><style>
 :root{--bg:#0e0d0d;--fg:#dcd6cf;--dim:#8d857c;--line:#3a2a28;--red:#b3261e}
