@@ -2,7 +2,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { fakeD1 } from "./helpers.mjs";
-import { addStory, storiesCall, listStories } from "../src/stories.js";
+import { createHash } from "node:crypto";
+import { addStory, storiesCall, listStories, sealStories } from "../src/stories.js";
+import { verify } from "../src/registry.js";
 
 test("chapters count up per day, refuse private-looking text, need the key, and read back newest first", async () => {
   const db = fakeD1(), c = (day, body = "Zoey, the Calm Scout, held the hallway.") => addStory(db, { day, server: "versus", map: "l4d_hospital01_apartment", title: "The Apartments", body });
@@ -30,4 +32,20 @@ test("the main page of a stories.* address is the stories page; other addresses 
   assert.equal(home.status, 200);
   assert.match(await home.text(), /Tales from the Safe Room/);
   assert.equal((await worker.fetch(new Request("https://dungeon-items.example.dev/"), env)).status, 404);
+});
+
+test("every chapter is sealed on the ledger as it is saved, and older ones can be sealed later", async () => {
+  const db = fakeD1();
+  await addStory(db, { day: "2026-10-27", server: "versus", map: "m", title: "T1", body: "Zoey held the hallway." });
+  const rows = db.raw.prepare("SELECT kind, game, player_id, record FROM ledger").all();
+  const fp = createHash("sha256").update("T1\nZoey held the hallway.").digest("hex");
+  assert.equal(rows.length, 1);
+  assert.deepEqual([rows[0].kind, rows[0].game, rows[0].player_id], ["story", "l4d", 0]);
+  assert.equal(rows[0].record, '{"k":"story","game":"l4d","day":"2026-10-27","chapter":1,"server":"versus","map":"m","hash":"' + fp + '"}');
+  // a chapter saved before sealing existed: sealed once, then nothing more to do
+  db.raw.prepare("INSERT INTO stories (day, chapter, server, map, title, body, created_at) VALUES ('2026-10-27', 2, 'versus', 'm', 'T2', 'Old one.', 1)").run();
+  assert.deepEqual(await sealStories(db), { ok: true, sealed: 1 });
+  assert.deepEqual(await sealStories(db), { ok: true, sealed: 0 });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS c FROM ledger WHERE kind = 'story'").get().c, 2);
+  assert.equal((await verify(db)).ok, true);
 });

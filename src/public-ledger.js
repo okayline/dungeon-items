@@ -242,6 +242,7 @@ const thisCopy = (e, r) => one ? copiesOf(e, r).find((c) => String(c.item) === q
 // a mystery button's finish (foil_, pattern_, effect_) stays a mystery too: "came with some kind of foil"
 function say(e, r) {
   if (!r) return "An entry this page can't read.";
+  if (r.k === "story") return g(r.game) + " chapter " + r.chapter + " of " + r.day + " was sealed.";
   if (r.k === "run") return momentWords(r) || g(r.game) + " sealed a moment of a run.";
   if (shared(r)) return groupsOf(e, r).map((cs) => andList(cs.map(copyName)) + groupWords(cs)).join("; ") + inGame(r.game, ", in ") + ".";   // (row() writes it with links)
   if (r.k === "checkpoint") return lapWords(r) || farmWords(r) || cftWords(r) || pitchWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
@@ -266,7 +267,7 @@ function ascii(p) { p.classList.add("ascii"); p.prepend(rule()); p.append(rule()
 // the heading above the entry number: the game, then what happened, in that game's own words (88x31, irl-dungeon and
 // scoundrel.exe lowercase; 4Dungeon in capitals, like its screen; Dawn Baton as a sentence). A move between games is headed by the
 // game it went to ("arrive"). A game or kind missing here gets the plain words in ANY.
-const ANY = { copy: "new copy", move: "copy changed hands", arrive: "copy arrived", spend: "copy used up", mark: "copy marked", marks: "copies marked", checkpoint: "checkpoint", run: "run" };
+const ANY = { copy: "new copy", move: "copy changed hands", arrive: "copy arrived", spend: "copy used up", mark: "copy marked", marks: "copies marked", checkpoint: "checkpoint", run: "run", story: "chapter sealed" };
 const HEAD = {
   "88x31": { copy: "new button", move: "button traveled", arrive: "button arrived", spend: "button gone", mark: "button marked" },
   "4dungeon": { copy: "ITEM FOUND", move: "ITEM CHANGED HANDS", arrive: "ITEM IN BAG", spend: "ITEM LEFT BAG", mark: "ITEM MARKED", marks: "ITEMS MARKED", checkpoint: "CHECKPOINT",

@@ -3,7 +3,12 @@
 //                            The chapter number is the next one for that day, picked here, never by the caller. Without the key: 404.
 //   GET  /api/stories        public, newest first. ?day=YYYY-MM-DD for one day, ?before=ID&limit=N (up to 50).
 //   GET  /stories            the stories as a page.
+//   POST /rpc/stories/seal   (same key) seals any chapter that is not on the ledger yet (the ones saved before sealing existed); safe to repeat.
+// Every chapter is sealed on the registry's one ledger in the same D1 batch that saves it (kind "story", game "l4d", no player):
+// the record holds the day, chapter, server, map and a SHA-256 fingerprint of the title and text, never the text itself.
 // A chapter holds titles and character names only. Anything that looks like a Steam ID or an address is refused.
+import { chainInsert, head, chainClash, isUnique, sha256 } from "./ledger.js";
+const GAME = "l4d", TRIES = 5;
 const sameKey = (a, b) => a.length === b.length && [...a].reduce((x, c, i) => x | (c.charCodeAt(0) ^ b.charCodeAt(i)), 0) === 0;
 const PRIVATE = /STEAM_\d|\[U:\d|\b7656\d{13}\b|\b\d{1,3}(\.\d{1,3}){3}\b/;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -16,25 +21,51 @@ export async function addStory(db, a) {
   if (!server || server.length > 40 || !map || !title || title.length > 200) return { error: "server, map and title are needed (title up to 200)." };
   if (!body || body.length > 20000) return { error: "body is needed (up to 20000)." };
   if ([title, body, facts || "", server, map].some((t) => PRIVATE.test(t))) return { error: "Looks like a Steam ID or an address: titles and character names only." };
-  try {
-    const r = await db.prepare(
-      `INSERT INTO stories (day, chapter, server, map, title, body, facts, created_at)
-       VALUES (?, COALESCE((SELECT MAX(chapter) FROM stories WHERE day = ?), 0) + 1, ?, ?, ?, ?, ?, ?)`
-    ).bind(day, day, server, map, title, body, facts, Math.floor(Date.now() / 1000)).run();
-    const row = await db.prepare("SELECT id, chapter FROM stories WHERE id = last_insert_rowid()").first();
-    return { ok: true, id: row && row.id, chapter: row && row.chapter, changes: r.meta && r.meta.changes };
-  } catch (e) {
-    return { error: /busy|UNIQUE/.test(String(e && e.message)) ? "Another chapter was saved at the same moment: try again." : String((e && e.message) || "Something broke.") };
+  const fp = await sha256(title + "\n" + body);
+  for (let i = 0; i < TRIES; i++) {
+    const n = (await db.prepare("SELECT COALESCE(MAX(chapter), 0) + 1 AS n FROM stories WHERE day = ?").bind(day).first()).n;
+    const record = JSON.stringify({ k: "story", game: GAME, day, chapter: n, server, map, hash: fp });
+    const t = Math.floor(Date.now() / 1000);
+    try {
+      await db.batch([
+        db.prepare("INSERT INTO stories (day, chapter, server, map, title, body, facts, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)").bind(day, n, server, map, title, body, facts, t),
+        await chainInsert(db, await head(db), { kind: "story", game: GAME, playerId: 0, record, t }),
+      ]);
+      const row = await db.prepare("SELECT id FROM stories WHERE day = ? AND chapter = ?").bind(day, n).first();
+      return { ok: true, id: row && row.id, chapter: n, sealed: true };
+    } catch (e) {
+      if (chainClash(e) || isUnique(e)) continue;   // someone else took the chapter number or the head: look again
+      return { error: String((e && e.message) || "Something broke.") };
+    }
   }
+  return { error: "Another chapter was saved at the same moment: try again." };
+}
+
+// Seals every chapter that has no ledger entry yet (chapters saved before sealing existed). Safe to repeat.
+export async function sealStories(db) {
+  const { results } = await db.prepare(
+    `SELECT id, day, chapter, server, map, title, body FROM stories s
+     WHERE NOT EXISTS (SELECT 1 FROM ledger WHERE kind = 'story' AND json_extract(record, '$.day') = s.day AND json_extract(record, '$.chapter') = s.chapter) ORDER BY id`
+  ).all();
+  let sealed = 0;
+  for (const r of results) {
+    const record = JSON.stringify({ k: "story", game: GAME, day: r.day, chapter: r.chapter, server: r.server, map: r.map, hash: await sha256(r.title + "\n" + r.body) });
+    for (let i = 0; i < TRIES; i++) {
+      try { await db.batch([await chainInsert(db, await head(db), { kind: "story", game: GAME, playerId: 0, record, t: Math.floor(Date.now() / 1000) })]); sealed++; break; }
+      catch (e) { if (!chainClash(e)) throw e; }
+    }
+  }
+  return { ok: true, sealed };
 }
 
 export async function storiesCall(req, env) {
-  if (!/^\/rpc\/stories\/add$/.test(new URL(req.url).pathname)) return null;
+  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal)$/);
+  if (!m) return null;
   const key = req.headers.get("x-stories-key") || "";
   if (req.method !== "POST" || !env.STORIES_KEY || env.STORIES_KEY.length < 16 || !sameKey(key, env.STORIES_KEY)) return null;
   let args;
   try { args = await req.json(); if (!Array.isArray(args)) throw 0; } catch { return Response.json({ error: "Send a JSON array." }, { status: 400 }); }
-  return Response.json(await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });
+  return Response.json(m[1] === "seal" ? await sealStories(env.DB) : await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });
 }
 
 export async function listStories(db, params) {
