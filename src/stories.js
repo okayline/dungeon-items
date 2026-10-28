@@ -6,6 +6,7 @@
 //   POST /rpc/stories/seal   (same key) seals any chapter that is not on the ledger yet (the ones saved before sealing existed); safe to repeat.
 //   POST /rpc/stories/picture (same key) with [{ id, prompts: [setting, subject, subject] }] makes the chapter's 3 pictures and keeps them in R2;
 //                            [{ id, redo: { "2": "new prompt" } }] replaces just the slots named (the old picture is overwritten).
+//   POST /rpc/stories/picture-file?id=<id>&slot=<1-3> (same key) with a PNG or JPEG as the body saves that picture as is (one made elsewhere).
 //   GET  /api/stories/picture/<id>/<1|2|3>   public, the picture itself (404 if the chapter has none).
 // Every chapter is sealed on the registry's one ledger in the same D1 batch that saves it (kind "story", game "l4d", no player):
 // the record holds the day, chapter, server, map and a SHA-256 fingerprint of the title and text, never the text itself.
@@ -73,9 +74,22 @@ async function makePicture(ai, slot, prompt) {
     out = await ai.run(FLUX, { multipart: { body: r.body, contentType: r.headers.get("content-type") } });   // answers with { image: base64 }
   }
   const bytes = typeof (out && out.image) === "string" ? Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0)) : new Uint8Array(await new Response(out).arrayBuffer());
-  const type = bytes[0] === 0x89 && bytes[1] === 0x50 ? "image/png" : bytes[0] === 0xff && bytes[1] === 0xd8 ? "image/jpeg" : null;
+  const type = imageType(bytes);
   if (!type) throw new Error("The picture came back in a shape I don't know.");
   return { bytes, type };
+}
+const imageType = (b) => b[0] === 0x89 && b[1] === 0x50 ? "image/png" : b[0] === 0xff && b[1] === 0xd8 ? "image/jpeg" : null;
+
+// A picture made somewhere else (the owner's playground), saved as is into a slot: POST /rpc/stories/picture-file?id=<chapter id>&slot=<1-3>
+// with the image as the body (PNG or JPEG, up to 5 MB). Replaces what the slot held.
+export async function uploadPicture(env, params, buf) {
+  const id = Number(params.get("id")), slot = Number(params.get("slot")), bytes = new Uint8Array(buf), type = imageType(bytes);
+  if (!Number.isInteger(id) || id < 1 || ![1, 2, 3].includes(slot)) return { error: "id and slot (1 to 3) are needed." };
+  if (!type || bytes.length > 5e6) return { error: "Send a PNG or JPEG up to 5 MB as the body." };
+  if (!env.PICTURES) return { error: "Pictures are not set up." };
+  if (!(await env.DB.prepare("SELECT 1 FROM stories WHERE id = ?").bind(id).first())) return { error: "No such chapter." };
+  await env.PICTURES.put(`story-${id}/${slot}`, bytes, { httpMetadata: { contentType: type }, customMetadata: { prompt: "(made in the Cloudflare playground, uploaded by the owner)", model: String(params.get("model") || "upload").slice(0, 40) } });
+  return { ok: true, id, slot, bytes: bytes.length };
 }
 
 // New chapter: { id, prompts: [setting, subject, subject] } (refused if the chapter already has pictures).
@@ -107,10 +121,11 @@ export async function servePicture(env, pathname) {
 }
 
 export async function storiesCall(req, env) {
-  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal|picture)$/);
+  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal|picture|picture-file)$/);
   if (!m) return null;
   const key = req.headers.get("x-stories-key") || "";
   if (req.method !== "POST" || !env.STORIES_KEY || env.STORIES_KEY.length < 16 || !sameKey(key, env.STORIES_KEY)) return null;
+  if (m[1] === "picture-file") return Response.json(await uploadPicture(env, new URL(req.url).searchParams, await req.arrayBuffer()), { headers: { "cache-control": "no-store" } });
   let args;
   try { args = await req.json(); if (!Array.isArray(args)) throw 0; } catch { return Response.json({ error: "Send a JSON array." }, { status: 400 }); }
   return Response.json(m[1] === "seal" ? await sealStories(env.DB) : m[1] === "picture" ? await addPictures(env, args[0]) : await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });

@@ -78,7 +78,12 @@ test("pictures: 3 are made once per chapter (setting, then two subjects), kept a
   assert.ok((await addPictures(env, { id, prompts: ["a", "b", "c"] })).error);
   assert.equal((await servePicture(env, `/api/stories/picture/${id}/2`)).headers.get("content-type"), "image/png");
   assert.equal(await servePicture(env, `/api/stories/picture/${id}/4`), null);
-  assert.ok((await addPictures(env, { id, redo: { 4: "x" } })).error);
+  assert.ok((await addPictures(env, { id, redo: { 4: "x" } })).error);   // three pictures per chapter, no fourth
+  const { uploadPicture } = await import("../src/stories.js"), jpg = Uint8Array.from([0xff, 0xd8, 0xff, 9, 9]);
+  assert.equal((await uploadPicture(env, new URLSearchParams(`id=${id}&slot=2`), jpg)).ok, true);   // a picture made elsewhere, saved as is
+  assert.equal(store.get(`story-${id}/2`).httpMetadata.contentType, "image/jpeg");
+  assert.ok((await uploadPicture(env, new URLSearchParams(`id=${id}&slot=2`), Uint8Array.from([1, 2, 3]))).error);
+  assert.ok((await uploadPicture(env, new URLSearchParams(`id=999&slot=2`), jpg)).error);
   assert.equal((await addPictures(env, { id, redo: { 2: "a new man" } })).pictures, 1);   // a redo replaces just that slot
   assert.equal(store.get(`story-${id}/2`).httpMetadata.contentType, "image/png");
 });

@@ -12,9 +12,25 @@ What worked in the tests: short plain sentences; concrete things you can point a
 
 ---
 
+## 2026-10-27, chapter 8 (stories id 11): Death Toll, the Town
+
+Made 2026-10-28. The first tries failed with Workers AI errors (3043 twice, and once 3030 "output flagged" for the big one's prompt with "grotesquely oversized arms" and "torn grey clothes"); softening the wording fixed it.
+
+1. Setting (Phoenix):
+   > A small-town main street in flat afternoon light, cracked curb, an empty bus shelter, silent shop fronts, a pale sky that looks painted on, everything strangely still. Dark, moody, semi-realistic digital painting, muted colours.
+2. Subject, the big one (Flux):
+   > A towering, heavily muscled man in a grey shirt, with a small head set between enormous shoulders and huge arms that hang down to the ground, stands alone in the middle of an empty small-town street in flat afternoon light, one huge arm raised, his fist pressed against his own chest, perfectly still, as if listening. Dark, moody, semi-realistic digital painting, muted colours.
+3. Subject, Zoey (Flux):
+   > Zoey, a young woman in a torn red jacket, sits on a cracked curb beside a bus shelter in flat afternoon light, shotgun across her knees, looking down the empty street, puzzled and quiet. Dark, moody, semi-realistic digital painting, muted colours.
+
+Picture 2 (the big one) came out as a regular strongman. Redoing it with Flux was flagged by the safety filter (3030) four times in a row, with any "monster", "brute", "rock" or "zombie" wording. Phoenix and Lucid-Origin drew it fine in the playground, so the owner downloaded the Lucid-Origin picture and it was saved as picture 2 with the upload route (planned; see below). The prompt, run in the playground on Lucid-Origin:
+
+2. Subject, the big one (Lucid-Origin, playground):
+   > A colossal hunched zombie giant with pale grey-green dead skin and dark veins, a small head sunk between huge shoulders, enormous muscular arms with giant fists hanging down to the ground, wearing only worn dark trousers, stands alone in the middle of an empty small-town street in flat afternoon light, one huge arm raised, his fist pressed against his own chest, perfectly still, as if listening. Dark, moody, semi-realistic digital painting, muted colours.
+
 ## 2026-10-27, chapter 10 (stories id 13): No Mercy, the Sewer
 
-Tested 2026-10-28 in the Cloudflare playground on all four models (no pictures saved yet). Flux got all three parts both times, including the pale figure; Phoenix and Lucid got the mood and dropped the pale figure.
+Tested 2026-10-28 in the Cloudflare playground on all four models, then made and saved the same day with exactly these prompts (no style line yet). Flux got all three parts both times, including the pale figure; Phoenix and Lucid got the mood and dropped the pale figure.
 
 1. Setting (Phoenix):
    > A long concrete drainage tunnel under a hospital, wet floor, rusted pipes along the ceiling, one flickering yellow light far down the corridor, deep shadow on both sides.
@@ -25,7 +41,7 @@ Tested 2026-10-28 in the Cloudflare playground on all four models (no pictures s
 
 ## 2026-10-27, chapter 9 (stories id 12): Crash Course, the Truck Depot Finale
 
-Tested 2026-10-28 in the Cloudflare playground on all four models (no pictures saved yet). Flux matched the story best; Phoenix gave a wide, moody yard.
+Tested 2026-10-28 in the Cloudflare playground on all four models, then made and saved the same day with exactly these prompts (no style line yet). Flux matched the story best; Phoenix gave a wide, moody yard.
 
 1. Setting (Phoenix):
    > A fenced yard at night with trucks parked in loose rows, lit by one tired yellow light and a lot of deep shadow.
@@ -47,3 +63,9 @@ That pair came out a little too anime, with a young Bill (Bill has to be an old 
    > Bill, an old grey-bearded veteran in a worn green jacket and beret, tired but stubborn, hunched behind a heavy gun bolted down on a flat roof at night, one tired yellow light below, deep shadow. Dark, moody, semi-realistic digital painting, muted colours.
 3. Redo 2, subject (Flux):
    > Francis, a burly man in a black leather vest, stands off to one side in the dark with a long rifle, perfectly still. Far out in a night yard between parked trucks, a pale thin figure drifts under one tired yellow light. Dark, moody, semi-realistic digital painting, muted colours.
+
+Picture 3 was redone twice more the same day, because the Witch sits or hunches on the ground, face in her hands, weeping (she is not walking), and she should look like a monster, not a sad girl. The live version:
+
+3. Redo 3, subject (Flux):
+   > Francis, a burly man in a black leather vest, stands off to one side in the dark with a long rifle, perfectly still. Far out in a night yard between parked trucks, under one tired yellow light, a monstrous pale grey-skinned woman with wild matted hair and long curved claws like knives sits hunched on the ground in ragged clothes, face in her hands, weeping. Dark, moody, semi-realistic digital painting, muted colours.
+(The version before it, with "a pale thin woman with long tangled hair", drew a sad girl, not a monster.)
