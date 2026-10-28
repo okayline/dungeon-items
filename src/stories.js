@@ -4,7 +4,8 @@
 //   GET  /api/stories        public, newest first. ?day=YYYY-MM-DD for one day, ?before=ID&limit=N (up to 50).
 //   GET  /stories            the stories as a page.
 //   POST /rpc/stories/seal   (same key) seals any chapter that is not on the ledger yet (the ones saved before sealing existed); safe to repeat.
-//   POST /rpc/stories/picture (same key) with [{ id, prompts: [setting, subject, subject] }] makes the chapter's 3 pictures once and keeps them in R2.
+//   POST /rpc/stories/picture (same key) with [{ id, prompts: [setting, subject, subject] }] makes the chapter's 3 pictures and keeps them in R2;
+//                            [{ id, redo: { "2": "new prompt" } }] replaces just the slots named (the old picture is overwritten).
 //   GET  /api/stories/picture/<id>/<1|2|3>   public, the picture itself (404 if the chapter has none).
 // Every chapter is sealed on the registry's one ledger in the same D1 batch that saves it (kind "story", game "l4d", no player):
 // the record holds the day, chapter, server, map and a SHA-256 fingerprint of the title and text, never the text itself.
@@ -61,7 +62,7 @@ export async function sealStories(db) {
 }
 
 // Pictures: 3 per chapter, kept in R2 (never in D1) as story-<id>/1, /2, /3.
-//   1 = the setting and mood (Phoenix), 2 and 3 = a subject and an action (Flux). Made once, never replaced.
+//   1 = the setting and mood (Phoenix), 2 and 3 = a subject and an action (Flux). A chapter's 3 are made once; a redo (below) replaces just some.
 const PHOENIX = "@cf/leonardo/phoenix-1.0", FLUX = "@cf/black-forest-labs/flux-2-klein-9b";
 async function makePicture(ai, slot, prompt) {
   let out;
@@ -77,19 +78,24 @@ async function makePicture(ai, slot, prompt) {
   return { bytes, type };
 }
 
+// New chapter: { id, prompts: [setting, subject, subject] } (refused if the chapter already has pictures).
+// Redo:        { id, redo: { "2": "new prompt" } } replaces just the slots named (the chapter must already have pictures).
 export async function addPictures(env, a) {
   a = a || {};
-  const id = Number(a.id), prompts = a.prompts;
-  if (!Number.isInteger(id) || id < 1 || !Array.isArray(prompts) || prompts.length !== 3 || prompts.some((p) => typeof p !== "string" || !p.trim() || p.length > 1000))
-    return { error: "id and 3 prompts are needed: the setting, then two subjects (up to 1000 characters each)." };
-  if (prompts.some((p) => PRIVATE.test(p))) return { error: "Looks like a Steam ID or an address." };
+  const id = Number(a.id), redo = a.redo && typeof a.redo === "object" && !Array.isArray(a.redo) ? a.redo : null;
+  const todo = redo ? Object.entries(redo).map(([s, p]) => [Number(s), p]) : Array.isArray(a.prompts) && a.prompts.length === 3 ? a.prompts.map((p, i) => [i + 1, p]) : [];
+  if (!Number.isInteger(id) || id < 1 || !todo.length || todo.some(([s, p]) => ![1, 2, 3].includes(s) || typeof p !== "string" || !p.trim() || p.length > 1000))
+    return { error: "id and either 3 prompts (the setting, then two subjects) or a redo of slots 1 to 3 are needed (up to 1000 characters each)." };
+  if (todo.some(([, p]) => PRIVATE.test(p))) return { error: "Looks like a Steam ID or an address." };
   if (!env.AI || !env.PICTURES) return { error: "Pictures are not set up." };
   if (!(await env.DB.prepare("SELECT 1 FROM stories WHERE id = ?").bind(id).first())) return { error: "No such chapter." };
-  if (await env.PICTURES.head(`story-${id}/1`)) return { error: "This chapter already has pictures." };
+  const has = !!(await env.PICTURES.head(`story-${id}/1`));
+  if (!redo && has) return { error: "This chapter already has pictures." };
+  if (redo && !has) return { error: "This chapter has no pictures to redo." };
   try {
-    const made = await Promise.all(prompts.map((p, i) => makePicture(env.AI, i + 1, p).catch((e) => { throw new Error("picture " + (i + 1) + " (" + (i ? "flux" : "phoenix") + "): " + String((e && e.message) || e)); })));   // all three first, so a failure saves none
-    await Promise.all(made.map((m, i) => env.PICTURES.put(`story-${id}/${i + 1}`, m.bytes, { httpMetadata: { contentType: m.type }, customMetadata: { prompt: prompts[i], model: i ? FLUX : PHOENIX } })));
-    return { ok: true, id, pictures: 3 };
+    const made = await Promise.all(todo.map(([s, p]) => makePicture(env.AI, s, p).catch((e) => { throw new Error("picture " + s + " (" + (s > 1 ? "flux" : "phoenix") + "): " + String((e && e.message) || e)); })));   // all first, so a failure saves none
+    await Promise.all(made.map((m, i) => env.PICTURES.put(`story-${id}/${todo[i][0]}`, m.bytes, { httpMetadata: { contentType: m.type }, customMetadata: { prompt: todo[i][1], model: todo[i][0] > 1 ? FLUX : PHOENIX } })));
+    return { ok: true, id, pictures: todo.length, redone: !!redo };
   } catch (e) { return { error: String((e && e.message) || "Something broke.") }; }
 }
 
@@ -97,7 +103,7 @@ export async function servePicture(env, pathname) {
   const m = pathname.match(/^\/api\/stories\/picture\/(\d{1,9})\/([123])$/);
   if (!m || !env.PICTURES) return null;
   const o = await env.PICTURES.get(`story-${m[1]}/${m[2]}`);
-  return o ? new Response(o.body, { headers: { "content-type": (o.httpMetadata && o.httpMetadata.contentType) || "image/png", "cache-control": "public, max-age=31536000, immutable" } }) : null;
+  return o ? new Response(o.body, { headers: { "content-type": (o.httpMetadata && o.httpMetadata.contentType) || "image/png", "cache-control": "public, max-age=300" } }) : null;
 }
 
 export async function storiesCall(req, env) {

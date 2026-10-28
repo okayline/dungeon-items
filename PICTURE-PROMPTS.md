@@ -33,3 +33,10 @@ Tested 2026-10-28 in the Cloudflare playground on all four models (no pictures s
    > Bill is up on a flat roof, hunched behind a heavy gun bolted down in front of him. He looks worn out but stubborn.
 3. Subject (Flux):
    > Francis is off to one side in the dark with a long rifle, perfectly still. Out in the yard, a pale thin figure drifts between the trucks, and the whole scene has the hush before something ends.
+
+Pictures made 2026-10-28 with the prompts above. Picture 2 came out as a bright daytime photo (the prompt said nothing about the light), so pictures 2 and 3 were redone the same day in the "Zoey" illustrated style (the sewer picture the owner loved), with the light and a style line added. The first versions are gone.
+
+2. Redo, subject (Flux):
+   > Bill, worn out but stubborn, hunched behind a heavy gun bolted down on a flat roof at night, one tired yellow light below, deep shadow. Dark, moody anime-style illustration, painted look, muted colours.
+3. Redo, subject (Flux):
+   > Francis stands off to one side in the dark with a long rifle, perfectly still. Far out in a night yard between parked trucks, a pale thin figure drifts under one tired yellow light. Dark, moody anime-style illustration, painted look, muted colours.

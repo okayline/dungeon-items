@@ -78,4 +78,7 @@ test("pictures: 3 are made once per chapter (setting, then two subjects), kept a
   assert.ok((await addPictures(env, { id, prompts: ["a", "b", "c"] })).error);
   assert.equal((await servePicture(env, `/api/stories/picture/${id}/2`)).headers.get("content-type"), "image/png");
   assert.equal(await servePicture(env, `/api/stories/picture/${id}/4`), null);
+  assert.ok((await addPictures(env, { id, redo: { 4: "x" } })).error);
+  assert.equal((await addPictures(env, { id, redo: { 2: "a new man" } })).pictures, 1);   // a redo replaces just that slot
+  assert.equal(store.get(`story-${id}/2`).httpMetadata.contentType, "image/png");
 });
