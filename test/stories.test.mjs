@@ -66,6 +66,24 @@ test("worldEvents reads the Tank and Witch from today's and yesterday's chapters
   assert.equal(markWords({ kind: "night", value: "witch_fell" }), "was found on the day a Witch fell");
 });
 
+test("voice: a chapter is read aloud once in order, kept as mp3, served back, replaced only on redo", async () => {
+  const { addVoice, serveVoice } = await import("../src/stories.js");
+  const db = fakeD1(), store = new Map(), calls = [], mp3 = Uint8Array.from({ length: 200 }, (_, i) => i);
+  const PICTURES = { head: async (k) => store.get(k) || null, put: async (k, b, o) => { store.set(k, { body: b, httpMetadata: o.httpMetadata }); }, get: async (k) => store.get(k) || null };
+  const AI = { run: async (model, input) => { calls.push([model, input]); return new Response(mp3).body; } };
+  const para = (c) => (c + " ").repeat(900).trim();   // 1,799 characters: each paragraph is its own piece
+  const id = (await addStory(db, { day: "2026-10-27", server: "versus", map: "m", title: "t", body: para("a") + "\n\n" + para("b") })).id, env = { DB: db, AI, PICTURES };
+  assert.ok((await addVoice(env, { id: 999 })).error);
+  assert.ok((await addVoice(env, { id, speaker: "Bad Name" })).error);
+  const r = await addVoice(env, { id, speaker: "luna" });
+  assert.deepEqual([r.ok, r.pieces, r.bytes], [true, 2, 400]);
+  assert.deepEqual(calls.map(([m, i]) => [m, i.text[0], i.speaker, i.encoding]), [["@cf/deepgram/aura-2-en", "a", "luna", "mp3"], ["@cf/deepgram/aura-2-en", "b", "luna", "mp3"]]);
+  assert.ok((await addVoice(env, { id })).error);   // never replaced without redo
+  assert.equal((await addVoice(env, { id, redo: true })).redone, true);
+  assert.equal((await serveVoice(env, `/api/stories/voice/${id}`)).headers.get("content-type"), "audio/mpeg");
+  assert.equal(await serveVoice(env, "/api/stories/voice/999"), null);
+});
+
 test("pictures: 3 are made once per chapter (setting, then two subjects), kept as given, served back, never replaced", async () => {
   const { addPictures, servePicture } = await import("../src/stories.js");
   const db = fakeD1(), store = new Map(), png = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 1, 2, 3]);
