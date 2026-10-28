@@ -40,3 +40,10 @@ Pictures made 2026-10-28 with the prompts above. Picture 2 came out as a bright 
    > Bill, worn out but stubborn, hunched behind a heavy gun bolted down on a flat roof at night, one tired yellow light below, deep shadow. Dark, moody anime-style illustration, painted look, muted colours.
 3. Redo, subject (Flux):
    > Francis stands off to one side in the dark with a long rifle, perfectly still. Far out in a night yard between parked trucks, a pale thin figure drifts under one tired yellow light. Dark, moody anime-style illustration, painted look, muted colours.
+
+That pair came out a little too anime, with a young Bill (Bill has to be an old man) and a Japanese-looking town. Redone a second time the same day with the looks named and a softer style line (the one live now):
+
+2. Redo 2, subject (Flux):
+   > Bill, an old grey-bearded veteran in a worn green jacket and beret, tired but stubborn, hunched behind a heavy gun bolted down on a flat roof at night, one tired yellow light below, deep shadow. Dark, moody, semi-realistic digital painting, muted colours.
+3. Redo 2, subject (Flux):
+   > Francis, a burly man in a black leather vest, stands off to one side in the dark with a long rifle, perfectly still. Far out in a night yard between parked trucks, a pale thin figure drifts under one tired yellow light. Dark, moody, semi-realistic digital painting, muted colours.
