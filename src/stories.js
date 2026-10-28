@@ -52,16 +52,16 @@ export async function listStories(db, params) {
 export const STORIES_PAGE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Stories</title><style>
 :root{--bg:#0e0d0d;--fg:#dcd6cf;--dim:#8d857c;--line:#3a2a28;--red:#b3261e}
-body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.7 Georgia,"Times New Roman",serif}
+body{margin:0;background:var(--bg);color:var(--fg);font:19px/1.75 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;text-wrap:pretty}
 header{border-bottom:3px solid var(--red);background:#151212}
 header>div{max-width:42rem;margin:0 auto;padding:1.6rem 16px}
-h1{font:700 1.9rem/1.2 Georgia,serif;letter-spacing:.04em;text-transform:uppercase;margin:0}
-.sub{color:var(--dim);font:14px system-ui,sans-serif;margin-top:.3rem}
+h1{font:400 1.8rem/1.2 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;letter-spacing:.14em;text-transform:uppercase;margin:0}
+.sub{color:var(--dim);font:italic 15px "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;margin-top:.3rem}
 main{max-width:42rem;margin:0 auto;padding:1rem 16px 4rem}
 article{padding:1.6rem 0 .4rem}
 article+article:before,.rule{content:"";display:block;height:2px;margin:0 0 1.6rem;background:linear-gradient(90deg,var(--red),transparent)}
-h2{font:700 1.5rem/1.25 Georgia,serif;margin:0 0 .3rem;color:#f0e9e1}
-.meta{color:var(--dim);font:14px system-ui,sans-serif;margin-bottom:1rem}
+h2{font:italic 400 1.6rem/1.3 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;margin:0 0 .3rem;color:#f0e9e1}
+.meta{color:var(--dim);font:13px "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
 p{margin:.9rem 0;white-space:pre-wrap}
 a,button{color:#d9534a;background:none;border:0;font:inherit;cursor:pointer;padding:0;margin-top:1.6rem}
 a:hover,button:hover{text-decoration:underline}
