@@ -93,7 +93,8 @@ article{padding:1.6rem 0 .4rem}
 article+article:before,.rule{content:"";display:block;height:2px;margin:0 0 1.6rem;background:linear-gradient(90deg,var(--red),transparent)}
 h2{font:italic 400 1.6rem/1.3 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;margin:0 0 .3rem;color:#f0e9e1}
 .meta{color:var(--dim);font:13px "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
-p{margin:.9rem 0;white-space:pre-wrap}
+p{margin:.9rem 0;padding:0 2.4rem;white-space:pre-wrap}
+@media (max-width:520px){p{padding:0 .8rem}}
 a,button{color:#d9534a;background:none;border:0;font:inherit;cursor:pointer;padding:0;margin-top:1.6rem}
 a:hover,button:hover{text-decoration:underline}
 </style></head><body><header><div><h1>Tales from the Safe Room</h1><div class="sub">stories from the past week on ~*~88x31~*~ cLuB l4d servers</div></div></header><main><div id="list"></div><button id="more" hidden>&laquo; Older chapters</button></main>
