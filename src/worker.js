@@ -6,9 +6,12 @@
 //                             Counts and a hash only: no holders, no copies listed.
 //   GET /api/registry/ledger  the registry ledger itself, newest first (?before=ID&limit=N, up to 100); no player ids.
 //   GET /api/registry/copy    one copy's story: ?item=ID&copy=N, its item and every ledger entry about it, newest first.
+//   GET /api/stories          the written chapters, newest first (?day= ?before= ?limit=); POST /rpc/stories/add saves one (STORIES_KEY).
+//   GET /stories              the chapters as a page.
 //   GET /ledger               the ledger as a page; /ledger?item=ID&copy=N shows one copy.
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
+import { storiesCall, listStories, STORIES_PAGE } from "./stories.js";
 import { verify } from "./registry.js";
 import { publicLedger, copyHistory, LEDGER_PAGE, isMystery, mysteryItem } from "./public-ledger.js";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-methods": "GET, OPTIONS", "access-control-allow-headers": "if-none-match" };
@@ -35,6 +38,7 @@ export default {
     const url = new URL(req.url);
     if (url.pathname.startsWith("/rpc/accounts/")) return (await httpCall(req, env)) || json({ error: "Not found." }, 404);
     if (url.pathname.startsWith("/rpc/registry/")) return (await registryCall(req, env)) || json({ error: "Not found." }, 404);
+    if (url.pathname.startsWith("/rpc/stories/")) return (await storiesCall(req, env)) || json({ error: "Not found." }, 404);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (req.method !== "GET") return json({ error: "Read only." }, 405, { allow: "GET, OPTIONS" });
     if (url.pathname === "/api/items") {
@@ -56,6 +60,8 @@ export default {
       const c = await copyHistory(env.DB, url.searchParams);
       return c ? json(c, 200, { "cache-control": "public, max-age=60" }) : json({ error: "No such copy." }, 404);
     }
+    if (url.pathname === "/api/stories") { const r = await listStories(env.DB, url.searchParams); return r.error ? json(r, 400) : json(r, 200, { "cache-control": "public, max-age=60" }); }
+    if (url.pathname === "/stories") return new Response(STORIES_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     if (url.pathname === "/ledger") return new Response(LEDGER_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     const m = url.pathname.match(/^\/api\/items\/(\d{1,12})$/);
     if (m) {
