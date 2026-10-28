@@ -68,14 +68,15 @@ a:hover,button:hover{text-decoration:underline}
 </style></head><body><header><div><h1>Stories from the servers</h1><div class="sub">Stories from the past week</div></div></header><main><div id="list"></div><button id="more" hidden>&laquo; Older chapters</button></main>
 <script>
 var next=null,all=false,held=[],list=document.getElementById("list"),more=document.getElementById("more");
-var cutoff=new Date(Date.now()-10*36e5-7*864e5).toISOString().slice(0,10);   // a week ago, Hawaii date
+function ld(t){return new Date(t*1000).toLocaleDateString("en-CA")}   // the visitor's own date (YYYY-MM-DD)
+var cutoff=ld(Date.now()/1000-7*864e2);   // a week ago, by the visitor's date
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
 function show(s){var a=document.createElement("article");
- a.innerHTML="<h2>"+esc(s.title)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+esc(s.day)+" &middot; "+esc(s.server)+"</div><p>"+esc(s.body)+"</p>";list.appendChild(a)}
+ a.innerHTML="<h2>"+esc(s.title)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+ld(s.created_at)+" &middot; "+esc(s.server)+"</div><p>"+esc(s.body)+"</p>";list.appendChild(a)}
 function done(){more.hidden=!(held.length||next);if(!list.children.length)list.textContent="No chapters this week."}
 function load(){fetch("/api/stories"+(next?"?before="+next:"")).then(function(r){return r.json()}).then(function(d){
  var st=d.stories||[];next=d.next;
- st.forEach(function(s){if(all||s.day>=cutoff)show(s);else held.push(s)});
+ st.forEach(function(s){if(all||ld(s.created_at)>=cutoff)show(s);else held.push(s)});
  done()}).catch(function(){list.textContent="Couldn't load the stories."})}
 more.onclick=function(){all=true;held.splice(0).forEach(show);if(next)load();else done()};
 load();
