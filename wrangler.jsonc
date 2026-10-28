@@ -6,5 +6,10 @@
   "d1_databases": [
     // created with the Cloudflare tools on 2026-10-15 (HST), region OC.
     { "binding": "DB", "database_name": "items-db", "database_id": "b39d9b77-fb44-4474-82b2-60252578f38a" }
+  ],
+  // story pictures: made with Workers AI, kept in R2 (never in D1). Bucket created 2026-10-28 (HST).
+  "ai": { "binding": "AI" },
+  "r2_buckets": [
+    { "binding": "PICTURES", "bucket_name": "story-pictures" }
   ]
 }

@@ -65,3 +65,17 @@ test("worldEvents reads the Tank and Witch from today's and yesterday's chapters
   assert.equal(markWords({ kind: "night", value: "tank_fell" }), "was found on the day a Tank fell");
   assert.equal(markWords({ kind: "night", value: "witch_fell" }), "was found on the day a Witch fell");
 });
+
+test("pictures: 3 are made once per chapter (setting, then two subjects), kept as given, served back, never replaced", async () => {
+  const { addPictures, servePicture } = await import("../src/stories.js");
+  const db = fakeD1(), store = new Map(), png = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 1, 2, 3]);
+  const PICTURES = { head: async (k) => store.get(k) || null, put: async (k, b, o) => { store.set(k, { body: b, httpMetadata: o.httpMetadata }); }, get: async (k) => store.get(k) || null };
+  const AI = { run: async (model) => model.includes("phoenix") ? new Response(png).body : { image: Buffer.from(png).toString("base64") } };
+  const id = (await addStory(db, { day: "2026-10-27", server: "versus", map: "m", title: "t", body: "b" })).id, env = { DB: db, AI, PICTURES };
+  assert.ok((await addPictures(env, { id, prompts: ["a", "b"] })).error);
+  assert.ok((await addPictures(env, { id: 999, prompts: ["a", "b", "c"] })).error);
+  assert.equal((await addPictures(env, { id, prompts: ["a tunnel", "a man", "a woman"] })).pictures, 3);
+  assert.ok((await addPictures(env, { id, prompts: ["a", "b", "c"] })).error);
+  assert.equal((await servePicture(env, `/api/stories/picture/${id}/2`)).headers.get("content-type"), "image/png");
+  assert.equal(await servePicture(env, `/api/stories/picture/${id}/4`), null);
+});

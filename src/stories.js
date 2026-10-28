@@ -4,6 +4,8 @@
 //   GET  /api/stories        public, newest first. ?day=YYYY-MM-DD for one day, ?before=ID&limit=N (up to 50).
 //   GET  /stories            the stories as a page.
 //   POST /rpc/stories/seal   (same key) seals any chapter that is not on the ledger yet (the ones saved before sealing existed); safe to repeat.
+//   POST /rpc/stories/picture (same key) with [{ id, prompts: [setting, subject, subject] }] makes the chapter's 3 pictures once and keeps them in R2.
+//   GET  /api/stories/picture/<id>/<1|2|3>   public, the picture itself (404 if the chapter has none).
 // Every chapter is sealed on the registry's one ledger in the same D1 batch that saves it (kind "story", game "l4d", no player):
 // the record holds the day, chapter, server, map and a SHA-256 fingerprint of the title and text, never the text itself.
 // A chapter holds titles and character names only. Anything that looks like a Steam ID or an address is refused.
@@ -58,14 +60,54 @@ export async function sealStories(db) {
   return { ok: true, sealed };
 }
 
+// Pictures: 3 per chapter, kept in R2 (never in D1) as story-<id>/1, /2, /3.
+//   1 = the setting and mood (Phoenix), 2 and 3 = a subject and an action (Flux). Made once, never replaced.
+const PHOENIX = "@cf/leonardo/phoenix-1.0", FLUX = "@cf/black-forest-labs/flux-2-klein-9b";
+async function makePicture(ai, slot, prompt) {
+  let out;
+  if (slot === 1) out = await ai.run(PHOENIX, { prompt, width: 1024, height: 1024, num_steps: 25 });   // answers with the image bytes
+  else {
+    const form = new FormData(); form.append("prompt", prompt); form.append("width", "1024"); form.append("height", "1024");
+    const r = new Response(form);
+    out = await ai.run(FLUX, { multipart: { body: r.body, contentType: r.headers.get("content-type") } });   // answers with { image: base64 }
+  }
+  const bytes = typeof (out && out.image) === "string" ? Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0)) : new Uint8Array(await new Response(out).arrayBuffer());
+  const type = bytes[0] === 0x89 && bytes[1] === 0x50 ? "image/png" : bytes[0] === 0xff && bytes[1] === 0xd8 ? "image/jpeg" : null;
+  if (!type) throw new Error("The picture came back in a shape I don't know.");
+  return { bytes, type };
+}
+
+export async function addPictures(env, a) {
+  a = a || {};
+  const id = Number(a.id), prompts = a.prompts;
+  if (!Number.isInteger(id) || id < 1 || !Array.isArray(prompts) || prompts.length !== 3 || prompts.some((p) => typeof p !== "string" || !p.trim() || p.length > 1000))
+    return { error: "id and 3 prompts are needed: the setting, then two subjects (up to 1000 characters each)." };
+  if (prompts.some((p) => PRIVATE.test(p))) return { error: "Looks like a Steam ID or an address." };
+  if (!env.AI || !env.PICTURES) return { error: "Pictures are not set up." };
+  if (!(await env.DB.prepare("SELECT 1 FROM stories WHERE id = ?").bind(id).first())) return { error: "No such chapter." };
+  if (await env.PICTURES.head(`story-${id}/1`)) return { error: "This chapter already has pictures." };
+  try {
+    const made = await Promise.all(prompts.map((p, i) => makePicture(env.AI, i + 1, p)));   // all three first, so a failure saves none
+    await Promise.all(made.map((m, i) => env.PICTURES.put(`story-${id}/${i + 1}`, m.bytes, { httpMetadata: { contentType: m.type }, customMetadata: { prompt: prompts[i], model: i ? FLUX : PHOENIX } })));
+    return { ok: true, id, pictures: 3 };
+  } catch (e) { return { error: String((e && e.message) || "Something broke.") }; }
+}
+
+export async function servePicture(env, pathname) {
+  const m = pathname.match(/^\/api\/stories\/picture\/(\d{1,9})\/([123])$/);
+  if (!m || !env.PICTURES) return null;
+  const o = await env.PICTURES.get(`story-${m[1]}/${m[2]}`);
+  return o ? new Response(o.body, { headers: { "content-type": (o.httpMetadata && o.httpMetadata.contentType) || "image/png", "cache-control": "public, max-age=31536000, immutable" } }) : null;
+}
+
 export async function storiesCall(req, env) {
-  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal)$/);
+  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal|picture)$/);
   if (!m) return null;
   const key = req.headers.get("x-stories-key") || "";
   if (req.method !== "POST" || !env.STORIES_KEY || env.STORIES_KEY.length < 16 || !sameKey(key, env.STORIES_KEY)) return null;
   let args;
   try { args = await req.json(); if (!Array.isArray(args)) throw 0; } catch { return Response.json({ error: "Send a JSON array." }, { status: 400 }); }
-  return Response.json(m[1] === "seal" ? await sealStories(env.DB) : await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });
+  return Response.json(m[1] === "seal" ? await sealStories(env.DB) : m[1] === "picture" ? await addPictures(env, args[0]) : await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });
 }
 
 export async function listStories(db, params) {
@@ -109,6 +151,8 @@ h2{font:italic 400 1.6rem/1.3 "Iowan Old Style","Palatino Linotype",Palatino,"Bo
 .meta{color:var(--dim);font:13px "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
 p{margin:.9rem 0;padding:0 8rem 0 3.5rem;white-space:pre-wrap}
 .meta+p{margin-top:1.9rem}
+.pic{display:block;width:100%;height:auto;margin:1rem 0;border:1px solid var(--line)}
+.pics{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1.2rem 0}.pics:empty{display:none}.pics .pic{margin:0}
 @media (max-width:640px){p{padding:0 2rem 0 1rem}}
 a,button{color:#d9534a;background:none;border:0;font:inherit;cursor:pointer;padding:0;margin-top:1.6rem}
 a:hover,button:hover{text-decoration:underline}
@@ -118,8 +162,9 @@ var next=null,all=false,held=[],list=document.getElementById("list"),more=docume
 function ld(t){return new Date(t*1000).toLocaleDateString("en-CA")}   // the visitor's own date (YYYY-MM-DD)
 var cutoff=ld(Date.now()/1000-7*864e2);   // a week ago, by the visitor's date
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function pic(id,n){return '<img class="pic" src="/api/stories/picture/'+id+'/'+n+'" alt="" loading="lazy" onerror="this.remove()">'}   // a chapter with no pictures just shows none
 function show(s){var a=document.createElement("article");
- a.innerHTML="<h2>"+esc(s.title)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+ld(s.created_at)+" &middot; "+esc(s.server)+"</div><p>"+esc(s.body)+"</p>";list.appendChild(a)}
+ a.innerHTML="<h2>"+esc(s.title)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+ld(s.created_at)+" &middot; "+esc(s.server)+"</div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a)}
 function done(){more.hidden=!(held.length||next);if(!list.children.length)list.textContent="No chapters this week."}
 function load(){fetch("/api/stories"+(next?"?before="+next:"")).then(function(r){return r.json()}).then(function(d){
  var st=d.stories||[];next=d.next;
