@@ -8,7 +8,7 @@
 //                            [{ id, redo: { "2": "new prompt" } }] replaces just the slots named (the old picture is overwritten).
 //   POST /rpc/stories/picture-file?id=<id>&slot=<1-3> (same key) with a PNG or JPEG as the body saves that picture as is (one made elsewhere).
 //   GET  /api/stories/picture/<id>/<1|2|3>   public, the picture itself (404 if the chapter has none).
-//   POST /rpc/stories/voice  (same key) with [{ id }] reads the chapter aloud (Aura 2) and keeps the mp3 in R2; [{ id, redo: true }] replaces it; { speaker } is optional.
+//   POST /rpc/stories/voice  (same key) with [{ id }] reads the chapter aloud (Aura 2) and keeps the mp3 in R2; [{ id, redo: true }] replaces it; { speaker } is optional; { sentences: 2 } reads only the first 2 sentences (a short test; redo replaces it).
 //   GET  /api/stories/voice/<id>   public, the narration (audio/mpeg; 404 if the chapter has none).
 // Every chapter is sealed on the registry's one ledger in the same D1 batch that saves it (kind "story", game "l4d", no player):
 // the record holds the day, chapter, server, map and a SHA-256 fingerprint of the title and text, never the text itself.
@@ -145,7 +145,9 @@ export async function addVoice(env, a) {
   if (has && !a.redo) return { error: "This chapter already has a voice (use redo: true to replace it)." };
   try {
     const parts = [];
-    for (const text of voiceChunks(row.body)) {   // one at a time, in order
+    const first = Number.isInteger(a.sentences) && a.sentences >= 1 && a.sentences <= 10 ? a.sentences : 0;   // a short test: just the first few sentences
+    const body = first ? (row.body.match(/[^.!?]+[.!?]+["”]?\s*/g) || [row.body]).slice(0, first).join("").trim() : row.body;
+    for (const text of voiceChunks(body)) {   // one at a time, in order
       const out = await env.AI.run(AURA, speaker ? { text, speaker, encoding: "mp3" } : { text, encoding: "mp3" });   // answers with the audio bytes
       const bytes = new Uint8Array(await new Response(out).arrayBuffer());
       if (bytes.length < 100) throw new Error("A piece of the voice came back empty.");

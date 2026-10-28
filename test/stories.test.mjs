@@ -82,6 +82,9 @@ test("voice: a chapter is read aloud once in order, kept as mp3, served back, re
   assert.equal((await addVoice(env, { id, redo: true })).redone, true);
   assert.equal((await serveVoice(env, `/api/stories/voice/${id}`)).headers.get("content-type"), "audio/mpeg");
   assert.equal(await serveVoice(env, "/api/stories/voice/999"), null);
+  calls.length = 0;
+  const t = await addVoice(env, { id: (await addStory(db, { day: "2026-10-27", server: "versus", map: "m", title: "t2", body: "One here. Two here. Three here." })).id, sentences: 2 });
+  assert.deepEqual([t.ok, calls.length, calls[0][1].text], [true, 1, "One here. Two here."]);   // a short test reads only the first sentences
 });
 
 test("pictures: 3 are made once per chapter (setting, then two subjects), kept as given, served back, never replaced", async () => {
