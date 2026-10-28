@@ -22,3 +22,12 @@ test("chapters count up per day, refuse private-looking text, need the key, and 
   const l = await listStories(db, new URLSearchParams("day=2026-10-27"));
   assert.deepEqual(l.stories.map((s) => s.chapter), [3, 2, 1]);
 });
+
+test("the main page of a stories.* address is the stories page; other addresses keep no main page", async () => {
+  const { default: worker } = await import("../src/worker.js");
+  const env = { DB: fakeD1() };
+  const home = await worker.fetch(new Request("https://stories.88x31.app/"), env);
+  assert.equal(home.status, 200);
+  assert.match(await home.text(), /Stories from the servers/);
+  assert.equal((await worker.fetch(new Request("https://dungeon-items.example.dev/"), env)).status, 404);
+});
