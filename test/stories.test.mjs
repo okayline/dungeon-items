@@ -87,24 +87,18 @@ test("voice: a chapter is read aloud once in order, kept as mp3, served back, re
   assert.deepEqual([t.ok, calls.length, calls[0][1].text], [true, 1, "One here. Two here."]);   // a short test reads only the first sentences
 });
 
-test("pictures: 3 are made once per chapter (setting, then two subjects), kept as given, served back, never replaced", async () => {
-  const { addPictures, servePicture } = await import("../src/stories.js");
-  const db = fakeD1(), store = new Map(), png = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 1, 2, 3]);
+test("pictures: one made elsewhere is saved as given in slot 1 to 3, served back, and the picture-making door is gone", async () => {
+  const { uploadPicture, servePicture, storiesCall } = await import("../src/stories.js");
+  const db = fakeD1(), store = new Map(), jpg = Uint8Array.from([0xff, 0xd8, 0xff, 9, 9]);
   const PICTURES = { head: async (k) => store.get(k) || null, put: async (k, b, o) => { store.set(k, { body: b, httpMetadata: o.httpMetadata }); }, get: async (k) => store.get(k) || null };
-  const AI = { run: async (model) => model.includes("phoenix") ? new Response(png).body : { image: Buffer.from(png).toString("base64") } };
-  const id = (await addStory(db, { day: "2026-10-27", server: "versus", map: "m", title: "t", body: "b" })).id, env = { DB: db, AI, PICTURES };
-  assert.ok((await addPictures(env, { id, prompts: ["a", "b"] })).error);
-  assert.ok((await addPictures(env, { id: 999, prompts: ["a", "b", "c"] })).error);
-  assert.equal((await addPictures(env, { id, prompts: ["a tunnel", "a man", "a woman"] })).pictures, 3);
-  assert.ok((await addPictures(env, { id, prompts: ["a", "b", "c"] })).error);
-  assert.equal((await servePicture(env, `/api/stories/picture/${id}/2`)).headers.get("content-type"), "image/png");
-  assert.equal(await servePicture(env, `/api/stories/picture/${id}/4`), null);
-  assert.ok((await addPictures(env, { id, redo: { 4: "x" } })).error);   // three pictures per chapter, no fourth
-  const { uploadPicture } = await import("../src/stories.js"), jpg = Uint8Array.from([0xff, 0xd8, 0xff, 9, 9]);
-  assert.equal((await uploadPicture(env, new URLSearchParams(`id=${id}&slot=2`), jpg)).ok, true);   // a picture made elsewhere, saved as is
+  const id = (await addStory(db, { day: "2026-10-27", server: "versus", map: "m", title: "t", body: "b" })).id, env = { DB: db, PICTURES, STORIES_KEY: "k".repeat(20) };
+  assert.equal((await uploadPicture(env, new URLSearchParams(`id=${id}&slot=2`), jpg)).ok, true);
   assert.equal(store.get(`story-${id}/2`).httpMetadata.contentType, "image/jpeg");
+  assert.equal((await servePicture(env, `/api/stories/picture/${id}/2`)).headers.get("content-type"), "image/jpeg");
+  assert.equal(await servePicture(env, `/api/stories/picture/${id}/4`), null);
+  assert.ok((await uploadPicture(env, new URLSearchParams(`id=${id}&slot=4`), jpg)).error);   // three pictures per chapter, no fourth
   assert.ok((await uploadPicture(env, new URLSearchParams(`id=${id}&slot=2`), Uint8Array.from([1, 2, 3]))).error);
   assert.ok((await uploadPicture(env, new URLSearchParams(`id=999&slot=2`), jpg)).error);
-  assert.equal((await addPictures(env, { id, redo: { 2: "a new man" } })).pictures, 1);   // a redo replaces just that slot
-  assert.equal(store.get(`story-${id}/2`).httpMetadata.contentType, "image/png");
+  const post = new Request("https://x/rpc/stories/picture", { method: "POST", headers: { "x-stories-key": "k".repeat(20) }, body: JSON.stringify([{ id, prompts: ["a", "b", "c"] }]) });
+  assert.equal(await storiesCall(post, env), null);   // the door that made pictures from prompts no longer exists
 });

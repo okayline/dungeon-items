@@ -4,8 +4,6 @@
 //   GET  /api/stories        public, newest first. ?day=YYYY-MM-DD for one day, ?before=ID&limit=N (up to 50).
 //   GET  /stories            the stories as a page.
 //   POST /rpc/stories/seal   (same key) seals any chapter that is not on the ledger yet (the ones saved before sealing existed); safe to repeat.
-//   POST /rpc/stories/picture (same key) with [{ id, prompts: [setting, subject, subject] }] makes the chapter's 3 pictures and keeps them in R2;
-//                            [{ id, redo: { "2": "new prompt" } }] replaces just the slots named (the old picture is overwritten).
 //   POST /rpc/stories/picture-file?id=<id>&slot=<1-3> (same key) with a PNG or JPEG as the body saves that picture as is (one made elsewhere).
 //   GET  /api/stories/picture/<id>/<1|2|3>   public, the picture itself (404 if the chapter has none).
 //   POST /rpc/stories/voice  (same key) with [{ id }] reads the chapter aloud (Aura 2) and keeps the mp3 in R2; [{ id, redo: true }] replaces it; { speaker } is optional; { sentences: 2 } reads only the first 2 sentences (a short test; redo replaces it).
@@ -64,22 +62,7 @@ export async function sealStories(db) {
   return { ok: true, sealed };
 }
 
-// Pictures: 3 per chapter, kept in R2 (never in D1) as story-<id>/1, /2, /3.
-//   1 = the setting and mood (Phoenix), 2 and 3 = a subject and an action (Flux). A chapter's 3 are made once; a redo (below) replaces just some.
-const PHOENIX = "@cf/leonardo/phoenix-1.0", FLUX = "@cf/black-forest-labs/flux-2-klein-9b";
-async function makePicture(ai, slot, prompt) {
-  let out;
-  if (slot === 1) out = await ai.run(PHOENIX, { prompt, width: 1024, height: 1024, num_steps: 25 });   // answers with the image bytes
-  else {
-    const form = new FormData(); form.append("prompt", prompt); form.append("width", "1024"); form.append("height", "1024");
-    const r = new Response(form);
-    out = await ai.run(FLUX, { multipart: { body: r.body, contentType: r.headers.get("content-type") } });   // answers with { image: base64 }
-  }
-  const bytes = typeof (out && out.image) === "string" ? Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0)) : new Uint8Array(await new Response(out).arrayBuffer());
-  const type = imageType(bytes);
-  if (!type) throw new Error("The picture came back in a shape I don't know.");
-  return { bytes, type };
-}
+// Pictures: 3 per chapter, made elsewhere and uploaded, kept in R2 (never in D1) as story-<id>/1, /2, /3.
 const imageType = (b) => b[0] === 0x89 && b[1] === 0x50 ? "image/png" : b[0] === 0xff && b[1] === 0xd8 ? "image/jpeg" : null;
 
 // A picture made somewhere else (the owner's playground), saved as is into a slot: POST /rpc/stories/picture-file?id=<chapter id>&slot=<1-3>
@@ -92,27 +75,6 @@ export async function uploadPicture(env, params, buf) {
   if (!(await env.DB.prepare("SELECT 1 FROM stories WHERE id = ?").bind(id).first())) return { error: "No such chapter." };
   await env.PICTURES.put(`story-${id}/${slot}`, bytes, { httpMetadata: { contentType: type }, customMetadata: { prompt: "(made in the Cloudflare playground, uploaded by the owner)", model: String(params.get("model") || "upload").slice(0, 40) } });
   return { ok: true, id, slot, bytes: bytes.length };
-}
-
-// New chapter: { id, prompts: [setting, subject, subject] } (refused if the chapter already has pictures).
-// Redo:        { id, redo: { "2": "new prompt" } } replaces just the slots named (the chapter must already have pictures).
-export async function addPictures(env, a) {
-  a = a || {};
-  const id = Number(a.id), redo = a.redo && typeof a.redo === "object" && !Array.isArray(a.redo) ? a.redo : null;
-  const todo = redo ? Object.entries(redo).map(([s, p]) => [Number(s), p]) : Array.isArray(a.prompts) && a.prompts.length === 3 ? a.prompts.map((p, i) => [i + 1, p]) : [];
-  if (!Number.isInteger(id) || id < 1 || !todo.length || todo.some(([s, p]) => ![1, 2, 3].includes(s) || typeof p !== "string" || !p.trim() || p.length > 1000))
-    return { error: "id and either 3 prompts (the setting, then two subjects) or a redo of slots 1 to 3 are needed (up to 1000 characters each)." };
-  if (todo.some(([, p]) => PRIVATE.test(p))) return { error: "Looks like a Steam ID or an address." };
-  if (!env.AI || !env.PICTURES) return { error: "Pictures are not set up." };
-  if (!(await env.DB.prepare("SELECT 1 FROM stories WHERE id = ?").bind(id).first())) return { error: "No such chapter." };
-  const has = !!(await env.PICTURES.head(`story-${id}/1`));
-  if (!redo && has) return { error: "This chapter already has pictures." };
-  if (redo && !has) return { error: "This chapter has no pictures to redo." };
-  try {
-    const made = await Promise.all(todo.map(([s, p]) => makePicture(env.AI, s, p).catch((e) => { throw new Error("picture " + s + " (" + (s > 1 ? "flux" : "phoenix") + "): " + String((e && e.message) || e)); })));   // all first, so a failure saves none
-    await Promise.all(made.map((m, i) => env.PICTURES.put(`story-${id}/${todo[i][0]}`, m.bytes, { httpMetadata: { contentType: m.type }, customMetadata: { prompt: todo[i][1], model: todo[i][0] > 1 ? FLUX : PHOENIX } })));
-    return { ok: true, id, pictures: todo.length, redone: !!redo };
-  } catch (e) { return { error: String((e && e.message) || "Something broke.") }; }
 }
 
 export async function servePicture(env, pathname) {
@@ -168,14 +130,14 @@ export async function serveVoice(env, pathname) {
 }
 
 export async function storiesCall(req, env) {
-  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal|picture|picture-file|voice)$/);
+  const m = new URL(req.url).pathname.match(/^\/rpc\/stories\/(add|seal|picture-file|voice)$/);
   if (!m) return null;
   const key = req.headers.get("x-stories-key") || "";
   if (req.method !== "POST" || !env.STORIES_KEY || env.STORIES_KEY.length < 16 || !sameKey(key, env.STORIES_KEY)) return null;
   if (m[1] === "picture-file") return Response.json(await uploadPicture(env, new URL(req.url).searchParams, await req.arrayBuffer()), { headers: { "cache-control": "no-store" } });
   let args;
   try { args = await req.json(); if (!Array.isArray(args)) throw 0; } catch { return Response.json({ error: "Send a JSON array." }, { status: 400 }); }
-  return Response.json(m[1] === "seal" ? await sealStories(env.DB) : m[1] === "picture" ? await addPictures(env, args[0]) : m[1] === "voice" ? await addVoice(env, args[0]) : await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });
+  return Response.json(m[1] === "seal" ? await sealStories(env.DB) : m[1] === "voice" ? await addVoice(env, args[0]) : await addStory(env.DB, args[0]), { headers: { "cache-control": "no-store" } });
 }
 
 export async function listStories(db, params) {
