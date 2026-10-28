@@ -93,7 +93,8 @@ article{padding:1.6rem 0 .4rem}
 article+article:before,.rule{content:"";display:block;height:2px;margin:0 0 1.6rem;background:linear-gradient(90deg,var(--red),transparent)}
 h2{font:italic 400 1.6rem/1.3 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;margin:0 0 .3rem;color:#f0e9e1}
 .meta{color:var(--dim);font:13px "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
-p{margin:.9rem 0;padding:0 6rem 0 3.5rem;white-space:pre-wrap}
+p{margin:.9rem 0;padding:0 8rem 0 3.5rem;white-space:pre-wrap}
+.meta+p{margin-top:1.9rem}
 @media (max-width:640px){p{padding:0 2rem 0 1rem}}
 a,button{color:#d9534a;background:none;border:0;font:inherit;cursor:pointer;padding:0;margin-top:1.6rem}
 a:hover,button:hover{text-decoration:underline}
