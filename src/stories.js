@@ -51,20 +51,27 @@ export async function listStories(db, params) {
 
 export const STORIES_PAGE = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Stories</title><style>
-:root{--bg:#faf8f4;--fg:#222;--dim:#777;--line:#ddd}
-@media (prefers-color-scheme:dark){:root{--bg:#161616;--fg:#e8e6e1;--dim:#999;--line:#333}}
-body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 Georgia,serif}
-main{max-width:40rem;margin:0 auto;padding:2rem 16px 4rem}
-h1{font-size:1.4rem}article{border-top:1px solid var(--line);padding-top:1.4rem;margin-top:2rem}
-h2{font-size:1.2rem;margin:.2rem 0}.meta{color:var(--dim);font:14px system-ui,sans-serif}
-p{margin:.9rem 0;white-space:pre-wrap}button{font:inherit;margin-top:2rem}
-</style></head><body><main><h1>Stories from the servers</h1><div id="list"></div><button id="more" hidden>Older chapters</button></main>
+:root{--bg:#0e0d0d;--fg:#dcd6cf;--dim:#8d857c;--line:#3a2a28;--red:#b3261e}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.7 Georgia,"Times New Roman",serif}
+header{border-bottom:3px solid var(--red);background:#151212}
+header>div{max-width:42rem;margin:0 auto;padding:1.6rem 16px}
+h1{font:700 1.9rem/1.2 Georgia,serif;letter-spacing:.04em;text-transform:uppercase;margin:0}
+.sub{color:var(--dim);font:14px system-ui,sans-serif;margin-top:.3rem}
+main{max-width:42rem;margin:0 auto;padding:1rem 16px 4rem}
+article{padding:1.6rem 0 .4rem}
+article+article:before,.rule{content:"";display:block;height:2px;margin:0 0 1.6rem;background:linear-gradient(90deg,var(--red),transparent)}
+h2{font:700 1.5rem/1.25 Georgia,serif;margin:0 0 .3rem;color:#f0e9e1}
+.meta{color:var(--dim);font:14px system-ui,sans-serif;margin-bottom:1rem}
+p{margin:.9rem 0;white-space:pre-wrap}
+a,button{color:#d9534a;background:none;border:0;font:inherit;cursor:pointer;padding:0;margin-top:1.6rem}
+a:hover,button:hover{text-decoration:underline}
+</style></head><body><header><div><h1>Stories from the servers</h1><div class="sub">What happened on our Left 4 Dead servers, told as it went</div></div></header><main><div id="list"></div><button id="more" hidden>&laquo; Older chapters</button></main>
 <script>
 var next=null,list=document.getElementById("list"),more=document.getElementById("more");
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
 function load(){fetch("/api/stories"+(next?"?before="+next:"")).then(function(r){return r.json()}).then(function(d){
  (d.stories||[]).forEach(function(s){var a=document.createElement("article");
-  a.innerHTML='<div class="meta">Chapter '+s.chapter+" · "+esc(s.day)+" · "+esc(s.server)+"</div><h2>"+esc(s.title)+"</h2><p>"+esc(s.body)+"</p>";list.appendChild(a)});
+  a.innerHTML="<h2>"+esc(s.title)+'</h2><div class="meta">Chapter '+s.chapter+" · "+esc(s.day)+" · "+esc(s.server)+"</div><p>"+esc(s.body)+"</p>";list.appendChild(a)});
  next=d.next;more.hidden=!next;if(!(d.stories||[]).length&&!list.children.length)list.textContent="No chapters yet."}).catch(function(){list.textContent="Couldn't load the stories."})}
 more.onclick=load;load();
 </script></body></html>`;
