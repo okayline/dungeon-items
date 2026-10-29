@@ -4,7 +4,6 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
-import { execSync } from "node:child_process";
 import { fakeD1 } from "./helpers.mjs";
 import { birth, moveCopy, spendCopy, heldBy, whereIs, addItems, retireItems, verify } from "../src/registry.js";
 import worker from "../src/worker.js";
@@ -84,7 +83,7 @@ test("the HTTP door marks only 88x31 players' copies, as 88x31, and reads any co
 
 test("migration 004 runs on the old layout and keeps every item, copy and ledger row", () => {
   const db = new DatabaseSync(":memory:");
-  db.exec(execSync("git show dd6d80c^:schema.sql", { encoding: "utf8" }));
+  db.exec(readFileSync(new URL("./fixtures/schema-before-004.sql", import.meta.url), "utf8"));   // schema.sql as it was before migration 004 (dd6d80c^), kept here so a shallow clone can run it
   db.exec("INSERT INTO items (source, source_key, rarity, name, created_at, updated_at) VALUES ('4dungeon', 'M:1', 'mythic', 'old', 1, 1), ('4dungeon', 'C:1', 'common', 'c', 1, 1)");
   db.exec("INSERT INTO copies (item_id, copy, born_game, born_key, holder_game, holder_id, born_at, moved_at) VALUES (2, 1, 'irl-dungeon', 'k', 'irl-dungeon', 1, 1, 1)");
   db.exec("PRAGMA foreign_keys = ON");

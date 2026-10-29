@@ -9,9 +9,11 @@
 //   GET /api/stories          the written chapters, newest first (?day= ?before= ?limit=); POST /rpc/stories/add saves one (STORIES_KEY).
 //   GET /stories              the chapters as a page (/story/<id>, /map/<map> and /server/<name> and /day/<date> are the same page); on a stories.* host the main page (/) is the same page.
 //   GET /ledger               the ledger as a page; /ledger?item=ID&copy=N shows one copy.
+//   GET /footer.js            the footer every game shows: "© name, year · ≡ version"; ≡ pops up the game's own carry window (src/footer.js).
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
 import { storiesCall, listStories, servePicture, STORIES_PAGE } from "./stories.js";
+import { FOOTER_JS } from "./footer.js";
 import { verify } from "./registry.js";
 import { publicLedger, copyHistory, LEDGER_PAGE, isMystery, mysteryItem } from "./public-ledger.js";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-methods": "GET, OPTIONS", "access-control-allow-headers": "if-none-match" };
@@ -63,6 +65,7 @@ export default {
     if (url.pathname.startsWith("/api/stories/picture/")) return (await servePicture(env, url.pathname)) || json({ error: "No such picture." }, 404);
     if (url.pathname === "/api/stories") { const r = await listStories(env.DB, url.searchParams); return r.error ? json(r, 400) : json(r, 200, { "cache-control": "public, max-age=60" }); }
     if (url.pathname === "/stories" || /^\/(story\/\d{1,9}|(map|server)\/[\w.-]{1,80}|day\/\d{4}-\d{2}-\d{2})$/.test(url.pathname) || (url.pathname === "/" && url.hostname.startsWith("stories."))) return new Response(STORIES_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
+    if (url.pathname === "/footer.js") return new Response(FOOTER_JS, { headers: { "content-type": "application/javascript; charset=utf-8", "cache-control": "public, max-age=300" } });
     if (url.pathname === "/ledger") return new Response(LEDGER_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     const m = url.pathname.match(/^\/api\/items\/(\d{1,12})$/);
     if (m) {
