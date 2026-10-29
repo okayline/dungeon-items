@@ -100,7 +100,11 @@ export async function listStories(db, params) {
   if (day) { if (!DAY.test(day)) return { error: "day is YYYY-MM-DD." }; where.push("day = ?"); args.push(day); }
   if (before > 0) { where.push("id < ?"); args.push(before); }
   const { results } = await db.prepare(
-    `SELECT id, day, chapter, server, map, title, body, created_at FROM stories ${where.length ? "WHERE " + where.join(" AND ") : ""} ORDER BY id DESC LIMIT ?`
+    // series: the stored number, or for older chapters (saved before the column) their place among the same map's chapters
+    `SELECT id, day, chapter, server, map, title, body, created_at, series FROM (
+       SELECT id, day, chapter, server, map, title, body, created_at,
+              COALESCE(series, ROW_NUMBER() OVER (PARTITION BY map ORDER BY created_at, id)) AS series FROM stories
+     ) ${where.length ? "WHERE " + where.join(" AND ") : ""} ORDER BY id DESC LIMIT ?`
   ).bind(...args, limit).all();
   return { stories: results, next: results.length === limit ? results[results.length - 1].id : null };
 }
@@ -147,7 +151,7 @@ var cutoff=ld(Date.now()/1000-7*864e2);   // a week ago, by the visitor's date
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
 function pic(id,n){return '<img class="pic" src="/api/stories/picture/'+id+'/'+n+'" alt="" loading="lazy" onerror="this.remove()">'}   // a chapter with no pictures just shows none
 function show(s){var a=document.createElement("article");
- a.innerHTML="<h2>"+esc(s.title)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+ld(s.created_at)+" &middot; "+esc(s.server)+"</div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a)}
+ a.innerHTML="<h2>"+esc(s.title)+'</h2><div class="meta">Chapter '+s.chapter+(s.series?" &middot; Series #"+s.series:"")+" &middot; "+ld(s.created_at)+" &middot; "+esc(s.server)+"</div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a)}
 function done(){more.hidden=!(held.length||next);if(!list.children.length)list.textContent="No chapters this week."}
 function load(){fetch("/api/stories"+(next?"?before="+next:"")).then(function(r){return r.json()}).then(function(d){
  var st=d.stories||[];next=d.next;

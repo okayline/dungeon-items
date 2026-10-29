@@ -81,3 +81,11 @@ test("pictures: one made elsewhere is saved as given in slot 1 to 3, served back
   const post = new Request("https://x/rpc/stories/picture", { method: "POST", headers: { "x-stories-key": "k".repeat(20) }, body: JSON.stringify([{ id, prompts: ["a", "b", "c"] }]) });
   assert.equal(await storiesCall(post, env), null);   // the door that made pictures from prompts no longer exists
 });
+
+test("series: a stored number is used, older chapters get their place among the same map's chapters", async () => {
+  const db = fakeD1(), add = (map) => addStory(db, { day: "2026-10-27", server: "vintage", map, title: "t", body: "b" });
+  await add("l4d_a"); await add("l4d_b"); await add("l4d_a");
+  db.raw.prepare("INSERT INTO stories (day, chapter, server, map, title, body, created_at, series) VALUES ('2026-10-27', 4, 'vintage', 'l4d_a', 't', 'b', 9999999999, 7)").run();
+  const got = (await listStories(db, new URLSearchParams())).stories.map((s) => [s.map, s.series]);
+  assert.deepEqual(got, [["l4d_a", 7], ["l4d_a", 2], ["l4d_b", 1], ["l4d_a", 1]]);   // newest first
+});

@@ -255,6 +255,7 @@ CREATE TABLE IF NOT EXISTS stories (
   body        TEXT NOT NULL CHECK (length(body) BETWEEN 1 AND 20000),
   facts       TEXT,                                                                           -- the anonymous JSON the chapter was written from
   created_at  INTEGER NOT NULL,
+  series      INTEGER CHECK (series IS NULL OR series >= 1),                                  -- migration 009: number within its level (map); empty on older chapters
   UNIQUE (day, chapter)
 );
 
