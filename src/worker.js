@@ -7,7 +7,7 @@
 //   GET /api/registry/ledger  the registry ledger itself, newest first (?before=ID&limit=N, up to 100); no player ids.
 //   GET /api/registry/copy    one copy's story: ?item=ID&copy=N, its item and every ledger entry about it, newest first.
 //   GET /api/stories          the written chapters, newest first (?day= ?before= ?limit=); POST /rpc/stories/add saves one (STORIES_KEY).
-//   GET /stories              the chapters as a page; on a stories.* host the main page (/) is the same page.
+//   GET /stories              the chapters as a page (/story/<id> and /map/<map> are the same page for one chapter or one level); on a stories.* host the main page (/) is the same page.
 //   GET /ledger               the ledger as a page; /ledger?item=ID&copy=N shows one copy.
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
@@ -62,7 +62,7 @@ export default {
     }
     if (url.pathname.startsWith("/api/stories/picture/")) return (await servePicture(env, url.pathname)) || json({ error: "No such picture." }, 404);
     if (url.pathname === "/api/stories") { const r = await listStories(env.DB, url.searchParams); return r.error ? json(r, 400) : json(r, 200, { "cache-control": "public, max-age=60" }); }
-    if (url.pathname === "/stories" || (url.pathname === "/" && url.hostname.startsWith("stories."))) return new Response(STORIES_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
+    if (url.pathname === "/stories" || /^\/(story\/\d{1,9}|map\/[\w.-]{1,80})$/.test(url.pathname) || (url.pathname === "/" && url.hostname.startsWith("stories."))) return new Response(STORIES_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     if (url.pathname === "/ledger") return new Response(LEDGER_PAGE, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     const m = url.pathname.match(/^\/api\/items\/(\d{1,12})$/);
     if (m) {

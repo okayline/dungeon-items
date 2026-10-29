@@ -89,3 +89,12 @@ test("series: a stored number is used, older chapters get their place among the 
   const got = (await listStories(db, new URLSearchParams())).stories.map((s) => [s.map, s.series]);
   assert.deepEqual(got, [["l4d_a", 7], ["l4d_a", 2], ["l4d_b", 1], ["l4d_a", 1]]);   // newest first
 });
+
+test("one chapter and one level can be asked for, and their pages are the stories page", async () => {
+  const db = fakeD1(), add = (map, day) => addStory(db, { day, server: "versus", map, title: "Tale #1 from X: Y", body: "Zoey held the hallway." });
+  await add("l4d_hospital01_apartment", "2026-10-27"); await add("l4d_smalltown04_mainstreet", "2026-10-27"); await add("l4d_hospital01_apartment", "2026-10-28");
+  assert.equal((await listStories(db, new URLSearchParams("id=2"))).stories.length, 1);
+  assert.deepEqual((await listStories(db, new URLSearchParams("map=l4d_hospital01_apartment"))).stories.map((s) => s.series), [2, 1]);
+  const { default: worker } = await import("../src/worker.js");
+  for (const p of ["/story/2", "/map/l4d_hospital01_apartment"]) assert.match(await (await worker.fetch(new Request("https://stories.88x31.app" + p), { DB: db })).text(), /Tales from the Safe Room/);
+});

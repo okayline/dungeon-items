@@ -2,7 +2,8 @@
 //   POST /rpc/stories/add    with  x-stories-key: <STORIES_KEY secret>  and a JSON array [{ day, server, map, title, body, facts }].
 //                            The chapter number is the next one for that day, picked here, never by the caller. Without the key: 404.
 //   GET  /api/stories        public, newest first. ?day=YYYY-MM-DD for one day, ?before=ID&limit=N (up to 50).
-//   GET  /stories            the stories as a page.
+//                            ?id=ID for one chapter, ?map=MAP for one level's chapters.
+//   GET  /stories            the stories as a page. /story/<id> (one chapter) and /map/<map> (every chapter of a level) are the same page.
 //   POST /rpc/stories/seal   (same key) seals any chapter that is not on the ledger yet (the ones saved before sealing existed); safe to repeat.
 //   POST /rpc/stories/picture-file?id=<id>&slot=<1-3> (same key) with a PNG or JPEG as the body saves that picture as is (one made elsewhere).
 //   GET  /api/stories/picture/<id>/<1|2|3>   public, the picture itself (404 if the chapter has none).
@@ -94,11 +95,13 @@ export async function storiesCall(req, env) {
 }
 
 export async function listStories(db, params) {
-  const day = params.get("day"), before = Number(params.get("before")) || 0;
+  const day = params.get("day"), before = Number(params.get("before")) || 0, one = Number(params.get("id")) || 0, map = params.get("map");
   const limit = Math.min(Math.max(Number(params.get("limit")) || 20, 1), 50);
   const where = [], args = [];
   if (day) { if (!DAY.test(day)) return { error: "day is YYYY-MM-DD." }; where.push("day = ?"); args.push(day); }
   if (before > 0) { where.push("id < ?"); args.push(before); }
+  if (one > 0) { where.push("id = ?"); args.push(one); }
+  if (map) { where.push("map = ?"); args.push(map); }
   const { results } = await db.prepare(
     // series: the stored number, or for older chapters (saved before the column) their place among the same map's chapters
     `SELECT id, day, chapter, server, map, title, body, created_at, series FROM (
@@ -141,22 +144,29 @@ p{margin:.9rem 0;padding:0 8rem 0 3.5rem;white-space:pre-wrap}
 .pic{display:block;width:100%;height:auto;margin:1rem 0;border:1px solid var(--line)}
 .pics{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1.2rem 0}.pics:empty{display:none}.pics .pic{margin:0}
 @media (max-width:640px){p{padding:0 2rem 0 1rem}}
+a.t{color:inherit;margin:0}a.t:hover{color:#d9534a}
 a,button{color:#d9534a;background:none;border:0;font:inherit;cursor:pointer;padding:0;margin-top:1.6rem}
 a:hover,button:hover{text-decoration:underline}
-</style></head><body><header><div><h1>Tales from the Safe Room</h1><div class="sub">stories from the past week on <span style="font-size:12px">~*~88x31~*~ cLuB</span> <span style="font-size:14px">l4d</span> servers</div></div></header><main><div id="list"></div><button id="more" hidden>&laquo; Older chapters</button></main>
+</style></head><body><header><div><h1><a href="/" id="home" style="color:inherit;text-decoration:none;margin:0">Tales from the Safe Room</a></h1><div class="sub">stories from the past week on <span style="font-size:12px">~*~88x31~*~ cLuB</span> <span style="font-size:14px">l4d</span> servers</div></div></header><main><div id="list"></div><button id="more" hidden>&laquo; Older chapters</button></main>
 <script>
 var next=null,all=false,held=[],list=document.getElementById("list"),more=document.getElementById("more");
+var path=location.pathname,pm=path.match(/^\\/(story|map)\\/([^\\/]+)$/),one=pm&&pm[1]==="story"?pm[2]:null,lvl=pm&&pm[1]==="map"?decodeURIComponent(pm[2]):null;
+if(location.hostname.indexOf("stories.")!==0)document.getElementById("home").href="/stories";
+if(pm)all=true;   // a chapter or a level shows everything, not just the last week
 function ld(t){return new Date(t*1000).toLocaleDateString("en-CA")}   // the visitor's own date (YYYY-MM-DD)
 var cutoff=ld(Date.now()/1000-7*864e2);   // a week ago, by the visitor's date
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
 function pic(id,n){return '<img class="pic" src="/api/stories/picture/'+id+'/'+n+'" alt="" loading="lazy" onerror="this.remove()">'}   // a chapter with no pictures just shows none
+function head(s){var m=s.title.match(/^(.+? #\\d+) from (.+?)(: .+)$/);   // "Tale #3 from The Apartments: Subtitle": the chapter and the level are links
+ if(!m)return esc(s.title);return '<a class="t" href="/story/'+s.id+'">'+esc(m[1])+'</a> from <a class="t" href="/map/'+encodeURIComponent(s.map)+'">'+esc(m[2])+"</a>"+esc(m[3])}
 function show(s){var a=document.createElement("article");
- a.innerHTML="<h2>"+esc(s.title)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+ld(s.created_at)+" &middot; "+esc(s.server)+"</div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a)}
-function done(){more.hidden=!(held.length||next);if(!list.children.length)list.textContent="No chapters this week."}
-function load(){fetch("/api/stories"+(next?"?before="+next:"")).then(function(r){return r.json()}).then(function(d){
+ a.innerHTML="<h2>"+head(s)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+ld(s.created_at)+" &middot; "+esc(s.server)+"</div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a)}
+function done(){more.hidden=!(held.length||next);if(!list.children.length)list.textContent=pm?"No such chapter.":"No chapters this week."}
+function load(){fetch("/api/stories"+(one?"?id="+one:lvl?"?map="+encodeURIComponent(lvl)+(next?"&before="+next:""):next?"?before="+next:"")).then(function(r){return r.json()}).then(function(d){
  var st=d.stories||[];next=d.next;
  st.forEach(function(s){if(all||ld(s.created_at)>=cutoff)show(s);else held.push(s)});
  done()}).catch(function(){list.textContent="Couldn't load the stories."})}
+more.textContent=pm?"\u00ab Older chapters of this level":more.textContent;
 more.onclick=function(){all=true;held.splice(0).forEach(show);if(next)load();else done()};
 load();
 </script></body></html>`;
