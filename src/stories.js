@@ -2,8 +2,8 @@
 //   POST /rpc/stories/add    with  x-stories-key: <STORIES_KEY secret>  and a JSON array [{ day, server, map, title, body, facts }].
 //                            The chapter number is the next one for that day, picked here, never by the caller. Without the key: 404.
 //   GET  /api/stories        public, newest first. ?day=YYYY-MM-DD for one day, ?before=ID&limit=N (up to 50).
-//                            ?id=ID for one chapter, ?map=MAP for one level's chapters.
-//   GET  /stories            the stories as a page. /story/<id> (one chapter) and /map/<map> (every chapter of a level) are the same page.
+//                            ?id=ID for one chapter, ?map=MAP for one level's chapters, ?server=NAME for one server's.
+//   GET  /stories            the stories as a page. /story/<id> (one chapter) and /map/<map> (every chapter of a level) and /server/<name> (every chapter of a server) are the same page.
 //   POST /rpc/stories/seal   (same key) seals any chapter that is not on the ledger yet (the ones saved before sealing existed); safe to repeat.
 //   POST /rpc/stories/picture-file?id=<id>&slot=<1-3> (same key) with a PNG or JPEG as the body saves that picture as is (one made elsewhere).
 //   GET  /api/stories/picture/<id>/<1|2|3>   public, the picture itself (404 if the chapter has none).
@@ -95,13 +95,14 @@ export async function storiesCall(req, env) {
 }
 
 export async function listStories(db, params) {
-  const day = params.get("day"), before = Number(params.get("before")) || 0, one = Number(params.get("id")) || 0, map = params.get("map");
+  const day = params.get("day"), before = Number(params.get("before")) || 0, one = Number(params.get("id")) || 0, map = params.get("map"), server = params.get("server");
   const limit = Math.min(Math.max(Number(params.get("limit")) || 20, 1), 50);
   const where = [], args = [];
   if (day) { if (!DAY.test(day)) return { error: "day is YYYY-MM-DD." }; where.push("day = ?"); args.push(day); }
   if (before > 0) { where.push("id < ?"); args.push(before); }
   if (one > 0) { where.push("id = ?"); args.push(one); }
   if (map) { where.push("map = ?"); args.push(map); }
+  if (server) { where.push("server = ?"); args.push(server); }
   const { results } = await db.prepare(
     // series: the stored number, or for older chapters (saved before the column) their place among the same map's chapters
     `SELECT id, day, chapter, server, map, title, body, created_at, series FROM (
@@ -150,7 +151,7 @@ a:hover,button:hover{text-decoration:underline}
 </style></head><body><header><div><h1><a href="/" id="home" style="color:inherit;text-decoration:none;margin:0">Tales from the Safe Room</a></h1><div class="sub">stories from the past week on <span style="font-size:12px">~*~88x31~*~ cLuB</span> <span style="font-size:14px">l4d</span> servers</div></div></header><main><div id="list"></div><button id="more" hidden>&laquo; Older chapters</button></main>
 <script>
 var next=null,all=false,held=[],list=document.getElementById("list"),more=document.getElementById("more");
-var path=location.pathname,pm=path.match(/^\\/(story|map)\\/([^\\/]+)$/),one=pm&&pm[1]==="story"?pm[2]:null,lvl=pm&&pm[1]==="map"?decodeURIComponent(pm[2]):null;
+var path=location.pathname,pm=path.match(/^\\/(story|map|server)\\/([^\\/]+)$/),one=pm&&pm[1]==="story"?pm[2]:null,lvl=pm&&pm[1]==="map"?decodeURIComponent(pm[2]):null,srv=pm&&pm[1]==="server"?decodeURIComponent(pm[2]):null;
 if(location.hostname.indexOf("stories.")!==0)document.getElementById("home").href="/stories";
 if(pm)all=true;   // a chapter or a level shows everything, not just the last week
 function ld(t){return new Date(t*1000).toLocaleDateString("en-CA")}   // the visitor's own date (YYYY-MM-DD)
@@ -160,13 +161,13 @@ function pic(id,n){return '<img class="pic" src="/api/stories/picture/'+id+'/'+n
 function head(s){var m=s.title.match(/^(.+? #\\d+) from (.+?)(: .+)$/);   // "Tale #3 from The Apartments: Subtitle": the chapter and the level are links
  if(!m)return esc(s.title);return '<a class="t" href="/story/'+s.id+'">'+esc(m[1])+'</a> from <a class="t" href="/map/'+encodeURIComponent(s.map)+'">'+esc(m[2])+"</a>"+esc(m[3])}
 function show(s){var a=document.createElement("article");
- a.innerHTML="<h2>"+head(s)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+ld(s.created_at)+" &middot; "+esc(s.server)+"</div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a)}
+ a.innerHTML="<h2>"+head(s)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; "+ld(s.created_at)+' &middot; <a class="t" href="/server/'+encodeURIComponent(s.server)+'">'+esc(s.server)+"</a></div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a)}
 function done(){more.hidden=!(held.length||next);if(!list.children.length)list.textContent=pm?"No such chapter.":"No chapters this week."}
-function load(){fetch("/api/stories"+(one?"?id="+one:lvl?"?map="+encodeURIComponent(lvl)+(next?"&before="+next:""):next?"?before="+next:"")).then(function(r){return r.json()}).then(function(d){
+function load(){fetch("/api/stories"+(one?"?id="+one:lvl||srv?(lvl?"?map="+encodeURIComponent(lvl):"?server="+encodeURIComponent(srv))+(next?"&before="+next:""):next?"?before="+next:"")).then(function(r){return r.json()}).then(function(d){
  var st=d.stories||[];next=d.next;
  st.forEach(function(s){if(all||ld(s.created_at)>=cutoff)show(s);else held.push(s)});
  done()}).catch(function(){list.textContent="Couldn't load the stories."})}
-more.textContent=pm?"\u00ab Older chapters of this level":more.textContent;
+more.textContent=pm?"\u00ab Older chapters":more.textContent;
 more.onclick=function(){all=true;held.splice(0).forEach(show);if(next)load();else done()};
 load();
 </script></body></html>`;
