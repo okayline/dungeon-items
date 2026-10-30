@@ -13,8 +13,8 @@ export const FOOTER_JS = `(function () {
   var me = document.currentScript; if (!me) return;
   var d = me.dataset, carry = d.carry || "/api/carry?embed=1";
   var css = document.createElement("style");
-  css.textContent = ".ddfoot{position:relative;align-self:flex-end;margin:-3px 0 0;padding:0;text-align:right;font-family:inherit;font-size:10px;line-height:1;color:#ccc;letter-spacing:.03em}" +
-    ".ddfoot .ddacct{cursor:pointer;font-size:14px;padding:0 .3em;user-select:none}" +
+  css.textContent = ".ddfoot{position:relative;align-self:flex-end;margin:-3px 0 0;padding:0;text-align:right;font-family:inherit;font-size:9px;line-height:1;color:#ccc;letter-spacing:.03em}" +
+    ".ddfoot .ddacct{cursor:pointer;font-size:13px;padding:0 .3em;user-select:none}" +
     ".ddfoot iframe{position:absolute;right:0;bottom:100%;margin-bottom:4px;width:440px;height:240px;max-height:120vh;border:1px solid #8f8f8a;background:#07090a;z-index:1000;transform:scale(.55);transform-origin:bottom right}";
   document.head.appendChild(css);
   var foot = document.createElement("div"); foot.className = "ddfoot";
