@@ -1,9 +1,9 @@
 // (Oct 29) THE FOOTER: one line at the bottom of every game's page, written once here, served as GET /footer.js.
 //   <script src="https://dungeon-items.ddddungeon.workers.dev/footer.js" data-version="v0.11.0"></script>
-// It draws "✦ ~*~88x31~*~ cLuB, <year> · ≡ <version>" (the same name in every game) right after its own script tag, like the 88x31 BBS footer. The ≡ pops up the
+// It draws "🄯 ~*~88x31~*~ cLuB, <year> · ≡ <version>" (the same name in every game) right after its own script tag, like the 88x31 BBS footer. The ≡ pops up the
 // shared carry window (save codes, passkeys, carry) from the game's OWN /api/carry?embed=1 (logins are per game, so it
 // has to be the game's address), just above the ≡, over the page. ≡ again, a click anywhere else or Esc closes it.
-// data-copy="no" leaves out the ✦ (88x31, which shows buttons other people made).
+// data-copy="no" leaves out the 🄯 (88x31, which shows buttons other people made).
 // The line sits snug under a game's screen (a small negative top margin, line-height 1); a centered page keeps a 4px gap.
 // data-align="center" centers the line (88x31, Dawn Baton, Aura Farm); without it, it sits at the right, under a game's screen.
 // data-carry overrides the window's address (a game whose route is somewhere else). (Oct 29) A data-carry that starts with
@@ -19,7 +19,7 @@ export const FOOTER_JS = `(function () {
   document.head.appendChild(css);
   var foot = document.createElement("div"); foot.className = "ddfoot";
   if (d.align === "center") { foot.style.textAlign = "center"; foot.style.alignSelf = "center"; foot.style.marginTop = "4px"; }   // data-align="center": for a page whose content is centered
-  foot.appendChild(document.createTextNode((d.copy === "no" ? "" : "\\u2726 ") + "~*~88x31~*~ cLuB, " + new Date().getFullYear() + " \\u00b7 "));
+  foot.appendChild(document.createTextNode((d.copy === "no" ? "" : "\\u{1f12f} ") + "~*~88x31~*~ cLuB, " + new Date().getFullYear() + " \\u00b7 "));
   var acct = document.createElement("span"); acct.className = "ddacct"; acct.title = "Save codes and passkeys"; acct.textContent = "\\u2261";
   foot.appendChild(acct);
   if (d.version) foot.appendChild(document.createTextNode(" " + d.version));

@@ -23,5 +23,5 @@ test("data-align=center centers the footer line", async () => {
 
 test('data-copy="no" leaves out the copyright sign', async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
-  assert.ok(js.includes('d.copy === "no" ? "" : "\\u2726 "'));
+  assert.ok(js.includes('d.copy === "no" ? "" : "\\u{1f12f} "'));
 });
