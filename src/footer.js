@@ -20,7 +20,7 @@ export const FOOTER_JS = `(function () {
   foot.appendChild(acct);
   if (d.version) foot.appendChild(document.createTextNode(" " + d.version));
   if (carry.charAt(0) === "#") {
-    acct.addEventListener("click", function () { if (location.hash === carry) window.dispatchEvent(new HashChangeEvent("hashchange")); else location.hash = carry; });
+    acct.addEventListener("click", function () { if (location.hash === carry) window.dispatchEvent(new HashChangeEvent("hashchange", { oldURL: location.href, newURL: location.href })); else location.hash = carry; });
     me.parentNode.insertBefore(foot, me.nextSibling);
     return;
   }
