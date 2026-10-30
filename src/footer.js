@@ -10,17 +10,22 @@
 // "#" (88x31's "#codes", 4Dungeon's "#user") pops up nothing: the ≡ goes to that place on the game's own page, for a game
 // whose login is its own screen (4Dungeon keeps its token in the page; 88x31 has its own routes), so the window can't do it.
 // (Oct 29) The § next to the ≡ is only a mark for now: it opens nothing.
+// (Oct 29) The footer text can always be selected, even on a page that turns selection off for its body (4Dungeon, scoundrel.exe,
+// irl-dungeon); the ≡ still can't. It shows only once the page and its fonts have loaded.
 export const FOOTER_JS = `(function () {
   var me = document.currentScript; if (!me) return;
   var d = me.dataset, carry = d.carry || "/api/carry?embed=1";
   var css = document.createElement("style");
-  css.textContent = ".ddfoot{position:relative;align-self:flex-end;margin:-3px 0 0;padding:0 6px 0 0;text-align:right;font-family:inherit;font-size:9px;line-height:1;color:#ccc;letter-spacing:.03em}" +
+  css.textContent = ".ddfoot{position:relative;align-self:flex-end;margin:-3px 0 0;padding:0 6px 0 0;text-align:right;font-family:inherit;font-size:9px;line-height:1;color:#ccc;letter-spacing:.03em;-webkit-user-select:text;user-select:text}" +
     ".ddfoot .ddacct{cursor:pointer;font-size:13px;padding:0 .3em;user-select:none}" +
     ".ddfoot iframe{position:absolute;right:0;bottom:100%;margin-bottom:4px;width:440px;height:240px;max-height:120vh;border:1px solid #8f8f8a;background:#07090a;z-index:1000;transform:scale(.55);transform-origin:bottom right}";
   document.head.appendChild(css);
   var foot = document.createElement("div"); foot.className = "ddfoot";
   if (/VT323/i.test(getComputedStyle(me.parentNode).fontFamily)) foot.style.fontSize = "12px";   // VT323 is a small font (about 3/4 the size of a normal one at the same px), so it gets 12px to look like 9px does on the other pages
   if (d.align === "center") { foot.style.textAlign = "center"; foot.style.alignSelf = "center"; foot.style.marginTop = "4px"; }   // data-align="center": for a page whose content is centered
+  foot.style.visibility = "hidden";   // (Oct 29) hidden, still taking its room, until the page has loaded: drawn at once it sat alone mid-screen on a centered page before the game drew
+  function reveal() { (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(function () { foot.style.visibility = ""; }); }); }
+  if (document.readyState === "complete") reveal(); else window.addEventListener("load", reveal);
   foot.appendChild(document.createTextNode((d.copy === "no" ? "" : "\\u{1f12f} ") + "~*~88x31~*~ \\u00b7 \\u00a7 "));
   var acct = document.createElement("span"); acct.className = "ddacct"; acct.title = "Save codes and passkeys"; acct.textContent = "\\u2261";
   foot.appendChild(acct);

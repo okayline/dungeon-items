@@ -30,3 +30,8 @@ test('data-copy="no" leaves out the copyright sign', async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
   assert.ok(js.includes('d.copy === "no" ? "" : "\\u{1f12f} "'));
 });
+
+test("the footer text can be selected and waits for the page to load before it shows", async () => {
+  const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
+  assert.ok(js.includes("user-select:text}") && js.includes('foot.style.visibility = "hidden"') && js.includes('addEventListener("load", reveal)'));
+});
