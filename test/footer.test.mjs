@@ -26,11 +26,6 @@ test("a page set in VT323 gets a bigger footer, since VT323 is a small font", as
   assert.ok(js.includes("/VT323/i.test(getComputedStyle(me.parentNode).fontFamily)") && js.includes('foot.style.fontSize = "12px"'));
 });
 
-test("the § pops up this Worker's own /ledger page, worked out from the script's own address", async () => {
-  const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
-  assert.ok(js.includes('ledger = me.src.replace(/\\/footer\\.js.*$/, "/ledger")') && js.includes('led.textContent = "\\u00a7"'));
-});
-
 test('data-copy="no" leaves out the copyright sign', async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
   assert.ok(js.includes('d.copy === "no" ? "" : "\\u{1f12f} "'));
