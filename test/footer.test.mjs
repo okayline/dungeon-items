@@ -16,11 +16,6 @@ test("a data-carry starting with # goes to that place on the page instead of pop
   assert.ok(js.includes('carry.charAt(0) === "#"') && js.includes("location.hash = carry"));
 });
 
-test("data-align=center centers the footer line", async () => {
-  const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
-  assert.ok(js.includes('d.align === "center"') && js.includes('foot.style.textAlign = "center"'));
-});
-
 test("a page set in VT323 gets a bigger footer, since VT323 is a small font", async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
   assert.ok(js.includes("/VT323/i.test(getComputedStyle(me.parentNode).fontFamily)") && js.includes('foot.style.fontSize = "12px"'));

@@ -1,11 +1,10 @@
 // (Oct 29) THE FOOTER: one line at the bottom of every game's page, written once here, served as GET /footer.js.
 //   <script src="https://dungeon-items.ddddungeon.workers.dev/footer.js" data-version="v0.11.0"></script>
-// It draws "🄯 ~*~88x31~*~ · ≡ <version>" (the same name in every game) right after its own script tag, like the 88x31 BBS footer. The ≡ pops up the
+// It draws "🄯 ~*~88x31~*~ · § ≡ <version>" (the same name in every game) right after its own script tag, like the 88x31 BBS footer. The ≡ pops up the
 // shared carry window (save codes, passkeys, carry) from the game's OWN /api/carry?embed=1 (logins are per game, so it
 // has to be the game's address), just above the ≡, over the page. ≡ again, a click anywhere else or Esc closes it.
 // data-copy="no" leaves out the 🄯 (88x31, which shows buttons other people made).
-// The line sits snug under a game's screen (a small negative top margin, line-height 1); a centered page keeps a 4px gap.
-// data-align="center" centers the line (88x31, Dawn Baton, Aura Farm); without it, it sits at the right, under a game's screen.
+// The line sits snug at the right, under a game's screen (a small negative top margin, line-height 1).
 // data-carry overrides the window's address (a game whose route is somewhere else). (Oct 29) A data-carry that starts with
 // "#" (88x31's "#codes", 4Dungeon's "#user") pops up nothing: the ≡ goes to that place on the game's own page, for a game
 // whose login is its own screen (4Dungeon keeps its token in the page; 88x31 has its own routes), so the window can't do it.
@@ -22,7 +21,6 @@ export const FOOTER_JS = `(function () {
   document.head.appendChild(css);
   var foot = document.createElement("div"); foot.className = "ddfoot";
   if (/VT323/i.test(getComputedStyle(me.parentNode).fontFamily)) foot.style.fontSize = "12px";   // VT323 is a small font (about 3/4 the size of a normal one at the same px), so it gets 12px to look like 9px does on the other pages
-  if (d.align === "center") { foot.style.textAlign = "center"; foot.style.alignSelf = "center"; foot.style.marginTop = "4px"; }   // data-align="center": for a page whose content is centered
   foot.style.visibility = "hidden";   // (Oct 29) hidden, still taking its room, until the page has loaded: drawn at once it sat alone mid-screen on a centered page before the game drew
   function reveal() { (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(function () { foot.style.visibility = ""; }); }); }
   if (document.readyState === "complete") reveal(); else window.addEventListener("load", reveal);

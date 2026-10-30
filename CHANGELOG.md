@@ -5,6 +5,9 @@ Newest first. Times are Hawaii time (HST).
 ---
 
 ## Oct 29, 2026
+**Thu Oct 29, 2026 · 9:47 PM HST**
+- The footer is always at the right. Removed: `data-align="center"` (no game used it), its code and its test.
+
 **Thu Oct 29, 2026 · 9:50 PM HST**
 - The footer stays hidden (still holding its spot) until the page and its fonts have loaded, so it no longer shows alone in the middle of the screen before a game draws. Removed: drawing the footer the moment its script runs.
 - The footer text can be selected on every game, including pages that turn selection off for the whole body (4Dungeon, scoundrel.exe, irl-dungeon). The ≡ still can't be. Removed: nothing.
