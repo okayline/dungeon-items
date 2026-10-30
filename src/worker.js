@@ -9,7 +9,7 @@
 //   GET /api/stories          the written chapters, newest first (?day= ?before= ?limit=); POST /rpc/stories/add saves one (STORIES_KEY).
 //   GET /stories              the chapters as a page (/story/<id>, /map/<map> and /server/<name> and /day/<date> are the same page); on a stories.* host the main page (/) is the same page.
 //   GET /ledger               the ledger as a page; /ledger?item=ID&copy=N shows one copy.
-//   GET /footer.js            the footer every game shows: "🄯 ~*~88x31~*~, year · ≡ version"; ≡ pops up the game's own carry window (src/footer.js).
+//   GET /footer.js            the footer every game shows: "🄯 ~*~88x31~*~ · ≡ version"; ≡ pops up the game's own carry window (src/footer.js).
 import { httpCall } from "./accounts.js";
 import { registryCall } from "./registry-http.js";
 import { storiesCall, listStories, servePicture, STORIES_PAGE } from "./stories.js";
