@@ -9,33 +9,45 @@
 // data-carry overrides the window's address (a game whose route is somewhere else). (Oct 29) A data-carry that starts with
 // "#" (88x31's "#codes", 4Dungeon's "#user") pops up nothing: the ≡ goes to that place on the game's own page, for a game
 // whose login is its own screen (4Dungeon keeps its token in the page; 88x31 has its own routes), so the window can't do it.
+// (Oct 29) The § next to the ≡ pops up the shared ledger page (this Worker's own /ledger, the registry's whole history) the same way,
+// over the page, just above the §. Opening one window closes the other; a click anywhere else or Esc closes either.
 export const FOOTER_JS = `(function () {
   var me = document.currentScript; if (!me) return;
   var d = me.dataset, carry = d.carry || "/api/carry?embed=1";
   var css = document.createElement("style");
-  css.textContent = ".ddfoot{position:relative;align-self:flex-end;margin:-3px 0 0;padding:0;text-align:right;font-family:inherit;font-size:9px;line-height:1;color:#ccc;letter-spacing:.03em}" +
+  css.textContent = ".ddfoot{position:relative;align-self:flex-end;margin:-3px 0 0;padding:0 6px 0 0;text-align:right;font-family:inherit;font-size:9px;line-height:1;color:#ccc;letter-spacing:.03em}" +
     ".ddfoot .ddacct{cursor:pointer;font-size:13px;padding:0 .3em;user-select:none}" +
-    ".ddfoot iframe{position:absolute;right:0;bottom:100%;margin-bottom:4px;width:440px;height:240px;max-height:120vh;border:1px solid #8f8f8a;background:#07090a;z-index:1000;transform:scale(.55);transform-origin:bottom right}";
+    ".ddfoot .ddled{cursor:pointer;user-select:none}" +
+    ".ddfoot iframe{position:absolute;right:0;bottom:100%;margin-bottom:4px;width:440px;height:240px;max-height:120vh;border:1px solid #8f8f8a;background:#07090a;z-index:1000;transform:scale(.55);transform-origin:bottom right}" +
+    ".ddfoot iframe.ddledger{width:360px;max-width:92vw;height:280px;transform:none}";
   document.head.appendChild(css);
   var foot = document.createElement("div"); foot.className = "ddfoot";
   if (/VT323/i.test(getComputedStyle(me.parentNode).fontFamily)) foot.style.fontSize = "12px";   // VT323 is a small font (about 3/4 the size of a normal one at the same px), so it gets 12px to look like 9px does on the other pages
   if (d.align === "center") { foot.style.textAlign = "center"; foot.style.alignSelf = "center"; foot.style.marginTop = "4px"; }   // data-align="center": for a page whose content is centered
   foot.appendChild(document.createTextNode((d.copy === "no" ? "" : "\\u{1f12f} ") + "~*~88x31~*~ \\u00b7 "));
+  var led = document.createElement("span"); led.className = "ddled"; led.title = "Ledger"; led.textContent = "\\u00a7";
+  foot.appendChild(led); foot.appendChild(document.createTextNode(" "));
   var acct = document.createElement("span"); acct.className = "ddacct"; acct.title = "Save codes and passkeys"; acct.textContent = "\\u2261";
   foot.appendChild(acct);
   if (d.version) foot.appendChild(document.createTextNode(" " + d.version));
+  var wins = [], ledger = me.src.replace(/\\/footer\\.js.*$/, "/ledger");
+  function mk(title, cls) { var w = document.createElement("iframe"); w.title = title; w.hidden = true; if (cls) w.className = cls; foot.appendChild(w); wins.push(w); return w; }
+  function show(w, src, on) {   // one window at a time: opening w closes the other; show(null, "", false) closes whatever is open
+    for (var i = 0; i < wins.length; i++) if (!wins[i].hidden && (wins[i] !== w || !on)) { wins[i].hidden = true; wins[i].src = "about:blank"; }
+    if (on) { w.hidden = false; w.src = src; }
+  }
+  function anyOpen() { for (var i = 0; i < wins.length; i++) if (!wins[i].hidden) return true; return false; }
+  var lwin = mk("Ledger", "ddledger");
+  led.addEventListener("click", function (e) { e.stopPropagation(); show(lwin, ledger, lwin.hidden); });
   if (carry.charAt(0) === "#") {
     acct.addEventListener("click", function () { if (location.hash === carry) window.dispatchEvent(new HashChangeEvent("hashchange", { oldURL: location.href, newURL: location.href })); else location.hash = carry; });
-    me.parentNode.insertBefore(foot, me.nextSibling);
-    return;
+  } else {
+    var win = mk("Save codes, passkeys and carry");
+    win.onload = function () { try { var b = win.contentDocument && win.contentDocument.body; if (b && b.scrollHeight) win.style.height = Math.ceil(b.scrollHeight) + "px"; } catch (e) {} };
+    acct.addEventListener("click", function (e) { e.stopPropagation(); show(win, carry, win.hidden); });
   }
-  var win = document.createElement("iframe"); win.title = "Save codes, passkeys and carry"; win.hidden = true;
-  win.onload = function () { try { var b = win.contentDocument && win.contentDocument.body; if (b && b.scrollHeight) win.style.height = Math.ceil(b.scrollHeight) + "px"; } catch (e) {} };
-  foot.appendChild(win);
   me.parentNode.insertBefore(foot, me.nextSibling);
-  function show(on) { if (win.hidden === !on) return; win.hidden = !on; win.src = on ? carry : "about:blank"; }
-  acct.addEventListener("click", function (e) { e.stopPropagation(); show(win.hidden); });
-  document.addEventListener("click", function () { show(false); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !win.hidden) { e.preventDefault(); e.stopImmediatePropagation(); show(false); } }, true);
+  document.addEventListener("click", function () { show(null, "", false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && anyOpen()) { e.preventDefault(); e.stopImmediatePropagation(); show(null, "", false); } }, true);
 })();
 `;
