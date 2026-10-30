@@ -3,7 +3,9 @@
 // It draws "© ~*~88x31~*~ cLuB, <year> · ≡ <version>" (the same name in every game) right after its own script tag, like the 88x31 BBS footer. The ≡ pops up the
 // shared carry window (save codes, passkeys, carry) from the game's OWN /api/carry?embed=1 (logins are per game, so it
 // has to be the game's address), just above the ≡, over the page. ≡ again, a click anywhere else or Esc closes it.
-// data-carry overrides the window's address (a game whose route is somewhere else).
+// data-carry overrides the window's address (a game whose route is somewhere else). (Oct 29) A data-carry that starts with
+// "#" (88x31's "#codes", 4Dungeon's "#user") pops up nothing: the ≡ goes to that place on the game's own page, for a game
+// whose login is its own screen (4Dungeon keeps its token in the page; 88x31 has its own routes), so the window can't do it.
 export const FOOTER_JS = `(function () {
   var me = document.currentScript; if (!me) return;
   var d = me.dataset, carry = d.carry || "/api/carry?embed=1";
@@ -17,6 +19,11 @@ export const FOOTER_JS = `(function () {
   var acct = document.createElement("span"); acct.className = "ddacct"; acct.title = "Save codes and passkeys"; acct.textContent = "\\u2261";
   foot.appendChild(acct);
   if (d.version) foot.appendChild(document.createTextNode(" " + d.version));
+  if (carry.charAt(0) === "#") {
+    acct.addEventListener("click", function () { if (location.hash === carry) window.dispatchEvent(new HashChangeEvent("hashchange")); else location.hash = carry; });
+    me.parentNode.insertBefore(foot, me.nextSibling);
+    return;
+  }
   var win = document.createElement("iframe"); win.title = "Save codes, passkeys and carry"; win.hidden = true;
   win.onload = function () { try { var b = win.contentDocument && win.contentDocument.body; if (b && b.scrollHeight) win.style.height = Math.ceil(b.scrollHeight) + "px"; } catch (e) {} };
   foot.appendChild(win);

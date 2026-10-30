@@ -10,3 +10,8 @@ test("GET /footer.js serves the shared footer script", async () => {
   assert.ok(js.includes("/api/carry?embed=1"));   // the game's own carry window
   assert.doesNotThrow(() => new Function(js));     // it parses
 });
+
+test("a data-carry starting with # goes to that place on the page instead of popping up the window", async () => {
+  const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
+  assert.ok(js.includes('carry.charAt(0) === "#"') && js.includes("location.hash = carry"));
+});
