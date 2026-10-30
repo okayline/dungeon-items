@@ -18,6 +18,7 @@ export const FOOTER_JS = `(function () {
     ".ddfoot iframe{position:absolute;right:0;bottom:100%;margin-bottom:4px;width:440px;height:240px;max-height:120vh;border:1px solid #8f8f8a;background:#07090a;z-index:1000;transform:scale(.55);transform-origin:bottom right}";
   document.head.appendChild(css);
   var foot = document.createElement("div"); foot.className = "ddfoot";
+  if (/VT323/i.test(getComputedStyle(me.parentNode).fontFamily)) foot.style.fontSize = "12px";   // VT323 is a small font (about 3/4 the size of a normal one at the same px), so it gets 12px to look like 9px does on the other pages
   if (d.align === "center") { foot.style.textAlign = "center"; foot.style.alignSelf = "center"; foot.style.marginTop = "4px"; }   // data-align="center": for a page whose content is centered
   foot.appendChild(document.createTextNode((d.copy === "no" ? "" : "\\u{1f12f} ") + "~*~88x31~*~ \\u00b7 "));
   var acct = document.createElement("span"); acct.className = "ddacct"; acct.title = "Save codes and passkeys"; acct.textContent = "\\u2261";
