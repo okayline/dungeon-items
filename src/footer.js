@@ -9,6 +9,8 @@
 // "#" (88x31's "#codes", 4Dungeon's "#user") pops up nothing: the ≡ goes to that place on the game's own page, for a game
 // whose login is its own screen (4Dungeon keeps its token in the page; 88x31 has its own routes), so the window can't do it.
 // (Oct 29) The § next to the ≡ is only a mark for now: it opens nothing.
+// (Oct 31) A game puts <div id="ddfoot"></div> where it wants the footer (inside its own screen area, above this script tag) and the footer
+// is drawn into it. Without that div it is drawn right after the script tag, hidden until the page has loaded (the old way, to be deleted).
 // (Oct 29) The footer text can always be selected, even on a page that turns selection off for its body (4Dungeon, scoundrel.exe,
 // irl-dungeon); the ≡ still can't. It shows only once the page and its fonts have loaded.
 export const FOOTER_JS = `(function () {
@@ -19,24 +21,27 @@ export const FOOTER_JS = `(function () {
     ".ddfoot .ddacct{cursor:pointer;font-size:13px;padding:0 .3em;user-select:none}" +
     ".ddfoot iframe{position:absolute;right:0;bottom:100%;margin-bottom:4px;width:440px;height:240px;max-height:120vh;border:1px solid #8f8f8a;background:#07090a;z-index:1000;transform:scale(.55);transform-origin:bottom right}";
   document.head.appendChild(css);
-  var foot = document.createElement("div"); foot.className = "ddfoot";
-  if (/VT323/i.test(getComputedStyle(me.parentNode).fontFamily)) foot.style.fontSize = "12px";   // VT323 is a small font (about 3/4 the size of a normal one at the same px), so it gets 12px to look like 9px does on the other pages
-  foot.style.visibility = "hidden";   // (Oct 29) hidden, still taking its room, until the page has loaded: drawn at once it sat alone mid-screen on a centered page before the game drew
-  function reveal() { (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(function () { foot.style.visibility = ""; }); }); }
-  if (document.readyState === "complete") reveal(); else window.addEventListener("load", reveal);
+  var spot = document.getElementById("ddfoot");   // (Oct 31) the game's own empty <div id="ddfoot"></div>, placed where it wants the footer; the footer is drawn into it, so it shows up with the game
+  var foot = spot || document.createElement("div"); foot.classList.add("ddfoot");
+  if (/VT323/i.test(getComputedStyle(spot || me.parentNode).fontFamily)) foot.style.fontSize = "12px";   // VT323 is a small font (about 3/4 the size of a normal one at the same px), so it gets 12px to look like 9px does on the other pages
+  if (!spot) {   // (Oct 31) a game that has no spot yet: drawn right after this script tag, as before (hidden until the page has loaded). Delete this once every game has its spot.
+    foot.style.visibility = "hidden";
+    var reveal = function () { (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(function () { foot.style.visibility = ""; }); }); };
+    if (document.readyState === "complete") reveal(); else window.addEventListener("load", reveal);
+  }
   foot.appendChild(document.createTextNode((d.copy === "no" ? "" : "\\u{1f12f} ") + "~*~88x31~*~ \\u00b7 \\u00a7 "));
   var acct = document.createElement("span"); acct.className = "ddacct"; acct.title = "Save codes and passkeys"; acct.textContent = "\\u2261";
   foot.appendChild(acct);
   if (d.version) foot.appendChild(document.createTextNode(" " + d.version));
   if (carry.charAt(0) === "#") {
     acct.addEventListener("click", function () { if (location.hash === carry) window.dispatchEvent(new HashChangeEvent("hashchange", { oldURL: location.href, newURL: location.href })); else location.hash = carry; });
-    me.parentNode.insertBefore(foot, me.nextSibling);
+    if (!spot) me.parentNode.insertBefore(foot, me.nextSibling);
     return;
   }
   var win = document.createElement("iframe"); win.title = "Save codes, passkeys and carry"; win.hidden = true;
   win.onload = function () { try { var b = win.contentDocument && win.contentDocument.body; if (b && b.scrollHeight) win.style.height = Math.ceil(b.scrollHeight) + "px"; } catch (e) {} };
   foot.appendChild(win);
-  me.parentNode.insertBefore(foot, me.nextSibling);
+  if (!spot) me.parentNode.insertBefore(foot, me.nextSibling);
   function show(on) { if (win.hidden === !on) return; win.hidden = !on; win.src = on ? carry : "about:blank"; }
   acct.addEventListener("click", function (e) { e.stopPropagation(); show(win.hidden); });
   document.addEventListener("click", function () { show(false); });

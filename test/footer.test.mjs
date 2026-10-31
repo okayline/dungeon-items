@@ -18,12 +18,17 @@ test("a data-carry starting with # goes to that place on the page instead of pop
 
 test("a page set in VT323 gets a bigger footer, since VT323 is a small font", async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
-  assert.ok(js.includes("/VT323/i.test(getComputedStyle(me.parentNode).fontFamily)") && js.includes('foot.style.fontSize = "12px"'));
+  assert.ok(js.includes("/VT323/i.test(getComputedStyle(spot || me.parentNode).fontFamily)") && js.includes('foot.style.fontSize = "12px"'));
 });
 
 test('data-copy="no" leaves out the copyright sign', async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
   assert.ok(js.includes('d.copy === "no" ? "" : "\\u{1f12f} "'));
+});
+
+test('a game with <div id="ddfoot"> gets the footer drawn into it, with no waiting for load', async () => {
+  const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
+  assert.ok(js.includes('document.getElementById("ddfoot")') && js.includes("if (!spot) me.parentNode.insertBefore(foot, me.nextSibling)"));
 });
 
 test("the footer text can be selected and waits for the page to load before it shows", async () => {
