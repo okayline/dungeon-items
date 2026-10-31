@@ -9,7 +9,7 @@
 import { GENESIS } from "./ledger.js";
 import { WORDS_SCRIPT } from "./mark-words.js";
 
-const COLS = "id, kind, game, record, prev_hash, hash, created_at, name";
+const COLS = "id, kind, game, record, prev_hash, hash, created_at";
 
 // Only 88x31's commons show in public: every other 88x31 item is a mystery, the same rule as 88x31's logged-out Wall
 // (88x31 functions/api/designs.js): no name, picture, rarity or anything else, only that it is an 88x31 button.
@@ -33,7 +33,7 @@ async function shape(db, results) {
   return results.map((r) => {
     let item = null, items;
     try { const rec = JSON.parse(r.record); if (named(rec)) { items = idsOf(r.record).map((n) => names.get(n) || null); if (items.length === 1) item = items[0]; } else item = names.get(rec.item) || null; } catch { /* as above */ }
-    return { id: r.id, kind: r.kind, game: r.game, record: r.record, prev_hash: r.prev_hash, hash: r.hash, at: r.created_at, ...(r.name ? { name: r.name } : {}), item, ...(items ? { items } : {}) };
+    return { id: r.id, kind: r.kind, game: r.game, record: r.record, prev_hash: r.prev_hash, hash: r.hash, at: r.created_at, item, ...(items ? { items } : {}) };
   });
 }
 
@@ -245,7 +245,7 @@ function say(e, r) {
   if (r.k === "story") return g(r.game) + " chapter " + r.chapter + " of " + r.day + " was sealed.";
   if (r.k === "run") return momentWords(r) || g(r.game) + " sealed a moment of a run.";
   if (shared(r)) return groupsOf(e, r).map((cs) => andList(cs.map(copyName)) + groupWords(cs)).join("; ") + inGame(r.game, ", in ") + ".";   // (row() writes it with links)
-  if (r.k === "checkpoint") return lapWords(r) || farmWords(r) || cftWords(r) || pitchWords(r) || runWords(r, typeof e.name === "string" && e.name ? e.name : "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
+  if (r.k === "checkpoint") return lapWords(r) || farmWords(r) || cftWords(r) || pitchWords(r) || runWords(r, "A Scoundrel") || g(r.game) + " sealed its ledger here.";   // the record's head is shown in the seal lines
   const what = (e.item ? nameOf(e.item) : "item " + r.item) + " #" + r.copy;
   if (r.k === "copy") return what + " came into the world" + inGame(r.game) + ".";
   if (r.k === "move") return r.from === r.to ? what + " changed hands" + inGame(r.to) + "." : what + " travelled from " + g(r.from) + " to " + g(r.to) + ".";

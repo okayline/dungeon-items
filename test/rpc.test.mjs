@@ -159,7 +159,7 @@ test("a checkpoint can carry a few public facts for the page, and nothing that i
   assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), detail: [1] })).error, /detail/);
 });
 
-test("a checkpoint's name sits beside the record: shown by the ledger API, never sealed in the hash", async () => {
+test("a checkpoint's name sits beside the record: never sealed in the hash, and never shown by the ledger API", async () => {
   const db = fakeD1();
   const reg = new Registry({}, { DB: db });
   assert.match((await reg.checkpoint({ game: "scoundrel", entries: 3, head: "d".repeat(64), name: "<b>" })).error, /name/);
@@ -168,7 +168,9 @@ test("a checkpoint's name sits beside the record: shown by the ledger API, never
   assert.equal(row.name, "ryan");
   assert.doesNotMatch(row.record, /ryan/);
   assert.equal(row.hash, createHash("sha256").update(row.prev_hash + "|" + row.record).digest("hex"));   // the hash covers the record alone
-  assert.equal((await publicLedger(db, new URLSearchParams())).entries[0].name, "ryan");
+  const shown = (await publicLedger(db, new URLSearchParams())).entries[0];
+  assert.equal(shown.name, undefined);
+  assert.doesNotMatch(JSON.stringify(shown), /ryan/);
 });
 
 test("the public ledger page tells an aura-farm checkpoint with its two styles, and no player", async () => {

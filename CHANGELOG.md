@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Ledger names hidden
+**Sat Oct 31, 2026 · 11:42 AM HST** (no new version: the game itself is unchanged)
+- A checkpoint's player name is no longer sent by the ledger API or shown on the `/ledger` page: every scoundrel.exe run now reads "A Scoundrel". Removed: the `name` field in `/api/registry/ledger` entries and the name in the run sentence. Names already stored stay in the database (the ledger is append-only) and games can still send one; nothing reads it.
+
 ## Oct 31, 2026
 **Sat Oct 31, 2026 · 5:11 AM HST**
 - A game can put `<div id="ddfoot"></div>` where it wants the footer, and `/footer.js` draws the footer into it, so it shows up with the game instead of alone mid-screen. Games without that div still get the footer right after the script tag, hidden until the page has loaded. Removed: nothing yet; the wait-for-load fallback goes once every game has its div.
