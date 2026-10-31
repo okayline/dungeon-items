@@ -9,7 +9,7 @@ Newest first. Times are Hawaii time (HST).
 - A game can put `<div id="ddfoot"></div>` where it wants the footer, and `/footer.js` draws the footer into it, so it shows up with the game instead of alone mid-screen. Games without that div still get the footer right after the script tag, hidden until the page has loaded. Removed: nothing yet; the wait-for-load fallback goes once every game has its div.
 
 **Sat Oct 31, 2026 · 5:16 AM HST**
-- The footer now reads `🄯 ~*~88x31~*~ · § v0.20.0`: no ≡, so players no longer see the save codes and passkeys popup. The accounts themselves are untouched and still work behind the scenes. Removed: the ≡, the popup window, its click and Esc handling, `data-carry` (including the `#` links for 88x31 and 4Dungeon), and the test for `data-carry`.
+- The footer looks exactly the same (`🄯 ~*~88x31~*~ · § ≡ v0.20.0`), but the ≡ is now only a mark like the §: it no longer opens the save codes and passkeys popup. The accounts themselves are untouched and still work behind the scenes. Removed: the popup window, its click and Esc handling, the pointer cursor on the ≡, `data-carry` (including the `#` links for 88x31 and 4Dungeon), and the test for `data-carry`.
 
 ## Oct 29, 2026
 **Thu Oct 29, 2026 · 9:47 PM HST**

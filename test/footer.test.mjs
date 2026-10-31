@@ -10,9 +10,9 @@ test("GET /footer.js serves the shared footer script", async () => {
   assert.doesNotThrow(() => new Function(js));     // it parses
 });
 
-test("the footer has no ≡ and no account popup", async () => {
+test("the ≡ is still drawn but opens no account popup", async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
-  assert.ok(!js.includes("\\u2261") && !js.includes("iframe") && !js.includes("/api/carry"));
+  assert.ok(js.includes("\\u2261") && !js.includes("iframe") && !js.includes("/api/carry") && !js.includes("addEventListener(\"click\""));
 });
 
 test("a page set in VT323 gets a bigger footer, since VT323 is a small font", async () => {
