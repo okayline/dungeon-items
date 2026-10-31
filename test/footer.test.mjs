@@ -7,13 +7,12 @@ test("GET /footer.js serves the shared footer script", async () => {
   assert.equal(r.status, 200);
   assert.match(r.headers.get("content-type"), /^application\/javascript/);
   const js = await r.text();
-  assert.ok(js.includes("/api/carry?embed=1"));   // the game's own carry window
   assert.doesNotThrow(() => new Function(js));     // it parses
 });
 
-test("a data-carry starting with # goes to that place on the page instead of popping up the window", async () => {
+test("the footer has no ≡ and no account popup", async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
-  assert.ok(js.includes('carry.charAt(0) === "#"') && js.includes("location.hash = carry"));
+  assert.ok(!js.includes("\\u2261") && !js.includes("iframe") && !js.includes("/api/carry"));
 });
 
 test("a page set in VT323 gets a bigger footer, since VT323 is a small font", async () => {
