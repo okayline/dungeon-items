@@ -400,7 +400,7 @@ async function loadCopy() {
   c.append(el("div", "say", facts(i))); if (dun(i)) { c.lastChild.classList.add("q-" + i.rarity); c.lastChild.style.textTransform = "uppercase"; }
   if (i.note) c.append(el("div", "note", "\u201c" + i.note + "\u201d"));
   c.append(el("div", "facts", ["made in " + g(d.born_game) + " on " + when(d.born_at), d.moves + (d.moves === 1 ? " move" : " moves"), d.used_up ? "used up" : "still around"].join(" \u00b7 ")));
-  if (i.source === "88x31" && !i.hidden) { const p = el("div", "say"); const a = el("a", null, "See this button's page on 88x31 \u00bb"); a.href = "https://88x31.app/api/registry/button?item=" + i.id + "&copy=" + d.copy; p.append(a); c.append(p); }
+  if (i.source === "88x31" && !i.hidden) { const p = el("div", "say"); const a = el("a", null, "See this button's page on 88x31 \u00bb"); a.href = "https://club.88x31.app/api/registry/button?item=" + i.id + "&copy=" + d.copy; p.append(a); c.append(p); }
   $("#card").append(dun(i) ? ascii(c) : c);
   for (const e of d.entries) $("#list").append(row(e));
   const back = el("p"); back.style.textAlign = "center"; const a = el("a", null, "\u00ab The whole ledger"); a.href = location.pathname; back.append(a); $("#list").append(back);
