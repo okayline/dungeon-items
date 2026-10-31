@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Working notes tidy
+**Sat Oct 31, 2026 · 1:35 PM HST** (no new version: the game itself is unchanged)
+- Behind the scenes only: nothing in the shared core changes. The repo's working notes (`CLAUDE.md`) now hold only notes for this repo. Removed: the shared working-rules block that was copied into that file.
+
 ## Ledger names hidden
 **Sat Oct 31, 2026 · 11:42 AM HST** (no new version: the game itself is unchanged)
 - A checkpoint's player name is no longer sent by the ledger API or shown on the `/ledger` page: every scoundrel.exe run now reads "A Scoundrel". Removed: the `name` field in `/api/registry/ledger` entries and the name in the run sentence. Names already stored stay in the database (the ledger is append-only) and games can still send one; nothing reads it.
