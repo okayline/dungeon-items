@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Stories tab icon
+**Sat Oct 31, 2026 · 10:50 PM HST** (no new version: this repo has none)
+- Added: a tab icon on the stories page (stories.88x31.app): "88 x 31" in the page's link red inside a bold ASCII `+--+` border, on the header's dark colour, the same style as the games. It is written into the page itself, so there are no new files.
+- Removed: nothing (the page had no icon).
+
 ## Working notes tidy
 **Sat Oct 31, 2026 · 1:35 PM HST** (no new version: the game itself is unchanged)
 - Behind the scenes only: nothing in the shared core changes. The repo's working notes (`CLAUDE.md`) now hold only notes for this repo. Removed: the shared working-rules block that was copied into that file.
