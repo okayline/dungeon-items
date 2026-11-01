@@ -17,7 +17,7 @@ test("the ≡ is still drawn but opens no account popup", async () => {
 
 test("a page set in VT323 gets a bigger footer, since VT323 is a small font", async () => {
   const js = await (await worker.fetch(new Request("https://items.example/footer.js"), {})).text();
-  assert.ok(js.includes("/VT323/i.test(getComputedStyle(spot || me.parentNode).fontFamily)") && js.includes('foot.style.fontSize = "12px"'));
+  assert.ok(js.includes("/VT323/i.test(getComputedStyle(spot || me.parentNode).fontFamily)") && js.includes('foot.style.fontSize = "13px"'));
 });
 
 test('data-copy="no" leaves out the copyright sign', async () => {

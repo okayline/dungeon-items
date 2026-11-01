@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Footer ≡ as plain text, slightly bigger footer
+**Sat Oct 31, 2026 · 11:50 PM HST** (no new version: this repo has none)
+- The ≡ in the shared footer is now plain text like the rest of the line, and the footer text is a little bigger: 9px → 10px (VT323 pages 12px → 13px). Removed: the ≡'s own span with its larger 13px size, extra padding and unselectable style.
+
 ## Stories tab icon
 **Sat Oct 31, 2026 · 10:50 PM HST** (no new version: this repo has none)
 - Added: a tab icon on the stories page (stories.88x31.app): "88 x 31" in the page's link red inside a bold ASCII `+--+` border, on the header's dark colour, the same style as the games. It is written into the page itself, so there are no new files.
