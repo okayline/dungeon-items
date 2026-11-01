@@ -12,11 +12,11 @@ export const FOOTER_JS = `(function () {
   var me = document.currentScript; if (!me) return;
   var d = me.dataset;
   var css = document.createElement("style");
-  css.textContent = ".ddfoot{position:relative;align-self:flex-end;margin:-3px 0 0;padding:0 6px 0 0;text-align:right;font-family:inherit;font-size:10px;line-height:1;color:#ccc;letter-spacing:.03em;-webkit-user-select:text;user-select:text}";
+  css.textContent = ".ddfoot{position:relative;align-self:flex-end;margin:-3px 0 0;padding:0 6px 0 0;text-align:right;font-family:inherit;font-size:9px;line-height:1;color:#ccc;letter-spacing:.03em;-webkit-user-select:text;user-select:text}";
   document.head.appendChild(css);
   var spot = document.getElementById("ddfoot");   // (Oct 31) the game's own empty <div id="ddfoot"></div>, placed where it wants the footer; the footer is drawn into it, so it shows up with the game
   var foot = spot || document.createElement("div"); foot.classList.add("ddfoot");
-  if (/VT323/i.test(getComputedStyle(spot || me.parentNode).fontFamily)) foot.style.fontSize = "13px";   // VT323 is a small font (about 3/4 the size of a normal one at the same px), so it gets 13px to look like 10px does on the other pages
+  if (/VT323/i.test(getComputedStyle(spot || me.parentNode).fontFamily)) foot.style.fontSize = "12px";   // VT323 is a small font (about 3/4 the size of a normal one at the same px), so it gets 12px to look like 9px does on the other pages
   if (!spot) {   // (Oct 31) a game that has no spot yet: drawn right after this script tag, as before (hidden until the page has loaded). Delete this once every game has its spot.
     foot.style.visibility = "hidden";
     var reveal = function () { (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(function () { foot.style.visibility = ""; }); }); };

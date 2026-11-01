@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Footer back to 9px
+**Sat Oct 31, 2026 · 11:54 PM HST** (no new version: this repo has none)
+- The shared footer text is back to 9px (VT323 pages 12px), the size it was before tonight; the ≡ stays plain text. Removed: the 10px size (13px on VT323 pages) from the last change.
+
 ## Footer ≡ as plain text, slightly bigger footer
 **Sat Oct 31, 2026 · 11:50 PM HST** (no new version: this repo has none)
 - The ≡ in the shared footer is now plain text like the rest of the line, and the footer text is a little bigger: 9px → 10px (VT323 pages 12px → 13px). Removed: the ≡'s own span with its larger 13px size, extra padding and unselectable style.
