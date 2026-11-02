@@ -99,3 +99,18 @@ test("one chapter and one level can be asked for, and their pages are the storie
   const { default: worker } = await import("../src/worker.js");
   for (const p of ["/story/2", "/map/l4d_hospital01_apartment", "/server/versus", "/day/2026-10-27"]) assert.match(await (await worker.fetch(new Request("https://stories.88x31.app" + p), { DB: db })).text(), /Stories from the Safe Room/);
 });
+
+test("the feed lists the newest chapters as RSS, each linking to its own page", async () => {
+  const { default: worker } = await import("../src/worker.js");
+  const db = fakeD1();
+  await addStory(db, { day: "2026-10-27", server: "versus", map: "m", title: "Bill & the Rain", body: "Zoey held the <hallway>." });
+  await addStory(db, { day: "2026-10-28", server: "classic", map: "m", title: "Second", body: "Louis kept going." });
+  const r = await worker.fetch(new Request("https://stories.88x31.app/stories/feed.xml"), { DB: db });
+  assert.equal(r.status, 200);
+  assert.match(r.headers.get("content-type"), /rss\+xml/);
+  const t = await r.text();
+  assert.equal(t.match(/<item>/g).length, 2);
+  assert.ok(t.indexOf("<title>Second</title>") < t.indexOf("<title>Bill &amp; the Rain</title>"));
+  assert.match(t, /<link>https:\/\/stories\.88x31\.app\/story\/1<\/link>/);
+  assert.match(t, /Zoey held the &lt;hallway&gt;\./);
+});

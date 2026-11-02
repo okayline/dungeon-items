@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Stories RSS feed
+**Mon Nov 2, 2026 · 6:42 AM HST** (no new version: this repo has none)
+- Added: `GET /stories/feed.xml`, the 20 newest chapters as an RSS 2.0 feed (title, full text, date, and a link to each chapter's own page `/story/<id>`), built by `storiesFeed` in `src/stories.js`. The stories page's head has an `rel="alternate"` link to it, so feed readers find it from `https://stories.88x31.app`. One test. kura: "can we do the RSS feeds please ??"
+- Removed: nothing.
+
 ## Stories from the Safe Room
 **Mon Nov 2, 2026 · 4:22 AM HST** (no new version: this repo has none)
 - The series is now "Stories from the Safe Room" (page title, header, test, STORY-VIDEOS.md), and the line under the header now starts "tales from the past week on". Removed: the name "Tales from the Safe Room" and "stories from the past week". kura: "can we rename this to \"Stories from the Safe Room\" please".
