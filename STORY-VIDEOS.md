@@ -1,6 +1,6 @@
 # Story videos: changelog and recipe
 
-Each chapter of "Tales from the Safe Room" becomes a short video: its 3 pictures with a slow pan, voiced by narration. Times are Hawaii time (HST).
+Each chapter of "Stories from the Safe Room" becomes a short video: its 3 pictures with a slow pan, voiced by narration. Times are Hawaii time (HST).
 
 ## 2026-10-28, 9:01 AM HST
 

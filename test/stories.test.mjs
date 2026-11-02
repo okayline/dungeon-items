@@ -30,7 +30,7 @@ test("the main page of a stories.* address is the stories page; other addresses 
   const env = { DB: fakeD1() };
   const home = await worker.fetch(new Request("https://stories.88x31.app/"), env);
   assert.equal(home.status, 200);
-  assert.match(await home.text(), /Tales from the Safe Room/);
+  assert.match(await home.text(), /Stories from the Safe Room/);
   assert.equal((await worker.fetch(new Request("https://dungeon-items.example.dev/"), env)).status, 404);
 });
 
@@ -97,5 +97,5 @@ test("one chapter and one level can be asked for, and their pages are the storie
   assert.equal((await listStories(db, new URLSearchParams("server=versus"))).stories.length, 3);
   assert.deepEqual((await listStories(db, new URLSearchParams("map=l4d_hospital01_apartment"))).stories.map((s) => s.series), [2, 1]);
   const { default: worker } = await import("../src/worker.js");
-  for (const p of ["/story/2", "/map/l4d_hospital01_apartment", "/server/versus", "/day/2026-10-27"]) assert.match(await (await worker.fetch(new Request("https://stories.88x31.app" + p), { DB: db })).text(), /Tales from the Safe Room/);
+  for (const p of ["/story/2", "/map/l4d_hospital01_apartment", "/server/versus", "/day/2026-10-27"]) assert.match(await (await worker.fetch(new Request("https://stories.88x31.app" + p), { DB: db })).text(), /Stories from the Safe Room/);
 });

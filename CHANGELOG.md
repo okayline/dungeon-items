@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Stories from the Safe Room
+**Mon Nov 2, 2026 · 4:22 AM HST** (no new version: this repo has none)
+- The series is now "Stories from the Safe Room" (page title, header, test, STORY-VIDEOS.md), and the line under the header now starts "tales from the past week on". Removed: the name "Tales from the Safe Room" and "stories from the past week". kura: "can we rename this to \"Stories from the Safe Room\" please".
+
 ## Footer back to 9px
 **Sat Oct 31, 2026 · 11:54 PM HST** (no new version: this repo has none)
 - The shared footer text is back to 9px (VT323 pages 12px), the size it was before tonight; the ≡ stays plain text. Removed: the 10px size (13px on VT323 pages) from the last change.
