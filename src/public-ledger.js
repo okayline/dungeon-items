@@ -19,12 +19,15 @@ export const mysteryItem = (i) => ({ source: i.source, hidden: true });
 
 // (Nov 3, for UN/TAP) A game's deal pool, for the Registry entrypoint only (never served over HTTP): every active item of a
 // source with what a game needs to deal it, its type, rarity and series. A mystery item comes back as its id, type, rarity,
-// series and hidden: true, with no name, picture or note, so a game that deals it can't show what it is.
-export async function dealPool(db, source) {
+// series and hidden: true, with no name, picture or note, so a game that deals it can't show what it is. With { uncommons: true }
+// 88x31's uncommons come back in full (the owner, Nov 3: uncommons shown in UN/TAP only; the public views still hide them);
+// rare and up stay hidden whatever is asked.
+export async function dealPool(db, source, { uncommons = false } = {}) {
   const { results } = await db.prepare("SELECT id, source, rarity, name, type, image, extra FROM items WHERE source = ? AND retired = 0 ORDER BY id").bind(source).all();
   return results.map((r) => {
     const series = JSON.parse(r.extra || "{}").series ?? null;
-    return isMystery(r) ? { id: r.id, type: r.type, rarity: r.rarity, series, hidden: true } : { id: r.id, name: r.name, type: r.type, rarity: r.rarity, series, image: r.image };
+    const hide = isMystery(r) && !(uncommons && r.rarity === "uncommon");
+    return hide ? { id: r.id, type: r.type, rarity: r.rarity, series, hidden: true } : { id: r.id, name: r.name, type: r.type, rarity: r.rarity, series, image: r.image };
   });
 }
 

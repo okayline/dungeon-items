@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Uncommons in UN/TAP's deal pool
+**Tue Nov 3, 2026 · 8:50 AM HST** (no new version: this repo has none)
+- Changed: a game can ask the private deal pool for 88x31's uncommons in full (UN/TAP does). The public pages still hide them, and rarer buttons stay hidden everywhere.
+- Removed: nothing.
+
 ## A deal pool for games
 **Tue Nov 3, 2026 · 8:15 AM HST** (no new version: this repo has none)
 - Added: a private call games can deal buttons from (for UN/TAP). Buttons that are hidden in public stay hidden in it: no name or picture.

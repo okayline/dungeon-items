@@ -235,4 +235,11 @@ test("dealPool deals 88x31's commons in full and its other rarities without name
     { id: 1, name: "Cool Site!", type: "neon", rarity: "common", series: "Alpha", image: "img-c" },
     { id: 2, type: "divider", rarity: "rare", series: "Beta", hidden: true },
   ]);
+  db.raw.prepare(`INSERT INTO items (source, source_key, rarity, name, type, image, extra, created_at, updated_at) VALUES
+    ('88x31', 'u', 'uncommon', 'Half Secret', 'counter', 'img-u', '{"series":"Beta"}', 1, 1)`).run();
+  const hidden = (list) => list.map((i) => [i.id, i.rarity, !!i.hidden]);
+  assert.deepEqual(hidden(await reg.dealPool("88x31")), [[1, "common", false], [2, "rare", true], [5, "uncommon", true]]);
+  // { uncommons: true }: the uncommon in full, the rare still hidden
+  assert.deepEqual(hidden(await reg.dealPool("88x31", { uncommons: true })), [[1, "common", false], [2, "rare", true], [5, "uncommon", false]]);
+  assert.equal((await reg.dealPool("88x31", { uncommons: true }))[2].name, "Half Secret");
 });
