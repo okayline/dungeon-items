@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Space back after the date on the stories page
+**Mon Nov 2, 2026 · 9:33 PM HST** (no new version: this repo has none)
+- Fixed: the space between "·" and the server name after each chapter's date ("2026-10-31 · CLASSIC"). The 9:29 PM change dropped it by mistake. kura's screenshot showed "·CLASSIC".
+- Removed: nothing.
+
 ## Stories show the played day
 **Mon Nov 2, 2026 · 9:29 PM HST** (no new version: this repo has none)
 - Changed: each chapter's date on the stories page is now its `day`, the Hawaii day the session was played (the same day its link opens). kura: "yeah can we show the played day please !"
