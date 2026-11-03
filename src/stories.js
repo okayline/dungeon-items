@@ -172,7 +172,7 @@ function pic(id,n){return '<img class="pic" src="/api/stories/picture/'+id+'/'+n
 function head(s){var m=s.title.match(/^(.+? #\\d+) from (.+?)(: .+)$/);   // "Tale #3 from The Apartments: Subtitle": the chapter and the level are links
  if(!m)return esc(s.title);return '<a class="t" href="/story/'+s.id+'">'+esc(m[1])+'</a> from <a class="t" href="/map/'+encodeURIComponent(s.map)+'">'+esc(m[2])+"</a>"+esc(m[3])}
 function show(s){var a=document.createElement("article");
- a.innerHTML="<h2>"+head(s)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; <a class=t href=/day/"+s.day+">"+ld(s.created_at)+"</a> &middot; <a class=t href=/server/"+encodeURIComponent(s.server)+">"+esc(s.server)+"</a></div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a);if(one)near(s)}
+ a.innerHTML="<h2>"+head(s)+'</h2><div class="meta">Chapter '+s.chapter+" &middot; <a class=t href=/day/"+s.day+">"+s.day+"</a> &middot;<a class=t href=/server/"+encodeURIComponent(s.server)+">"+esc(s.server)+"</a></div>"+pic(s.id,1)+"<p>"+esc(s.body)+'</p><div class="pics">'+pic(s.id,2)+pic(s.id,3)+"</div>";list.appendChild(a);if(one)near(s)}
 function near(s){fetch("/api/stories?limit=50&map="+encodeURIComponent(s.map)).then(function(r){return r.json()}).then(function(d){   // the chapters just before and after this one on the same level
  var l=(d.stories||[]).sort(function(x,y){return x.id-y.id}),i=l.findIndex(function(x){return x.id===s.id}),n=document.createElement("div"),h="";
  function lk(c,t){var m=c.title.match(/^(.+? #\\d+) from/);return '<a href="/story/'+c.id+'">'+t.replace("#",esc(m?m[1]:c.title))+"</a>"}

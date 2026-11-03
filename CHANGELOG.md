@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Stories show the played day
+**Mon Nov 2, 2026 · 9:29 PM HST** (no new version: this repo has none)
+- Changed: each chapter's date on the stories page is now its `day`, the Hawaii day the session was played (the same day its link opens). kura: "yeah can we show the played day please !"
+- Removed: showing the date the chapter was saved (`created_at` in the visitor's own time zone) there. The one-week cutoff for which chapters show at first still goes by the save date.
+
 ## Stories RSS feed
 **Mon Nov 2, 2026 · 6:42 AM HST** (no new version: this repo has none)
 - Added: `GET /stories/feed.xml`, the 20 newest chapters as an RSS 2.0 feed (title, full text, date, and a link to each chapter's own page `/story/<id>`), built by `storiesFeed` in `src/stories.js`. The stories page's head has an `rel="alternate"` link to it, so feed readers find it from `https://stories.88x31.app`. One test. kura: "can we do the RSS feeds please ??"
