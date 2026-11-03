@@ -17,6 +17,17 @@ const COLS = "id, kind, game, record, prev_hash, hash, created_at";
 export const isMystery = (i) => !!i && i.source === "88x31" && i.rarity !== "common";
 export const mysteryItem = (i) => ({ source: i.source, hidden: true });
 
+// (Nov 3, for UN/TAP) A game's deal pool, for the Registry entrypoint only (never served over HTTP): every active item of a
+// source with what a game needs to deal it, its type, rarity and series. A mystery item comes back as its id, type, rarity,
+// series and hidden: true, with no name, picture or note, so a game that deals it can't show what it is.
+export async function dealPool(db, source) {
+  const { results } = await db.prepare("SELECT id, source, rarity, name, type, image, extra FROM items WHERE source = ? AND retired = 0 ORDER BY id").bind(source).all();
+  return results.map((r) => {
+    const series = JSON.parse(r.extra || "{}").series ?? null;
+    return isMystery(r) ? { id: r.id, type: r.type, rarity: r.rarity, series, hidden: true } : { id: r.id, name: r.name, type: r.type, rarity: r.rarity, series, image: r.image };
+  });
+}
+
 // the item ids a record names: one (item), a mark many copies share (copies: [{ item, copy, n }]), or a move's marks
 // (marks: [{ kind, value, copies }]), each copy as often as the record names it
 const named = (r) => Array.isArray(r.marks) ? r.marks.flatMap((m) => (m && Array.isArray(m.copies) ? m.copies : [])) : Array.isArray(r.copies) ? r.copies : null;

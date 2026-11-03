@@ -11,7 +11,7 @@
 // load it with a stand-in for that module (test/rpc.test.mjs).
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { birth, moveCopy, spendCopy, heldBy, whereIs, verify, addMark, addMarks, marksOf, itemIds, checkpoint, sealRun, heldAcross, pinned, pin, markCarried } from "./registry.js";
-import { copyStory } from "./public-ledger.js";
+import { copyStory, dealPool } from "./public-ledger.js";
 import { worldEvents } from "./stories.js";
 import { carryWindow } from "./carry-window.js";
 import * as A from "./accounts.js";
@@ -37,6 +37,7 @@ export class Registry extends WorkerEntrypoint {
   heldAcross(game, playerId, limit) { return heldAcross(this.env.DB, game, playerId, limit); }
   markCarried(args) { return markCarried(this.env.DB, args); }
   carryWindow(args) { return carryWindow(this.env.DB, args); }   // the carry window page (carry-window.js), for a game to show on its own site
+  dealPool(source) { return dealPool(this.env.DB, source); }   // every active item of a source to deal from, mystery ones without name or picture (UN/TAP)
 }
 
 // The shared accounts, also through a service binding:

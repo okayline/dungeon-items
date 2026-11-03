@@ -61,6 +61,7 @@ story belongs to the copy, so it follows the copy into any game.
   stamps a mark on a copy the holder holds: `{ ok: true, n, created }` (a retry with the same key gives back the same
   mark) or `{ error }`. `await env.REGISTRY.marksOf(itemId, copy)` is `[{ kind, value, game, at }]`, oldest first, and
   `heldBy` now carries each copy's `marks` too. The HTTP door (88x31) has `addMark` (only on a copy one of 88x31's players holds, stamped as made in 88x31) and `marksOf`.
+  `await env.REGISTRY.dealPool(source)` is every active item of a source for a game to deal from: `{ id, name, type, rarity, series, image }`, or for a mystery item (88x31's non-commons) only `{ id, type, rarity, series, hidden: true }` (UN/TAP deals from it). Not served over HTTP.
   `await env.REGISTRY.copyStory(itemId, copy)` is one copy's public story (the item, `of` copies exist, `born_game`, `born_at`, `moves`, `used_up`, and every ledger entry about it, newest first; no holder), the same thing the `/ledger` page shows; `null` when there is no such copy.
 
 - **Mark words** (`src/mark-words.js`): the shared list of mark values and the words the `/ledger` page shows for each.

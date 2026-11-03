@@ -221,3 +221,18 @@ test("?head=HASH opens the public ledger at the checkpoint that sent that finger
   assert.equal(d.entries[0].id, ids[0]);
   assert.deepEqual((await publicLedger(db, new URLSearchParams("head=" + "c".repeat(64)))).entries, []);
 });
+
+test("dealPool deals 88x31's commons in full and its other rarities without name or picture", async () => {
+  const db = fakeD1();
+  db.raw.prepare(`INSERT INTO items (source, source_key, rarity, name, type, image, extra, created_at, updated_at) VALUES
+    ('88x31', 'c', 'common', 'Cool Site!', 'neon', 'img-c', '{"series":"Alpha"}', 1, 1),
+    ('88x31', 'r', 'rare', 'Secret Button', 'divider', 'img-r', '{"series":"Beta"}', 1, 1),
+    ('88x31', 'x', 'common', 'Old One', 'neon', 'img-x', '{}', 1, 1),
+    ('4dungeon', 'k', 'rare', 'A Key', NULL, NULL, '{}', 1, 1)`).run();
+  db.raw.prepare("UPDATE items SET retired = 1 WHERE source_key = 'x'").run();
+  const reg = new Registry({}, { DB: db });
+  assert.deepEqual(await reg.dealPool("88x31"), [
+    { id: 1, name: "Cool Site!", type: "neon", rarity: "common", series: "Alpha", image: "img-c" },
+    { id: 2, type: "divider", rarity: "rare", series: "Beta", hidden: true },
+  ]);
+});

@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## A deal pool for games
+**Tue Nov 3, 2026 · 8:15 AM HST** (no new version: this repo has none)
+- Added: a private call games can deal buttons from (for UN/TAP). Buttons that are hidden in public stay hidden in it: no name or picture.
+- Removed: nothing.
+
 ## Space back after the date on the stories page
 **Mon Nov 2, 2026 · 9:33 PM HST** (no new version: this repo has none)
 - Fixed: the space between "·" and the server name after each chapter's date ("2026-10-31 · CLASSIC"). The 9:29 PM change dropped it by mistake. kura's screenshot showed "·CLASSIC".
