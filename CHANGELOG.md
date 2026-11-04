@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Printed effects in the deal pool
+**Tue Nov 3, 2026 · 11:20 PM HST** (no new version: this repo has none)
+- Added: a button can have one printed effect, the same for every copy of it, and the private deal pool hands it to games (UN/TAP uses it). 88x31's 48 commons and 22 uncommons have theirs.
+- Removed: nothing.
+
 ## Uncommons in UN/TAP's deal pool
 **Tue Nov 3, 2026 · 8:50 AM HST** (no new version: this repo has none)
 - Changed: a game can ask the private deal pool for 88x31's uncommons in full (UN/TAP does). The public pages still hide them, and rarer buttons stay hidden everywhere.
