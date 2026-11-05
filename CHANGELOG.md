@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Series Gamma in the deal pool
+**Thu Nov 5, 2026 · 10:35 AM HST** (no new version: this repo has none; no migration)
+- Added: `dealPool(source, { series: [...] })` deals the named series in full, rares too (kura: the GPUs of 88x31's Series Gamma, all rares, shown in UN/TAP), and an item's own quote (`extra.flavor`) comes with it as `flavor`. Every other rare stays a mystery. Removed: nothing.
+
 ## Read-Only moved onto 1-power 88x31 buttons only
 **Thu Nov 5, 2026 · 2:54 AM HST** (no new version: this repo has none; a data change in `items-db`, no migration)
 - Added: Read-Only on Bodacious, Blue Screen, Dot Matrix and IRC (1-power buttons); Broadband on Access Denied; Lag Spike on Best Viewed 800x600 and Webring Hub; Always Online on Disk Full. kura: Read-Only's power on a Webring or Divider could never be used to ping (then: "take read only off the counter button").

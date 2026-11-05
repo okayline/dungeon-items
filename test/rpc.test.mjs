@@ -243,3 +243,15 @@ test("dealPool deals 88x31's commons in full (with a printed effect) and its oth
   assert.deepEqual(hidden(await reg.dealPool("88x31", { uncommons: true })), [[1, "common", false], [2, "rare", true], [5, "uncommon", false]]);
   assert.equal((await reg.dealPool("88x31", { uncommons: true }))[2].name, "Half Secret");
 });
+
+test("dealPool shows a named series in full, with its own quotes", async () => {
+  const db = fakeD1();
+  db.raw.prepare(`INSERT INTO items (source, source_key, rarity, name, type, image, extra, created_at, updated_at) VALUES
+    ('88x31', 'g', 'rare', 'RTX 5090', 'hardware', 'img-g', '{"series":"Gamma","effect":"hotspot","flavor":"Twice the performance of the 4090."}', 1, 1),
+    ('88x31', 'b', 'rare', 'Secret Button', 'divider', 'img-b', '{"series":"Beta","flavor":"Shh."}', 1, 1)`).run();
+  const reg = new Registry({}, { DB: db });
+  assert.deepEqual(await reg.dealPool("88x31", { uncommons: true, series: ["Gamma"] }), [
+    { id: 1, name: "RTX 5090", type: "hardware", rarity: "rare", series: "Gamma", image: "img-g", effect: "hotspot", flavor: "Twice the performance of the 4090." },
+    { id: 2, type: "divider", rarity: "rare", series: "Beta", hidden: true },
+  ]);
+});

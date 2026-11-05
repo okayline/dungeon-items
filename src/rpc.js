@@ -37,7 +37,7 @@ export class Registry extends WorkerEntrypoint {
   heldAcross(game, playerId, limit) { return heldAcross(this.env.DB, game, playerId, limit); }
   markCarried(args) { return markCarried(this.env.DB, args); }
   carryWindow(args) { return carryWindow(this.env.DB, args); }   // the carry window page (carry-window.js), for a game to show on its own site
-  dealPool(source, opts) { return dealPool(this.env.DB, source, opts); }   // every active item of a source to deal from, mystery ones without name or picture; { uncommons: true } shows 88x31's uncommons (UN/TAP)
+  dealPool(source, opts) { return dealPool(this.env.DB, source, opts); }   // every active item of a source to deal from, mystery ones without name or picture; { uncommons: true } shows 88x31's uncommons, { series: [names] } those series in full (UN/TAP)
 }
 
 // The shared accounts, also through a service binding:

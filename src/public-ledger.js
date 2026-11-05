@@ -21,15 +21,17 @@ export const mysteryItem = (i) => ({ source: i.source, hidden: true });
 // source with what a game needs to deal it, its type, rarity and series. A mystery item comes back as its id, type, rarity,
 // series and hidden: true, with no name, picture or note, so a game that deals it can't show what it is. With { uncommons: true }
 // 88x31's uncommons come back in full (the owner, Nov 3: uncommons shown in UN/TAP only; the public views still hide them);
-// rare and up stay hidden whatever is asked. An item with a printed effect (extra.effect, the same for every copy: the owner, Nov 3,
-// "printed per button") comes with it as effect; one without has no effect field.
-export async function dealPool(db, source, { uncommons = false } = {}) {
+// rare and up stay hidden, except in a series named in { series: [...] } (kura, Nov 5: Series Gamma's GPUs, all rares, shown in
+// UN/TAP), which comes back in full. An item with a printed effect (extra.effect, the same for every copy: the owner, Nov 3,
+// "printed per button") comes with it as effect, and one with its own quote (extra.flavor) with it as flavor; one without has no field.
+export async function dealPool(db, source, { uncommons = false, series: shown = [] } = {}) {
   const { results } = await db.prepare("SELECT id, source, rarity, name, type, image, extra FROM items WHERE source = ? AND retired = 0 ORDER BY id").bind(source).all();
   return results.map((r) => {
-    const { series = null, effect } = JSON.parse(r.extra || "{}");
-    const hide = isMystery(r) && !(uncommons && r.rarity === "uncommon");
+    const { series = null, effect, flavor } = JSON.parse(r.extra || "{}");
+    const hide = isMystery(r) && !(uncommons && r.rarity === "uncommon") && !(series && shown.includes(series));
     const it = hide ? { id: r.id, type: r.type, rarity: r.rarity, series, hidden: true } : { id: r.id, name: r.name, type: r.type, rarity: r.rarity, series, image: r.image };
     if (effect) it.effect = effect;
+    if (flavor && !hide) it.flavor = flavor;
     return it;
   });
 }
