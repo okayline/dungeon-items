@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Read-Only moved onto 1-power 88x31 buttons only
+**Thu Nov 5, 2026 · 2:54 AM HST** (no new version: this repo has none; a data change in `items-db`, no migration)
+- Added: Read-Only on Bodacious, Blue Screen, Dot Matrix and IRC (1-power buttons); Broadband on Access Denied; Lag Spike on Best Viewed 800x600 and Webring Hub; Always Online on Disk Full. kura: Read-Only's power on a Webring or Divider could never be used to ping (then: "take read only off the counter button").
+- Removed: Read-Only from Access Denied, Webring Hub (webrings), Best Viewed 800x600 (divider) and Disk Full (counter); Broadband from Bodacious; Lag Spike from Blue Screen and Dot Matrix; Always Online from IRC. Each effect keeps the same number of buttons; Read-Only is now only on 1-power buttons.
+
 ## Prodigal Proxy on six 88x31 commons
 **Thu Nov 5, 2026 · 2:44 AM HST** (no new version: this repo has none; a data change in `items-db`, no migration)
 - Added: UN/TAP's new printed effect Prodigal Proxy (`proxy`) on six commons: Ctrl+Alt+Del, Mix Tape, HTML 4 Life, Lava Lamp, Hello World and 1337. Commons and uncommons now carry 11 effects, 4 to 7 buttons each.
