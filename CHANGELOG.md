@@ -4,6 +4,11 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Prodigal Proxy on six 88x31 commons
+**Thu Nov 5, 2026 · 2:44 AM HST** (no new version: this repo has none; a data change in `items-db`, no migration)
+- Added: UN/TAP's new printed effect Prodigal Proxy (`proxy`) on six commons: Ctrl+Alt+Del, Mix Tape, HTML 4 Life, Lava Lamp, Hello World and 1337. Commons and uncommons now carry 11 effects, 4 to 7 buttons each.
+- Removed: those six buttons' old effects (Backup from Ctrl+Alt+Del and Mix Tape, Read-Only from HTML 4 Life and Lava Lamp, Virus from Hello World and 1337), leaving Backup, Read-Only and Virus on 6 buttons each.
+
 ## Printed effects in the deal pool
 **Tue Nov 3, 2026 · 11:20 PM HST** (no new version: this repo has none)
 - Added: a button can have one printed effect, the same for every copy of it, and the private deal pool hands it to games (UN/TAP uses it). 88x31's 48 commons and 22 uncommons have theirs.
