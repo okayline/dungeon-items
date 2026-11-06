@@ -1,0 +1,800 @@
+{
+ "buttons": [
+  {
+   "id": 48,
+   "name": "Under Construction",
+   "type": "construction",
+   "flavor": "This site is still under construction",
+   "source": "oocities.org/metrodagupancolleges/"
+  },
+  {
+   "id": 49,
+   "name": "Made with Notepad",
+   "type": "construction",
+   "flavor": "I am carrying out a major upgrade on my homepage",
+   "source": "oocities.org/vienna/6538/"
+  },
+  {
+   "id": 62,
+   "name": "Save Often",
+   "type": "construction",
+   "flavor": "Don't worry, I'm pretty sure I've got everything on back-up in case something happens...",
+   "source": "Tomb of Anubis home page, 2007 (pasted by kura)"
+  },
+  {
+   "id": 67,
+   "name": "HTML 4 Life",
+   "type": "construction",
+   "flavor": "Lurker Lounge Lizard",
+   "source": "oocities.org/elconcrete/"
+  },
+  {
+   "id": 80,
+   "name": "Firewall",
+   "type": "construction",
+   "flavor": "I only sampled a bit of it but will return to view the rest when able.",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 81,
+   "name": "Virus Alert",
+   "type": "construction",
+   "flavor": "no time to scan it all but what I requested was interesting",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 83,
+   "name": "DOS Prompt",
+   "type": "construction",
+   "flavor": "Some of these would look great on my home page.",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 85,
+   "name": "Blue Screen",
+   "type": "construction",
+   "flavor": "...come back next week when the other stuff's been recovered...",
+   "source": "Tomb of Anubis home page, 2007 (pasted by kura)"
+  },
+  {
+   "id": 91,
+   "name": "root",
+   "type": "construction",
+   "flavor": "-- This site under construction --",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+  },
+  {
+   "id": 92,
+   "name": "Password Cracker",
+   "type": "construction",
+   "flavor": "it's very much under construction, as you might notice.",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 143,
+   "name": "The Golden Floppy",
+   "type": "construction",
+   "flavor": "More to come in the near future.......",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 144,
+   "name": "20 GOTO 20",
+   "type": "construction",
+   "flavor": "This page last updated on September 20, 1997",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 172,
+   "name": "Be Kind Rewind",
+   "type": "construction",
+   "flavor": "(let me know of expired links, please!)",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 176,
+   "name": "Tracking",
+   "type": "construction",
+   "flavor": "This site is always under construction.....",
+   "source": "https://rintintin.colorado.edu/~epperson"
+  },
+  {
+   "id": 189,
+   "name": "Abort, Retry, Fail?",
+   "type": "construction",
+   "flavor": "And there is the new, also-under-construction Picture Page",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+  },
+  {
+   "id": 190,
+   "name": "Ctrl+Alt+Del",
+   "type": "construction",
+   "flavor": "the résumé page was updated some time in 1996.",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+  },
+  {
+   "id": 191,
+   "name": "Format C:",
+   "type": "construction",
+   "flavor": "This Web Page is, as always, under construction.",
+   "source": "https://www.qsl.net/kc8ioy"
+  },
+  {
+   "id": 199,
+   "name": "Kernel Panic",
+   "type": "construction",
+   "flavor": "Other than that, this stuff is unchanged since November of 1994.",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+  },
+  {
+   "id": 205,
+   "name": "Blow on It",
+   "type": "construction",
+   "flavor": "Coming Soon- Esteban Technologies Web Site Link",
+   "source": "https://www.qsl.net/kc8ioy"
+  },
+  {
+   "id": 53,
+   "name": "Hit Counter",
+   "type": "counter",
+   "flavor": "Visitors since 8-30-97:",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 61,
+   "name": "Y2K Ready",
+   "type": "counter",
+   "flavor": "Stop! Think! Do you really want to do this?",
+   "source": "oocities.org/lacialacia/newbie/index.html"
+  },
+  {
+   "id": 69,
+   "name": "CD-ROM",
+   "type": "counter",
+   "flavor": "Please ask me before using these pictures",
+   "source": "oocities.org/sunsetstrip/towers/5998/Chester.htm"
+  },
+  {
+   "id": 76,
+   "name": "1,000,000th Visitor",
+   "type": "counter",
+   "flavor": "According to WebCounter, you are visitor number!",
+   "source": "https://sites.ualberta.ca/~sdong/default.htm"
+  },
+  {
+   "id": 78,
+   "name": "Mainframe",
+   "type": "counter",
+   "flavor": "Please do NOT link these graphics to my server",
+   "source": "oocities.org/llegraphics/index2.html"
+  },
+  {
+   "id": 82,
+   "name": "2600 Hz",
+   "type": "counter",
+   "flavor": "Sorry, Your browser does not support this applet.",
+   "source": "oocities.org/mbaatip/institute.html"
+  },
+  {
+   "id": 86,
+   "name": "Hex Dump",
+   "type": "counter",
+   "flavor": "NO TRESPASSING",
+   "source": "oocities.org/soho/cafe/7423/youarehere.html"
+  },
+  {
+   "id": 87,
+   "name": "Carrier Detect",
+   "type": "counter",
+   "flavor": "Since Counter Reset 10/6/98",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+  },
+  {
+   "id": 93,
+   "name": "Defrag",
+   "type": "counter",
+   "flavor": "When pigs fly!",
+   "source": "oocities.org/wonderfulkel/badpage.html"
+  },
+  {
+   "id": 95,
+   "name": "Blinking 12:00",
+   "type": "counter",
+   "flavor": "This page has been accessed times since then",
+   "source": "https://rintintin.colorado.edu/~epperson"
+  },
+  {
+   "id": 138,
+   "name": "CD-ROM Rainbow",
+   "type": "counter",
+   "flavor": "Coming Soon (some of the diagram links don't work...be patient)",
+   "source": "oocities.org/televisioncity/3539/servo.html"
+  },
+  {
+   "id": 174,
+   "name": "Fast Forward",
+   "type": "counter",
+   "flavor": "...or just hit your \"back\" button on your web browser.",
+   "source": "oocities.org/toonsofanubis/review_index.html"
+  },
+  {
+   "id": 192,
+   "name": "Insert Disk 2",
+   "type": "counter",
+   "flavor": "Wednesday. More reviews. Be here!",
+   "source": "Tomb of Anubis home page, 2007 (pasted by kura)"
+  },
+  {
+   "id": 198,
+   "name": "Disk Full",
+   "type": "counter",
+   "flavor": "No frames? Too bad! Continue at your own risk.",
+   "source": "oocities.org/Area51/Vault/2566/"
+  },
+  {
+   "id": 201,
+   "name": "Insert Coin",
+   "type": "counter",
+   "flavor": "Once you're here you're stuck.",
+   "source": "oocities.org/wonderfulkel/badpage.html"
+  },
+  {
+   "id": 202,
+   "name": "Turbo",
+   "type": "counter",
+   "flavor": "Any reproduction, duplication, or distribution in any form is expressly prohibited.",
+   "source": "oocities.org/hiding_light/"
+  },
+  {
+   "id": 206,
+   "name": "Joystick",
+   "type": "counter",
+   "flavor": "Total: 205 guests",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+  },
+  {
+   "id": 54,
+   "name": "Best Viewed 800x600",
+   "type": "divider",
+   "flavor": "(These look best on a yellow background).",
+   "source": "oocities.org/heartland/estates/8353/Bar3.html"
+  },
+  {
+   "id": 59,
+   "name": "Island Life",
+   "type": "divider",
+   "flavor": "Take anything you want, but beware...",
+   "source": "oocities.org/kevins_killa_gifs/index.html"
+  },
+  {
+   "id": 107,
+   "name": "Rainbow",
+   "type": "divider",
+   "flavor": "Just some dividers to help you keep things split up...",
+   "source": "oocities.org/heartland/estates/8353/Bar3.html"
+  },
+  {
+   "id": 119,
+   "name": "Island Life Moonlight",
+   "type": "divider",
+   "flavor": "Hope you enjoy!",
+   "source": "oocities.org/heartland/estates/8353/Bar3.html"
+  },
+  {
+   "id": 142,
+   "name": "Millennium Fireworks",
+   "type": "divider",
+   "flavor": "Page last modified: 05/01/98 06:08 PM",
+   "source": "oocities.org/~celebrate/graphics-bars.html"
+  },
+  {
+   "id": 50,
+   "name": "Sign My Guestbook",
+   "type": "guestbook",
+   "flavor": "Please sign my guest book.",
+   "source": "oocities.org/mbreden/cats.html"
+  },
+  {
+   "id": 51,
+   "name": "Email Me!!",
+   "type": "guestbook",
+   "flavor": "E-mail me for comments about this page!!",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 57,
+   "name": "Four Kimono Ladies",
+   "type": "guestbook",
+   "flavor": "Immortalize yourself",
+   "source": "oocities.org/paris/leftbank/1192/"
+  },
+  {
+   "id": 65,
+   "name": "New Mail!",
+   "type": "guestbook",
+   "flavor": "Thanks for signing my Guestbook. We'll see on the net...",
+   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm"
+  },
+  {
+   "id": 68,
+   "name": "Virtual Pet",
+   "type": "guestbook",
+   "flavor": "See what others have to say",
+   "source": "oocities.org/paris/leftbank/1192/"
+  },
+  {
+   "id": 71,
+   "name": "Have a Nice Day",
+   "type": "guestbook",
+   "flavor": "Wicked site one of the best I've seen! Visit my site.....",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 74,
+   "name": "Ink Pen",
+   "type": "guestbook",
+   "flavor": "This site's gone in the bookmarks :-)",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 88,
+   "name": "BBS Online",
+   "type": "guestbook",
+   "flavor": "How did you find me? :",
+   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm"
+  },
+  {
+   "id": 89,
+   "name": "IRC",
+   "type": "guestbook",
+   "flavor": "Where are you from?",
+   "source": "https://www.ocf.berkeley.edu/~schough/guestbook.html"
+  },
+  {
+   "id": 114,
+   "name": "Four Kimono Ladies Gold Leaf",
+   "type": "guestbook",
+   "flavor": "Thanks you helped me out with my assignment!!!!",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 115,
+   "name": "Four Kimono Ladies Sakura",
+   "type": "guestbook",
+   "flavor": "What about a new background?",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 139,
+   "name": "Have a Nice Day Gold",
+   "type": "guestbook",
+   "flavor": "fantastische Bilder komme bald wieder",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 140,
+   "name": "Virtual Pet Golden Egg",
+   "type": "guestbook",
+   "flavor": "Good Site!!!",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 180,
+   "name": "Kimono Lady 1 (Prototype)",
+   "type": "guestbook",
+   "flavor": "Get ready for footballl baby-i will kcik you butt",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+  },
+  {
+   "id": 181,
+   "name": "Kimono Lady 2 (Prototype)",
+   "type": "guestbook",
+   "flavor": "Pitching is diluted nowadays, come back from retirement!",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+  },
+  {
+   "id": 182,
+   "name": "Kimono Lady 3 (Prototype)",
+   "type": "guestbook",
+   "flavor": "codes are good",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+  },
+  {
+   "id": 183,
+   "name": "Kimono Lady 4 (Prototype)",
+   "type": "guestbook",
+   "flavor": "Thank you for visiting!",
+   "source": "https://sites.ualberta.ca/~sdong/default.htm"
+  },
+  {
+   "id": 193,
+   "name": "Hello World",
+   "type": "guestbook",
+   "flavor": "New to internet, so you are first hit.",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 195,
+   "name": "Sysop Is In",
+   "type": "guestbook",
+   "flavor": "This page allows you to sign my guestbook.",
+   "source": "https://www.ocf.berkeley.edu/~schough/guestbook.html"
+  },
+  {
+   "id": 197,
+   "name": "Caps Lock",
+   "type": "guestbook",
+   "flavor": "Glad you made it here",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 204,
+   "name": "Dot Matrix",
+   "type": "guestbook",
+   "flavor": "From Iman's Web Sight",
+   "source": "https://www.ocf.berkeley.edu/~schough/guestbook.html"
+  },
+  {
+   "id": 47,
+   "name": "Surf the Web",
+   "type": "neon",
+   "flavor": "I have \"Surfed the Net\" for a year or so now",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 55,
+   "name": "Bodacious",
+   "type": "neon",
+   "flavor": "You have to really have a site that ROCKS to win this one.",
+   "source": "oocities.org/soho/lofts/7499/awards/awards.html"
+  },
+  {
+   "id": 56,
+   "name": "Radical!",
+   "type": "neon",
+   "flavor": "This award is hard to acquire.",
+   "source": "oocities.org/soho/lofts/7499/awards/awards.html"
+  },
+  {
+   "id": 58,
+   "name": "Synthwave",
+   "type": "neon",
+   "flavor": "Absolutly mind bogglingly awesome site!",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 60,
+   "name": "Mix Tape",
+   "type": "neon",
+   "flavor": "Awards This Site Has Won",
+   "source": "oocities.org/Heartland/Prairie/8424/awards.html"
+  },
+  {
+   "id": 70,
+   "name": "Lava Lamp",
+   "type": "neon",
+   "flavor": "Your page is spectacular....",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+  },
+  {
+   "id": 72,
+   "name": "MIDI On",
+   "type": "neon",
+   "flavor": "You are one of the best.....",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+  },
+  {
+   "id": 73,
+   "name": "Cool Site!",
+   "type": "neon",
+   "flavor": "Laurel's Cool Page Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 94,
+   "name": "1337",
+   "type": "neon",
+   "flavor": "It's my honour to win this award.",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+  },
+  {
+   "id": 96,
+   "name": "REC",
+   "type": "neon",
+   "flavor": "I cannot express my happiness in words when I receive this award.",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+  },
+  {
+   "id": 97,
+   "name": "Side A",
+   "type": "neon",
+   "flavor": "Click HERE to vote for this page as a Starting Point Hot Site.",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+  },
+  {
+   "id": 98,
+   "name": "Hi-Fi Stereo",
+   "type": "neon",
+   "flavor": "Your site has been awarded the .Cool Reality Award.",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+  },
+  {
+   "id": 99,
+   "name": "Neon Nite",
+   "type": "neon",
+   "flavor": "Netscape 3.0 Enhanced For Your Viewing Pleasure",
+   "source": "https://rintintin.colorado.edu/~epperson"
+  },
+  {
+   "id": 137,
+   "name": "Lava Lamp Blacklight",
+   "type": "neon",
+   "flavor": "My teacher just about kissed the screen.",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+  },
+  {
+   "id": 145,
+   "name": "FRAKTAL.PIC",
+   "type": "neon",
+   "flavor": "The Ultimate Homepage Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 146,
+   "name": "Fraktal",
+   "type": "neon",
+   "flavor": "a great page for Windows 95 users..(I need it)",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 147,
+   "name": "Seahorse Valley",
+   "type": "neon",
+   "flavor": "Learn about your Body!!",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 148,
+   "name": "Elephant Valley",
+   "type": "neon",
+   "flavor": "Welcome to my corner of the WWW!",
+   "source": "https://sites.ualberta.ca/~sdong/default.htm"
+  },
+  {
+   "id": 149,
+   "name": "Tendrils",
+   "type": "neon",
+   "flavor": "Hope you enjoy the new scans.",
+   "source": "https://sites.ualberta.ca/~sdong/default.htm"
+  },
+  {
+   "id": 150,
+   "name": "Spiral",
+   "type": "neon",
+   "flavor": "This page was created with and best viewed with Netscape Navigator Gold 2.0+",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 151,
+   "name": "Mini-Fraktal",
+   "type": "neon",
+   "flavor": "Home sweet home...",
+   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm"
+  },
+  {
+   "id": 178,
+   "name": "Boom Box",
+   "type": "neon",
+   "flavor": "NEW MILLENNIUM EDITION!",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+  },
+  {
+   "id": 184,
+   "name": "Fraktal Neon Test (Prototype)",
+   "type": "neon",
+   "flavor": "Geocities Eureka Outstanding Page Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 185,
+   "name": "Fraktal Wireframe (Prototype)",
+   "type": "neon",
+   "flavor": "\"Kelly Knows Excellence\" Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 186,
+   "name": "Fraktal Low Res (Prototype)",
+   "type": "neon",
+   "flavor": "Top 100% of All Web Sites Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 187,
+   "name": "?SYNTAX ERROR (Prototype)",
+   "type": "neon",
+   "flavor": "Whata heck is an AlterMedian!?...",
+   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm"
+  },
+  {
+   "id": 196,
+   "name": "Shareware",
+   "type": "neon",
+   "flavor": "all kinds of graphics for the homepage - free!!",
+   "source": "https://www.qsl.net/kr4eq"
+  },
+  {
+   "id": 203,
+   "name": "Starfield",
+   "type": "neon",
+   "flavor": "Welcome to my very own little world!",
+   "source": "https://rintintin.colorado.edu/~epperson"
+  },
+  {
+   "id": 207,
+   "name": "Plasma",
+   "type": "neon",
+   "flavor": "Best Kept Secrets of The Web Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 208,
+   "name": "Copper Bars",
+   "type": "neon",
+   "flavor": "The Award Ward Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 209,
+   "name": "Vector Cube",
+   "type": "neon",
+   "flavor": "Member of Joe's Garage Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 210,
+   "name": "Rotozoom",
+   "type": "neon",
+   "flavor": "UPDATE 7/16/00: I've added one new award today.",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+  },
+  {
+   "id": 52,
+   "name": "Webring Member",
+   "type": "webring",
+   "flavor": "This site is a member of WebRing.",
+   "source": "https://www.qsl.net/kb0oxd/"
+  },
+  {
+   "id": 63,
+   "name": "Aliens Welcome",
+   "type": "webring",
+   "flavor": "Want to join the Amateur Radio Webring?",
+   "source": "https://www.qsl.net/kb0oxd/"
+  },
+  {
+   "id": 64,
+   "name": "Cyber Cafe",
+   "type": "webring",
+   "flavor": "Do not copy the code for this webring. Press the join button to get the code.",
+   "source": "oocities.org/esberet/Webrings.html"
+  },
+  {
+   "id": 66,
+   "name": "56K Modem",
+   "type": "webring",
+   "flavor": "Want to join The Cool Comics Web Ring?",
+   "source": "oocities.org/esberet/Webrings.html"
+  },
+  {
+   "id": 75,
+   "name": "Webring Hub",
+   "type": "webring",
+   "flavor": "Home of the Pinoy Hams WebRing",
+   "source": "https://www.qsl.net/4f5aww/webring/headlines.htm"
+  },
+  {
+   "id": 77,
+   "name": "Access Granted",
+   "type": "webring",
+   "flavor": "Go to the next site!",
+   "source": "oocities.org/esberet/Webrings.html"
+  },
+  {
+   "id": 79,
+   "name": "Cyberspace",
+   "type": "webring",
+   "flavor": "Go to the previous site!",
+   "source": "oocities.org/esberet/Webrings.html"
+  },
+  {
+   "id": 84,
+   "name": "Access Denied",
+   "type": "webring",
+   "flavor": "Join Today!",
+   "source": "oocities.org/esberet/Webrings.html"
+  },
+  {
+   "id": 90,
+   "name": "127.0.0.1",
+   "type": "webring",
+   "flavor": "Want to join this ring?",
+   "source": "oocities.org/siliconvalley/haven/2448/programs/webring/sv_support_webring.htm"
+  },
+  {
+   "id": 177,
+   "name": "Hi-Speed Dubbing",
+   "type": "webring",
+   "flavor": "Is A Caring Member Of RAOK!",
+   "source": "oocities.org/kittysnick/webrings.html"
+  },
+  {
+   "id": 179,
+   "name": "Press Play on Tape",
+   "type": "webring",
+   "flavor": "The easy way to tour Amateur Radio Sites on the web!",
+   "source": "https://www.qsl.net/kb0oxd/"
+  },
+  {
+   "id": 194,
+   "name": "Ping",
+   "type": "webring",
+   "flavor": "Next 5 Sites",
+   "source": "https://www.qsl.net/kb0oxd/"
+  },
+  {
+   "id": 200,
+   "name": "Telnet",
+   "type": "webring",
+   "flavor": "Join This Ring",
+   "source": "https://www.qsl.net/kb0oxd/"
+  }
+ ],
+ "spare": [
+  {
+   "type": "construction",
+   "flavor": "this subpage has gotten a major facelift.",
+   "source": "https://www.ocf.berkeley.edu/~schough/guestbook.html"
+  },
+  {
+   "type": "divider",
+   "flavor": "Some things may be cursed!",
+   "source": "oocities.org/kevins_killa_gifs/index.html"
+  },
+  {
+   "type": "neon",
+   "flavor": "I was surprised and thrilled to have received it.",
+   "source": "https://www.weasner.com/etx/site/asod_award.html"
+  },
+  {
+   "type": "neon",
+   "flavor": "It was the first award for the Site",
+   "source": "https://www.weasner.com/etx/site/asod_award.html"
+  },
+  {
+   "type": "neon",
+   "flavor": "Thanks to everyone who took the time to recognize this website.",
+   "source": "https://www.ee.torontomu.ca/~elf/abacus/awards.html"
+  },
+  {
+   "type": "neon",
+   "flavor": "Awarded 4 stars by Link City!",
+   "source": "https://users.monash.edu/~pringle/silent/awards.html"
+  },
+  {
+   "type": "neon",
+   "flavor": "Magellan 3 Star Site",
+   "source": "https://users.monash.edu/~pringle/silent/awards.html"
+  },
+  {
+   "type": "neon",
+   "flavor": "Cool Site Central's Cool Site of the Day award for July 17, 1997.",
+   "source": "https://users.monash.edu/~pringle/silent/awards.html"
+  },
+  {
+   "type": "webring",
+   "flavor": "Invite Friends & Fellow Ham WebMasters",
+   "source": "https://www.qsl.net/4f5aww/webring/headlines.htm"
+  }
+ ]
+}

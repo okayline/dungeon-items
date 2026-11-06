@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Every button its own flavour line
+**Thu Nov 5, 2026 · 10:25 PM HST** (no new version: this repo has none; a data change in `items-db`, no migration)
+- Added: each of 88x31's 107 typed buttons has its own flavour line, all different: real lines from 1990s personal web pages, 54 from before and 62 found today, each with where it was found (`seed/flavor.json`), and 9 kept spare. Games that show a button's quote (UN/TAP) show its own line, the same every time (kura: "i'd like unique lines for all the cards if possible !"). Found buttons are left as they are. Removed: nothing here (UN/TAP stops picking a random line for those buttons).
+
 ## 3D printed buttons stand up in the big view
 **Thu Nov 5, 2026 · 10:00 PM HST** (no new version: this repo has none; no migration)
 - Added: a public list of the 3D printed buttons' height maps, and the shared big view uses it: a printed button (Under Construction, Synthwave, Island Life) stands up from its card at its print's heights and tilts, in every game that loads the shared view (kura: "yep could we do that please!"). Removed: the height map in the private deal pool (the public list replaces it).
