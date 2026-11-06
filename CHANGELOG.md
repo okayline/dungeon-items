@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## The big view, shared
+**Thu Nov 5, 2026 · 9:35 PM HST** (no new version: this repo has none; no migration)
+- Added: one shared script every game can load for its big view: hold a card or button (or rest the mouse on it) to see it big and turn it over, with the graphics cards in 3D. Each game gives it its own frame. A change made here changes every game that loads it (kura: "it would be nice to change it to "90 degrees" once, and have it change everywhere"). Removed: nothing here.
+
 ## 3D printed buttons
 **Thu Nov 5, 2026 · 8:20 PM HST** (no new version: this repo has none; migration `010_reliefs.sql`)
 - Added: a table of height maps for buttons that have been 3D printed, read from the files they were printed from, and the private deal pool hands a button's map to games with it (kura: "i was thinking of getting these buttons 3d printed", and a 3D version on the big card). The first three: Under Construction, Synthwave and Island Life (the last two printed a little deeper, kura: "could we get a little more depth on synthwave and island life please", and Island Life's palm trees standing out in front: "like the foreground"). Removed: nothing.
