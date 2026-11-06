@@ -271,10 +271,12 @@ WHEN NEW.chapter <> COALESCE((SELECT MAX(chapter) FROM stories WHERE day = NEW.d
 BEGIN SELECT RAISE(ABORT, 'chapter numbers count up per day with no gaps'); END;
 
 -- reliefs (migration 010): a button's height map, read from the file it was 3D printed from (kura, Nov 5); one per item.
--- 31 rows of 88 digits, the picture's top row first: each digit a pixel's level, 0.4 mm a level above a 2 mm base.
+-- 31 rows of 88 digits, the picture's top row first: each digit a pixel's level; a pixel stands floor_mm + level * step_mm tall.
 CREATE TABLE IF NOT EXISTS reliefs (
   item_id     INTEGER PRIMARY KEY REFERENCES items(id),
   map         TEXT NOT NULL CHECK (length(map) = 2728 AND map NOT GLOB '*[^0-9]*'),
+  floor_mm    REAL NOT NULL CHECK (floor_mm > 0),   -- how tall a level-0 pixel stands, from the bottom of the print
+  step_mm     REAL NOT NULL CHECK (step_mm > 0),    -- how much taller each level is
   created_at  INTEGER NOT NULL,
   updated_at  INTEGER NOT NULL
 );
