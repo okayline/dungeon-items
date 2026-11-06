@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Fixed: the shared big view
+**Thu Nov 5, 2026 · 9:55 PM HST** (no new version: this repo has none; no migration)
+- Fixed: the shared big view didn't open on any site (kura: "it doesnt pop up on any site now haha"). The way the Worker is built added a bit to the script that only works inside the Worker, so the script stopped on every page. Removed: that stop.
+
 ## The big view, shared
 **Thu Nov 5, 2026 · 9:35 PM HST** (no new version: this repo has none; no migration)
 - Added: one shared script every game can load for its big view: hold a card or button (or rest the mouse on it) to see it big and turn it over, with the graphics cards in 3D. Each game gives it its own frame. A change made here changes every game that loads it (kura: "it would be nice to change it to "90 degrees" once, and have it change everywhere"). Removed: nothing here.

@@ -21,3 +21,13 @@ test("GET /zoom.js serves the shared big view as a script that sets up window.DD
   run(window, document, window.addEventListener);
   assert.equal(on.length, n);
 });
+
+test("/zoom.js still runs when the build has put __name(...) calls in it (Cloudflare's esbuild keeps function names)", async () => {
+  const js = await (await worker.fetch(new Request("https://items.example/zoom.js"), {})).text();
+  const built = js.replace("if (window.DDZoom) return;", "if (window.DDZoom) return; __name(function f() {}, \"f\");");   // what the build adds, in short
+  assert.notEqual(built, js);
+  const el = () => ({ style: { setProperty() {} }, append() {}, appendChild() {} });
+  const window = { addEventListener() {} };
+  new Function("window", "document", "addEventListener", built)(window, { createElement: el, head: el(), addEventListener() {} }, () => {});
+  assert.equal(typeof window.DDZoom.setup, "function");
+});

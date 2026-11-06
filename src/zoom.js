@@ -481,5 +481,7 @@ export function zoomClient() {
   }
   window.DDZoom = { setup(o) { opts = o; }, busy: () => held || !!bigCard, mouse: () => !!bigBy, close: hideBig };
 }
-// the script a page loads: the function above, run once
-export const ZOOM_JS = "(" + zoomClient.toString() + ")();\n";
+// the script a page loads: the function above, run once. Cloudflare's build (esbuild, keeping function names) puts __name(...) calls
+// inside it, and __name only exists in the Worker, so the page gets a stand-in that does nothing (Nov 5: without it /zoom.js stopped at
+// "__name is not defined" on every page, and no big view opened anywhere)
+export const ZOOM_JS = "(function () { var __name = function (f) { return f; };\n(" + zoomClient.toString() + ")();\n})();\n";
