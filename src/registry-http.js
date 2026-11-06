@@ -34,6 +34,17 @@ const CALLS = {
   addItems: (db, [items]) => addItems(db, HTTP_GAME, items),
   retireItems: (db, [keys]) => retireItems(db, HTTP_GAME, keys),
   itemIds: (db, [keys]) => itemIds(db, HTTP_GAME, keys),
+  // (Nov 5) what this game's button cards print under the big button: every one of its items (retired too, since old copies stay)
+  // as { key, id, series, subtype, flavor }, fields it doesn't have left out. Through this door only, so the hidden ones' lines stay off
+  // the public /api/items.
+  cards: async (db) => {
+    const { results } = await db.prepare("SELECT id, source_key, extra FROM items WHERE source = ? ORDER BY id").bind(HTTP_GAME).all();
+    return results.map((r) => {
+      const x = JSON.parse(r.extra || "{}"), c = { key: r.source_key, id: r.id };
+      for (const k of ["series", "subtype", "flavor"]) if (typeof x[k] === "string") c[k] = x[k];
+      return c;
+    });
+  },
 };
 
 export async function registryCall(req, env) {

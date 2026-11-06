@@ -108,3 +108,12 @@ test("heldBy carries each item's details; whereIs finds a copy; the HTTP door on
   assert.deepEqual(await call("whereIs", [3, 1]), { game: "4dungeon", playerId: 7, spent: false });
   assert.equal(await call("whereIs", [5, 1]), null);                // 4dungeon's copy: not 88x31's to look up
 });
+
+test("the HTTP door's cards: every 88x31 item's series, subtype and flavour, retired too, no other game's", async () => {
+  const db = setup(), env = { DB: db, ACCOUNTS_KEY: "k".repeat(20) };
+  db.raw.prepare(`UPDATE items SET extra = '{"series":"Alpha","subtype":"Zone","flavor":"Under construction","effect":"glow"}', retired = 1 WHERE id = 3`).run();
+  const call = async (m, args) => (await worker.fetch(new Request("https://x/rpc/registry/" + m, { method: "POST", headers: { "x-accounts-key": env.ACCOUNTS_KEY }, body: JSON.stringify(args) }), env)).json();
+  assert.deepEqual(await call("cards", []), [
+    { key: "10", id: 1 }, { key: "11", id: 2 },
+    { key: "12", id: 3, series: "Alpha", subtype: "Zone", flavor: "Under construction" }]);
+});

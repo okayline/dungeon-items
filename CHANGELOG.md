@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Every button its own subtype
+**Fri Nov 6, 2026 · 6:40 PM HST** (no new version: this repo has none; a data change in `items-db`, no migration)
+- Added: each 88x31 button's subtype (the word after the dash on its card, like "Construction — Zone") is kept here next to its flavour line, the same one UN/TAP already shows, and for the GPUs their chip generation, as in Rob's Game (`seed/subtype.sql`), and 88x31 can read every button's card lines privately to print them under its big view. Removed: nothing.
+
 ## Every button its own flavour line
 **Thu Nov 5, 2026 · 10:25 PM HST** (no new version: this repo has none; a data change in `items-db`, no migration)
 - Added: each of 88x31's 107 typed buttons has its own flavour line, all different: real lines from 1990s personal web pages, 54 from before and 62 found today, each with where it was found (`seed/flavor.json`), and 9 kept spare. Games that show a button's quote (UN/TAP) show its own line, the same every time (kura: "i'd like unique lines for all the cards if possible !"). Found buttons are left as they are. Removed: nothing here (UN/TAP stops picking a random line for those buttons).
