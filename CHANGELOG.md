@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## 3D printed buttons
+**Thu Nov 5, 2026 · 8:20 PM HST** (no new version: this repo has none; migration `010_reliefs.sql`)
+- Added: a table of height maps for buttons that have been 3D printed, read from the files they were printed from, and the private deal pool hands a button's map to games with it (kura: "i was thinking of getting these buttons 3d printed", and a 3D version on the big card). The first three: Under Construction, Synthwave and Island Life. Removed: nothing.
+
 ## Series Gamma in the deal pool
 **Thu Nov 5, 2026 · 10:35 AM HST** (no new version: this repo has none; no migration)
 - Added: `dealPool(source, { series: [...] })` deals the named series in full, rares too (kura: the GPUs of 88x31's Series Gamma, all rares, shown in UN/TAP), and an item's own quote (`extra.flavor`) comes with it as `flavor`. Every other rare stays a mystery. Removed: nothing.
