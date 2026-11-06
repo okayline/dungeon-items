@@ -14,7 +14,8 @@
 //     holdOff(el)   true where a long press means something else there (picking a button up): a finger doesn't open it
 //     hoverOff(el)  true while the mouse mustn't open it (a fight playing)
 //   })
-//   DDZoom.busy()   true while a hold is on or the big view is open (a game's own gestures wait); DDZoom.close()
+//   DDZoom.busy()   true while a hold is on or the big view is open (a game's own gestures wait); DDZoom.mouse(): it's open from a
+//   mouse (not a finger); DDZoom.close()
 // The look is plain CSS with no weight (:where), so a game's own rules for .zoom, .zbox, .zface, .zedge and .zback win.
 export function zoomClient() {
   if (window.DDZoom) return;
@@ -478,7 +479,7 @@ export function zoomClient() {
       for (const { cv, b } of fronts) { const ctx = cv.getContext("2d"); ctx.clearRect(0, 0, b.w, b.h); ctx.drawImage(frames, tick * 88 + b.x, b.y, b.w, b.h, 0, 0, b.w, b.h); }
     }, matchMedia("(prefers-reduced-motion: reduce)").matches ? SPIN_MS * 4 : SPIN_MS);
   }
-  window.DDZoom = { setup(o) { opts = o; }, busy: () => held || !!bigCard, close: hideBig };
+  window.DDZoom = { setup(o) { opts = o; }, busy: () => held || !!bigCard, mouse: () => !!bigBy, close: hideBig };
 }
 // the script a page loads: the function above, run once
 export const ZOOM_JS = "(" + zoomClient.toString() + ")();\n";
