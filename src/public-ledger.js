@@ -24,19 +24,24 @@ export const mysteryItem = (i) => ({ source: i.source, hidden: true });
 // rare and up stay hidden, except in a series named in { series: [...] } (kura, Nov 5: Series Gamma's GPUs, all rares, shown in
 // UN/TAP), which comes back in full. An item with a printed effect (extra.effect, the same for every copy: the owner, Nov 3,
 // "printed per button") comes with it as effect, and one with its own quote (extra.flavor) with it as flavor; one without has no field.
-// An item 3D printed (kura, Nov 5) comes with its height map from reliefs as relief: { map, floor, step } (a pixel stands floor + level
-// * step mm tall), unless it's a mystery item.
 export async function dealPool(db, source, { uncommons = false, series: shown = [] } = {}) {
-  const { results } = await db.prepare("SELECT i.id, i.source, i.rarity, i.name, i.type, i.image, i.extra, r.map AS relief, r.floor_mm, r.step_mm FROM items i LEFT JOIN reliefs r ON r.item_id = i.id WHERE i.source = ? AND i.retired = 0 ORDER BY i.id").bind(source).all();
+  const { results } = await db.prepare("SELECT id, source, rarity, name, type, image, extra FROM items WHERE source = ? AND retired = 0 ORDER BY id").bind(source).all();
   return results.map((r) => {
     const { series = null, effect, flavor } = JSON.parse(r.extra || "{}");
     const hide = isMystery(r) && !(uncommons && r.rarity === "uncommon") && !(series && shown.includes(series));
     const it = hide ? { id: r.id, type: r.type, rarity: r.rarity, series, hidden: true } : { id: r.id, name: r.name, type: r.type, rarity: r.rarity, series, image: r.image };
     if (effect) it.effect = effect;
     if (flavor && !hide) it.flavor = flavor;
-    if (r.relief && !hide) it.relief = { map: r.relief, floor: r.floor_mm, step: r.step_mm };
     return it;
   });
+}
+
+// (Nov 5) Every 3D printed button's height map (reliefs), public, for the shared big view (/zoom.js) to show it in 3D on any site:
+// [{ id, source, key, map, floor, step }] (key: its key at home, the design id for 88x31; a pixel stands floor + level * step mm tall,
+// the map 31 rows of 88 levels, top row first). Retired and mystery items are left out.
+export async function publicReliefs(db) {
+  const { results } = await db.prepare("SELECT i.id, i.source, i.source_key, i.rarity, r.map, r.floor_mm, r.step_mm FROM reliefs r JOIN items i ON i.id = r.item_id WHERE i.retired = 0 ORDER BY i.id").all();
+  return results.filter((r) => !isMystery(r)).map((r) => ({ id: r.id, source: r.source, key: r.source_key, map: r.map, floor: r.floor_mm, step: r.step_mm }));
 }
 
 // the item ids a record names: one (item), a mark many copies share (copies: [{ item, copy, n }]), or a move's marks

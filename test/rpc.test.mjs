@@ -255,17 +255,3 @@ test("dealPool shows a named series in full, with its own quotes", async () => {
     { id: 2, type: "divider", rarity: "rare", series: "Beta", hidden: true },
   ]);
 });
-
-test("dealPool deals a printed button's height map, not a mystery one's", async () => {
-  const db = fakeD1();
-  db.raw.prepare(`INSERT INTO items (source, source_key, rarity, name, type, image, extra, created_at, updated_at) VALUES
-    ('88x31', 'c', 'common', 'Island Life', 'neon', 'img-c', '{"series":"Alpha"}', 1, 1),
-    ('88x31', 'r', 'rare', 'Secret Button', 'divider', 'img-r', '{"series":"Beta"}', 1, 1),
-    ('88x31', 'p', 'common', 'Plain One', 'neon', 'img-p', '{"series":"Alpha"}', 1, 1)`).run();
-  const map = "1".repeat(88 * 30) + "4".repeat(88);
-  db.raw.prepare("INSERT INTO reliefs (item_id, map, floor_mm, step_mm, created_at, updated_at) VALUES (1, ?, 2.4, 0.6, 1, 1), (2, ?, 2.4, 0.6, 1, 1)").run(map, map);
-  assert.throws(() => db.raw.prepare("INSERT INTO reliefs (item_id, map, floor_mm, step_mm, created_at, updated_at) VALUES (3, '123', 2.4, 0.6, 1, 1)").run());   // not 31 x 88
-  const pool = await new Registry({}, { DB: db }).dealPool("88x31");
-  assert.deepEqual(pool.map((i) => [i.id, i.relief ?? null]), [[1, { map, floor: 2.4, step: 0.6 }], [2, null], [3, null]]);
-});
-

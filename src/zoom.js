@@ -11,6 +11,9 @@
 //                   gpu, a GPU to show in 3D: { key, image, frames, art, spin } (its GPU_3D name, its still 88 x 31 picture, its
 //                   fans' 24 frames or none, the element in face where its picture is, whether the fans turn). Pictures from
 //                   another site need to allow it (Access-Control-Allow-Origin), since the sides are painted from their pixels.
+//                   relief, a button that may have been 3D printed: { image, art, id } or { image, art, source, key } (its picture,
+//                   the picture's element in face, and its item id, or its source and key at home, e.g. "88x31" and the design id):
+//                   if /api/reliefs has its height map, it stands up from the face in layers at the print's heights and tilts too
 //     holdOff(el)   true where a long press means something else there (picking a button up): a finger doesn't open it
 //     hoverOff(el)  true while the mouse mustn't open it (a fight playing)
 //   })
@@ -43,6 +46,10 @@ export function zoomClient() {
   document.head.appendChild(css);
   const mk = (tag, cls) => { const e = document.createElement(tag); if (cls) e.className = cls; return e; };
   let opts = null, bigCard = null, bigFlip = null, bigBy = null, held = false, bigTilt = false;   // bigBy: the element a mouse opened it from
+  // the 3D printed buttons' height maps (dungeon-items /api/reliefs, from where this script came), fetched once when a game sets up
+  const HOME = (() => { try { return new URL(document.currentScript.src).origin; } catch { return ""; } })();
+  let reliefs = null;
+  const getReliefs = () => (reliefs = reliefs || fetch(HOME + "/api/reliefs").then((r) => (r.ok ? r.json() : [])).catch(() => []));
   function showBig(el) {
     const v = opts && opts.open(el);
     if (!v) return;
@@ -60,6 +67,13 @@ export function zoomClient() {
     const shape = v.gpu && GPU_3D[v.gpu.key];
     bigTilt = !!shape;
     if (shape) gpu3d(v.gpu, shape, v);
+    else if (v.relief) {
+      const mine = bigCard, rel = v.relief;
+      getReliefs().then((list) => {
+        const e = list.find((r) => (rel.id != null ? r.id === rel.id : r.source === rel.source && r.key === String(rel.key)));
+        if (e && bigCard === mine) { bigTilt = true; relief3d(rel, e, v); }
+      });
+    }
   }
   function hideBig() { if (bigCard) bigCard.remove(); bigCard = null; bigFlip = null; bigBy = null; bigTilt = false; }
   const turnBig = (deg, tilt = 0) => {
@@ -479,7 +493,40 @@ export function zoomClient() {
       for (const { cv, b } of fronts) { const ctx = cv.getContext("2d"); ctx.clearRect(0, 0, b.w, b.h); ctx.drawImage(frames, tick * 88 + b.x, b.y, b.w, b.h, 0, 0, b.w, b.h); }
     }, matchMedia("(prefers-reduced-motion: reduce)").matches ? SPIN_MS * 4 : SPIN_MS);
   }
-  window.DDZoom = { setup(o) { opts = o; }, busy: () => held || !!bigCard, mouse: () => !!bigBy, close: hideBig };
+  // a 3D printed button (88x31's reliefs, kura, Nov 5: "Under Construction, Synthwave and Island Life would turn in 3D on every site,
+  // just like the GPUs"): its picture in thin layers every SLICE art pixels up from the face, each layer only the pixels that stand
+  // at least that tall (1 art pixel = 1 mm, as printed), the parts below a pixel's top a little darker so the steps show. Built with
+  // canvases that are only drawn on, never read, so the picture may come from any site.
+  const SLICE = 0.2;
+  function relief3d(rel, e, view) {
+    const im = new Image();
+    im.onload = () => {
+      if (!rel.art.isConnected || !bigFlip) return;
+      const top = [...e.map].map((d) => e.floor + Number(d) * e.step), most = Math.max(...top);
+      const mask = (keep) => { const c = mk("canvas"); c.width = 88; c.height = 31; const x = c.getContext("2d"), id = x.createImageData(88, 31);
+        for (let i = 0; i < 2728; i++) if (keep(top[i])) id.data[i * 4 + 3] = 255; x.putImageData(id, 0, 0); return c; };
+      // where the picture is on the face, inside its border: in --u, from the box's top left
+      const pic = /^(IMG|CANVAS)$/.test(rel.art.tagName) ? rel.art : rel.art.querySelector("img, canvas") || rel.art;
+      const zbox = bigFlip.parentElement, uPx = zbox.clientWidth / view.w, zr = zbox.getBoundingClientRect(), pr = pic.getBoundingClientRect(), cs = getComputedStyle(pic);
+      const bl = parseFloat(cs.borderLeftWidth) || 0, bt = parseFloat(cs.borderTopWidth) || 0;
+      const left = (pr.left + bl - zr.left) / uPx, topU = (pr.top + bt - zr.top) / uPx;
+      const w = (pr.width - bl - (parseFloat(cs.borderRightWidth) || 0)) / uPx, h = (pr.height - bt - (parseFloat(cs.borderBottomWidth) || 0)) / uPx, px = w / 88;
+      const P0 = 600, z0 = .5;   // the .zbox perspective and the face's translateZ, in --u
+      for (let a = SLICE; a <= most + 1e-6; a += SLICE) {
+        const c = mk("canvas"); c.width = 88; c.height = 31; const x = c.getContext("2d");
+        x.drawImage(im, 0, 0, 88, 31);
+        x.globalCompositeOperation = "destination-in"; x.drawImage(mask((t) => t >= a - 1e-6), 0, 0);
+        x.globalCompositeOperation = "source-atop"; x.globalAlpha = .45; x.drawImage(mask((t) => t - a >= SLICE - 1e-6), 0, 0);
+        const z = a * px, sc = (P0 - z0 - z) / (P0 - z0);   // scaled toward your eye, so face on it lies exactly over the picture
+        c.className = "relief3d";
+        c.style.cssText = `position:absolute;left:calc(${left} * var(--u));top:calc(${topU} * var(--u));width:calc(${w} * var(--u));height:calc(${h} * var(--u));image-rendering:pixelated;pointer-events:none;`
+          + `transform-origin:calc(${view.w / 2 - left} * var(--u)) calc(${view.h / 2 - topU} * var(--u));transform:translateZ(calc(${z0 + z} * var(--u))) scale(${sc})`;
+        bigFlip.append(c);
+      }
+    };
+    im.src = rel.image;
+  }
+  window.DDZoom = { setup(o) { opts = o; getReliefs(); }, busy: () => held || !!bigCard, mouse: () => !!bigBy, close: hideBig };
 }
 // the script a page loads: the function above, run once. Cloudflare's build (esbuild, keeping function names) puts __name(...) calls
 // inside it, and __name only exists in the Worker, so the page gets a stand-in that does nothing (Nov 5: without it /zoom.js stopped at

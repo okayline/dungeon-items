@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## 3D printed buttons stand up in the big view
+**Thu Nov 5, 2026 · 10:00 PM HST** (no new version: this repo has none; no migration)
+- Added: a public list of the 3D printed buttons' height maps, and the shared big view uses it: a printed button (Under Construction, Synthwave, Island Life) stands up from its card at its print's heights and tilts, in every game that loads the shared view (kura: "yep could we do that please!"). Removed: the height map in the private deal pool (the public list replaces it).
+
 ## Fixed: the shared big view
 **Thu Nov 5, 2026 · 9:55 PM HST** (no new version: this repo has none; no migration)
 - Fixed: the shared big view didn't open on any site (kura: "it doesnt pop up on any site now haha"). The way the Worker is built added a bit to the script that only works inside the Worker, so the script stopped on every page. Removed: that stop.

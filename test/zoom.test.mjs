@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/worker.js";
+import { fakeD1 } from "./helpers.mjs";
 
 test("GET /zoom.js serves the shared big view as a script that sets up window.DDZoom once", async () => {
   const r = await worker.fetch(new Request("https://items.example/zoom.js"), {});
@@ -30,4 +31,16 @@ test("/zoom.js still runs when the build has put __name(...) calls in it (Cloudf
   const window = { addEventListener() {} };
   new Function("window", "document", "addEventListener", built)(window, { createElement: el, head: el(), addEventListener() {} }, () => {});
   assert.equal(typeof window.DDZoom.setup, "function");
+});
+
+test("GET /api/reliefs lists printed buttons' height maps, not a mystery or retired one's", async () => {
+  const db = fakeD1();
+  db.raw.prepare(`INSERT INTO items (source, source_key, rarity, name, created_at, updated_at) VALUES
+    ('88x31', '20', 'common', 'Island Life', 1, 1), ('88x31', '7', 'rare', 'Secret', 1, 1), ('88x31', '9', 'common', 'Gone', 1, 1)`).run();
+  db.raw.prepare("UPDATE items SET retired = 1 WHERE source_key = '9'").run();
+  const map = "2".repeat(88 * 31);
+  db.raw.prepare("INSERT INTO reliefs (item_id, map, floor_mm, step_mm, created_at, updated_at) VALUES (1, ?, 2.8, 0.6, 1, 1), (2, ?, 2.8, 0.6, 1, 1), (3, ?, 2.8, 0.6, 1, 1)").run(map, map, map);
+  const r = await worker.fetch(new Request("https://items.example/api/reliefs"), { DB: db });
+  assert.equal(r.headers.get("access-control-allow-origin"), "*");
+  assert.deepEqual(await r.json(), [{ id: 1, source: "88x31", key: "20", map, floor: 2.8, step: 0.6 }]);
 });
