@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## More new flavour lines
+**Sat Nov 7, 2026 · 2:04 AM HST** (no new version: this repo has none; no migration)
+- Changed: new lines for Series Beta's ultras and prototypes (one is what a Commodore 64 would print for that button's own program), and for CD-ROM Rainbow, Have a Nice Day Gold, Four Kimono Ladies Gold Leaf and a Kimono Lady prototype in Series Alpha; Four Kimono Ladies Sakura's line changed once more. Removed: the old lines from those buttons (kept as spares).
+
 ## New flavour lines for Series Beta rares
 **Sat Nov 7, 2026 · 1:56 AM HST** (no new version: this repo has none; no migration)
 - Changed: new, shorter lines from old fractal pages, demo-scene pages and tape-era sources for 13 Series Beta rares, and a line and subtype for the new Boomin' Nite. The replaced lines are kept in the spare list. Removed: those 13 lines from their buttons.
