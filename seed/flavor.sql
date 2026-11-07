@@ -87,7 +87,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'If there were one ghetto b
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Geocities Eureka Outstanding Page Award') WHERE id = 184 AND source = '88x31';   -- Fraktal Neon Test (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', '"Kelly Knows Excellence" Award') WHERE id = 185 AND source = '88x31';   -- Fraktal Wireframe (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Top 100% of All Web Sites Award') WHERE id = 186 AND source = '88x31';   -- Fraktal Low Res (Prototype)
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Whata heck is an AlterMedian!?...') WHERE id = 187 AND source = '88x31';   -- ?SYNTAX ERROR (Prototype)
+UPDATE items SET extra = json_set(extra, '$.flavor', '?SYNTAX  ERROR IN 10') WHERE id = 187 AND source = '88x31';   -- ?SYNTAX ERROR (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'all kinds of graphics for the homepage - free!!') WHERE id = 196 AND source = '88x31';   -- Shareware
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Welcome to my very own little world!') WHERE id = 203 AND source = '88x31';   -- Starfield
 UPDATE items SET extra = json_set(extra, '$.flavor', 'A shifting display of colors.') WHERE id = 207 AND source = '88x31';   -- Plasma

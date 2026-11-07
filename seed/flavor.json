@@ -613,8 +613,8 @@
    "id": 187,
    "name": "?SYNTAX ERROR (Prototype)",
    "type": "neon",
-   "flavor": "Whata heck is an AlterMedian!?...",
-   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm"
+   "flavor": "?SYNTAX  ERROR IN 10",
+   "source": "what a Commodore 64 prints running the button's own program (line 10 has LAOD); kura, Nov 7 2026"
   },
   {
    "id": 196,
@@ -933,6 +933,11 @@
    "type": "webring",
    "flavor": "The easy way to tour Amateur Radio Sites on the web!",
    "source": "https://www.qsl.net/kb0oxd/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Whata heck is an AlterMedian!?...",
+   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm (replaced Nov 7 2026)"
   }
  ]
 }
