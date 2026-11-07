@@ -46,8 +46,8 @@
    "id": 83,
    "name": "DOS Prompt",
    "type": "construction",
-   "flavor": "Some of these would look great on my home page.",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": "Starting MS-DOS...",
+   "source": "https://hwiegman.home.xs4all.nl/msdos/98740.htm (MS-DOS boot message, Microsoft KB 98740)"
   },
   {
    "id": 85,
@@ -123,8 +123,8 @@
    "id": 199,
    "name": "Kernel Panic",
    "type": "construction",
-   "flavor": "Other than that, this stuff is unchanged since November of 1994.",
-   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+   "flavor": "Uncompressing Linux... Ok, booting the kernel",
+   "source": "https://lkml.rescloud.iu.edu/9812.2/0927.html (Linux boot message, linux-kernel list, Dec 21 1998)"
   },
   {
    "id": 205,
@@ -228,8 +228,8 @@
    "id": 198,
    "name": "Disk Full",
    "type": "counter",
-   "flavor": "No frames? Too bad! Continue at your own risk.",
-   "source": "oocities.org/Area51/Vault/2566/"
+   "flavor": "Do a file-by-file backup of the ProFile.",
+   "source": "https://apple3.org/Documents/Technotes/TA41071.html (Apple ProFile \"Disk Full\" technote, June 29 1990)"
   },
   {
    "id": 201,
@@ -424,8 +424,8 @@
    "id": 197,
    "name": "Caps Lock",
    "type": "guestbook",
-   "flavor": "Glad you made it here",
-   "source": "https://www.qsl.net/kr4eq"
+   "flavor": "UPPER CASE LOOKS AS IF YOU'RE SHOUTING.",
+   "source": "https://www.rfc-editor.org/rfc/rfc1855.txt (RFC 1855, Netiquette Guidelines, October 1995; part of a sentence)"
   },
   {
    "id": 204,
@@ -1153,6 +1153,26 @@
    "type": "construction",
    "flavor": "it's very much under construction, as you might notice.",
    "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Glad you made it here",
+   "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "Some of these would look great on my home page.",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "Other than that, this stuff is unchanged since November of 1994.",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "No frames? Too bad! Continue at your own risk.",
+   "source": "oocities.org/Area51/Vault/2566/ (replaced Nov 7 2026)"
   }
  ]
 }
