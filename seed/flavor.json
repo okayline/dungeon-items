@@ -270,8 +270,8 @@
    "id": 107,
    "name": "Rainbow",
    "type": "divider",
-   "flavor": "Just some dividers to help you keep things split up...",
-   "source": "oocities.org/heartland/estates/8353/Bar3.html"
+   "flavor": "Remember to place a Paragraph mark before and after the image like this:",
+   "source": "https://p25ext.lanl.gov/na44/gifs/lines.html"
   },
   {
    "id": 119,
@@ -375,8 +375,8 @@
    "id": 140,
    "name": "Virtual Pet Golden Egg",
    "type": "guestbook",
-   "flavor": "Good Site!!!",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": "I find myself hatching a new egg every 22 days or so.",
+   "source": "https://mimitchi.com/html/tama.htm (1997)"
   },
   {
    "id": 180,
@@ -522,15 +522,15 @@
    "id": 99,
    "name": "Neon Nite",
    "type": "neon",
-   "flavor": "Netscape 3.0 Enhanced For Your Viewing Pleasure",
-   "source": "https://rintintin.colorado.edu/~epperson"
+   "flavor": "Enhanced For Your Viewing Pleasure",
+   "source": "https://rintintin.colorado.edu/~epperson (kura, Nov 7: shortened)"
   },
   {
    "id": 137,
    "name": "Lava Lamp Blacklight",
    "type": "neon",
-   "flavor": "My teacher just about kissed the screen.",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": "Within an hour or so I had my lava lamp happily blurbing away.",
+   "source": "https://people.well.com/~cynsa/lamp.html (1995)"
   },
   {
    "id": 145,
@@ -748,6 +748,27 @@
    "type": "webring",
    "flavor": "Join This Ring",
    "source": "https://www.qsl.net/kb0oxd/"
+  },
+  {
+   "id": 221,
+   "name": "Black Light Lava",
+   "type": "neon",
+   "flavor": "I have my SGI indy-cam trained on my workmate's lava lamp",
+   "source": "https://people.well.com/~cynsa/lamp.html (1995)"
+  },
+  {
+   "id": 222,
+   "name": "Nice Day Coin",
+   "type": "guestbook",
+   "flavor": "have a quish day",
+   "source": "https://acg.media.mit.edu/people/golan/index.html (1998-2000)"
+  },
+  {
+   "id": 223,
+   "name": "Virtual Pet Hatchling",
+   "type": "guestbook",
+   "flavor": "I hatched my first Mimitchi on my lunch hour on September 1st.",
+   "source": "https://mimitchi.com/html/tama.htm (1997)"
   }
  ],
  "spare": [
