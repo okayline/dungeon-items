@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## New flavour lines for the rest of Series Alpha
+**Sat Nov 7, 2026 · 2:35 AM HST** (no new version: this repo has none; no migration)
+- Changed: 15 Series Alpha commons, Island Life Moonlight, The Golden Floppy and the last Kimono Lady prototype get old-web lines that match their buttons; two of them come from the spare list. Removed: the 18 old lines from those buttons (kept as spares) and the two spares that were used.
+
 ## More new flavour lines
 **Sat Nov 7, 2026 · 2:04 AM HST** (no new version: this repo has none; no migration)
 - Changed: new lines for Series Beta's ultras and prototypes (one is what a Commodore 64 would print for that button's own program), and for CD-ROM Rainbow, Have a Nice Day Gold, Four Kimono Ladies Gold Leaf and a Kimono Lady prototype in Series Alpha; Four Kimono Ladies Sakura's line changed once more. Removed: the old lines from those buttons (kept as spares).
