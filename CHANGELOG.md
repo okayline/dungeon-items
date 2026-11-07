@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## A zoomed button stays put under the mouse
+**Sat Nov 7, 2026 · 1:15 AM HST** (no new version: this repo has none; no migration)
+- Changed: while a button is open big from the mouse, drifting onto another button no longer swaps the big view to it; move away to close it first. Removed: the swap.
+
 ## The 3D printed buttons stand 0.9 mm a level
 **Sat Nov 7, 2026 · 12:17 AM HST** (no new version: this repo has none; no migration)
 - Changed: Under Construction, Synthwave and Island Life stand 0.9 mm a level in the shared big view (kura: "i like 0.9 a lot more !"; Under Construction "a little too deep" at 1.2). Removed: their old steps (0.6 mm for Synthwave and Island Life, 1.2 mm for Under Construction).

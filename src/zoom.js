@@ -123,7 +123,7 @@ export function zoomClient() {
       else hideBig();
     }
     clearTimeout(hover);
-    if (!n || n === bigBy || hoverOff(n)) return;
+    if (!n || bigBy || hoverOff(n)) return;   // while a mouse has one open, resting on another button doesn't swap it (kura, Nov 7)
     const sx = e.clientX, sy = e.clientY;
     hover = setTimeout(() => { if (n.isConnected && !hoverOff(n)) { showBig(n); if (bigCard) { bigBy = n; x0 = sx; y0 = sy; } } }, HOVER_MS);
   });
