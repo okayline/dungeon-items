@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## The RTX 5070 rebuilt like the RTX 5090
+**Fri Nov 6, 2026 · 11:32 PM HST** (no new version: this repo has none; no migration)
+- Changed: the RTX 5070's 3D model gets what the 5090 got, from kura's photos of the real card: its bracket against the card, in the card's grey, with two prongs, the 5090's ports and four vents beside them, its lip lower; the finger by the bracket gone and the far one grey with a pixel sticking out; a black board joining the fingers to the card; both ends solid, the far one one grey (kura: "yep lets do it !!"). 88x31 gives it a back picture. Removed: the silver bracket, its three tall prongs' places and the tab's notches, the nearest finger.
+
 ## The panel back behind graphics cards without a back
 **Fri Nov 6, 2026 · 10:36 PM HST** (no new version: this repo has none; no migration)
 - Changed: a graphics card with no back picture yet has its panel behind it again in the shared big view, as before tonight; only the ones with a back (the RTX 5090 and 5080) are see-through behind the model (kura: "for the gpus that don't have back models yet, can we have the background panels be black or blue like they were before please"). Removed: nothing.

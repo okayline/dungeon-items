@@ -231,23 +231,27 @@ export function zoomClient() {
     // the board's side, and four large vent holes beside them (their place on the bracket isn't in the photos: put on the fan side)
     "rtx-5070": { groups: [
       { d: 13, boxes: [
-        ...ROUND(13, [[12, 1, 70, 1], [11, 2, 72, 1], [10, 3, 74, 1], [9, 4, 76, 1], [8, 5, 78, 17], [9, 22, 76, 1], [10, 23, 74, 1], [11, 24, 72, 1], [12, 25, 70, 1]], { sides: "tbr",
+        ...ROUND(13, [[12, 1, 70, 1], [11, 2, 72, 1], [10, 3, 74, 1], [9, 4, 76, 1], [8, 5, 78, 17], [9, 22, 76, 1], [10, 23, 74, 1], [11, 24, 72, 1], [12, 25, 70, 1]], { sides: "tblr",   // its end by the bracket too (kura, Nov 6, as on the 5090)
           top: [[35, 58, 1, 11, "#18181a"], [36, 52, 6, 6, "#040405"], [36, 52, 8, 8, "#040405"], [53, 57, 2, 10, "#0a0a0b"], [54, 56, 3, 9, "#1e1e20", "#303032"]],
           bottom: [[35, 58, 1, 11, "#131315"], [40, 44, 4, 8, "#040405"], [49, 53, 4, 8, "#040405"]],
-          right: [[8, 9, 6, 7, "#141416"], [18, 19, 6, 7, "#141416"]] }),
+          right: [[0, 30, 0, 13, "#26262a"], [8, 9, 6, 7, "#141416"], [18, 19, 6, 7, "#141416"]] }),   // its far end one grey (as on the 5090), and its holes
         { x: 59, y: 0, w: 22, h: 1, sides: "tlr",      // the right frame's top bar (the rest of the top is 1 px lower), with the etched logo
           top: [[66, 79, 6, 7, "#6e6e74"], [73, 73, 6, 7, "#a4a4aa"]] },
         { x: 60, y: 26, w: 21, h: 1, sides: "blr" },   // the right frame's bottom bar
-        { x: 4, y: 1, w: 2, h: 27, sides: "tblr",
-          left: [[4, 8, 2, 4, "dp"], [10, 14, 2, 4, "dp"], [16, 20, 2, 4, "dp"], [22, 26, 2, 4, "hdmi"],
-                 [4, 8, 8, 10, "#0e0e10"], [10, 14, 8, 10, "#0e0e10"], [16, 20, 8, 10, "#0e0e10"], [22, 26, 8, 10, "#0e0e10"]] },
-        { x: 4, y: 28, w: 2, h: 5, sides: "blr", z: [2, 5] },
-        { x: 4, y: 28, w: 2, h: 5, sides: "blr", z: [8, 11] },
-        { x: 1, y: 1, w: 3, h: 2, sides: "tbl", top: [[2, 2, 3, 3, "#040405"], [2, 2, 9, 9, "#040405"]] },
+        // the bracket, its legs and its tab as on the 5090 (kura, Nov 6, on photos of the real 5070): against the card, in the card's
+        // grey, 1 px in from its front and back, two prongs; the ports as the 5090's, beside them its four vents
+        { x: 6, y: 3, w: 2, h: 23, sides: "tblr", z: [1, 12], fill: "#37373c",   // its top 2 px down (kura, Nov 6)
+          left: [[4, 6, 2, 3, "dp", .45], [9, 11, 2, 3, "dp", .45], [14, 16, 2, 3, "dp", .45], [19, 22, 2, 3, "hdmi", .45],
+                 [19, 19, 3, 3, "#1c1c1f"], [21, 21, 3, 3, "#1c1c1f"], [22, 22, 2, 3, "#252528"],
+                 [4, 7, 7, 10, "#141416"], [9, 12, 7, 10, "#141416"], [14, 17, 7, 10, "#141416"], [19, 22, 7, 10, "#141416"]] },
+        ...[[1, 5], [8, 12]].map((z) => ({ x: 6, y: 26, w: 2, h: 4, sides: "blr", z, fill: "#37373c" })),
+        { x: 3, y: 3, w: 3, h: 2, sides: "tbl", z: [1, 12], fill: "#37373c" },
       ] },
-      { d: 1, boxes: [   // the fingers, split at the picture's gaps (x 16, 20) and the key notch (x 39-40)
-        { x: 14, y: 28, w: 2, h: 1, sides: "tblr" }, { x: 17, y: 28, w: 3, h: 2, sides: "tblr" },
-        { x: 21, y: 28, w: 18, h: 2, sides: "tblr" }, { x: 41, y: 28, w: 3, h: 1, sides: "tblr" },
+      { d: 1, boxes: [   // the fingers, split at the picture's gap (x 20) and the key notch (x 39-40); as on the 5090: none by the bracket, the far
+        // one grey with a pixel sticking out past its bottom, and a black board joining them to the card (kura, Nov 6)
+        { x: 17, y: 28, w: 3, h: 2, sides: "tblr" }, { x: 21, y: 28, w: 18, h: 2, sides: "tblr" },
+        { x: 41, y: 28, w: 3, h: 1, sides: "tbl", fill: "#1c1b1e" }, { x: 44, y: 28, w: 1, h: 1, sides: "tbr", fill: "#1c1b1e" },
+        { x: 13, y: 26, w: 31, h: 2, sides: "lbr", fill: "#0c0c0e" },
       ] },
     ] },
     // RTX 4090 Founders Edition: 304 mm long, three slots (61 mm), so 15 px at its picture's scale (73 px). Top, from kura's photos
