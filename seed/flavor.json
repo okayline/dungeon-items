@@ -88,15 +88,15 @@
    "id": 172,
    "name": "Be Kind Rewind",
    "type": "construction",
-   "flavor": "(let me know of expired links, please!)",
-   "source": "https://www.qsl.net/kr4eq"
+   "flavor": "Be a friend, rewind when you reach the end",
+   "source": "https://www.hometheaterforum.com/community/threads/be-a-friend-rewind-when-you-reach-the-end.92210/ (thread title; from search)"
   },
   {
    "id": 176,
    "name": "Tracking",
    "type": "construction",
-   "flavor": "This site is always under construction.....",
-   "source": "https://rintintin.colorado.edu/~epperson"
+   "flavor": "FOR MAXIMUM PICTURE QUALITY",
+   "source": "https://avid.wiki/Random_House_Home_Video_(VCR_Tracking_Bumper) (on-screen tracking notice, 1980s-1990s tapes)"
   },
   {
    "id": 189,
@@ -130,8 +130,8 @@
    "id": 205,
    "name": "Blow on It",
    "type": "construction",
-   "flavor": "Coming Soon- Esteban Technologies Web Site Link",
-   "source": "https://www.qsl.net/kc8ioy"
+   "flavor": "Worked every time.",
+   "source": "https://www.engadget.com/2006-10-28-how-did-you-blow-your-nes-cartridge.html (Oct 28 2006)"
   },
   {
    "id": 53,
@@ -165,15 +165,15 @@
    "id": 78,
    "name": "Mainframe",
    "type": "counter",
-   "flavor": "Please do NOT link these graphics to my server",
-   "source": "oocities.org/llegraphics/index2.html"
+   "flavor": "Large, expensive, ultra-fast computers.",
+   "source": "https://www.catb.org/jargon/html/B/big-iron.html (the Jargon File, \"big iron\")"
   },
   {
    "id": 82,
    "name": "2600 Hz",
    "type": "counter",
-   "flavor": "Sorry, Your browser does not support this applet.",
-   "source": "oocities.org/mbaatip/institute.html"
+   "flavor": "Okay. That's where the 2600-cycle tone comes in.",
+   "source": "https://mirror.cyberbits.eu/textfiles.com/phreak/BOXES/esquire2.phk (Esquire, \"Secrets of the Little Blue Box\", Oct 1971; part of a quote)"
   },
   {
    "id": 86,
@@ -235,22 +235,22 @@
    "id": 201,
    "name": "Insert Coin",
    "type": "counter",
-   "flavor": "Once you're here you're stuck.",
-   "source": "oocities.org/wonderfulkel/badpage.html"
+   "flavor": "Solid Pac for a lifetime",
+   "source": "https://arcarc.xmission.com/Web%20Archives/Users.Erols.Com-mowerman%20(Aug-24-2003)/pacfile.htm (Pac-Man repair page, last updated Sept 14 2002)"
   },
   {
    "id": 202,
    "name": "Turbo",
    "type": "counter",
-   "flavor": "Any reproduction, duplication, or distribution in any form is expressly prohibited.",
-   "source": "oocities.org/hiding_light/"
+   "flavor": "Everything started working.",
+   "source": "https://forums.anandtech.com/threads/old-school-turbo-button.1127422 (Aug 14 2003)"
   },
   {
    "id": 206,
    "name": "Joystick",
    "type": "counter",
-   "flavor": "Total: 205 guests",
-   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+   "flavor": "Have you played Atari today?",
+   "source": "https://blog.archive.org/2022/07/13/have-you-played-atari-today-2/ (Atari's slogan from April 1982)"
   },
   {
    "id": 54,
@@ -431,8 +431,8 @@
    "id": 204,
    "name": "Dot Matrix",
    "type": "guestbook",
-   "flavor": "From Iman's Web Sight",
-   "source": "https://www.ocf.berkeley.edu/~schough/guestbook.html"
+   "flavor": "By all means, experiment.",
+   "source": "https://www.atarimagazines.com/v7n3/topbanner.php (ANTIC, July 1988)"
   },
   {
    "id": 47,
@@ -501,22 +501,22 @@
    "id": 96,
    "name": "REC",
    "type": "neon",
-   "flavor": "I cannot express my happiness in words when I receive this award.",
-   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+   "flavor": "Record yourself between tracks.",
+   "source": "https://www.kempa.com/articles/tape/ (Sami Jano; undated)"
   },
   {
    "id": 97,
    "name": "Side A",
    "type": "neon",
-   "flavor": "Click HERE to vote for this page as a Starting Point Hot Site.",
-   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+   "flavor": "Use side A to build up",
+   "source": "https://www.kempa.com/articles/tape/ (J.R. Brubaker; undated; part of a sentence)"
   },
   {
    "id": 98,
    "name": "Hi-Fi Stereo",
    "type": "neon",
-   "flavor": "Your site has been awarded the .Cool Reality Award.",
-   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+   "flavor": "The Modern Miracle of Living Stereo",
+   "source": "https://www.fourmilab.ch/scanalyzer/archives/2021/02/the-modern-miracle-of-living-stereo.html (title of RCA Victor's promotional film, late 1950s)"
   },
   {
    "id": 99,
@@ -1058,6 +1058,66 @@
    "type": "guestbook",
    "flavor": "Thank you for visiting!",
    "source": "https://sites.ualberta.ca/~sdong/default.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Please do NOT link these graphics to my server",
+   "source": "oocities.org/llegraphics/index2.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Sorry, Your browser does not support this applet.",
+   "source": "oocities.org/mbaatip/institute.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "I cannot express my happiness in words when I receive this award.",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Click HERE to vote for this page as a Starting Point Hot Site.",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Your site has been awarded the .Cool Reality Award.",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Any reproduction, duplication, or distribution in any form is expressly prohibited.",
+   "source": "oocities.org/hiding_light/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "From Iman's Web Sight",
+   "source": "https://www.ocf.berkeley.edu/~schough/guestbook.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "Coming Soon- Esteban Technologies Web Site Link",
+   "source": "https://www.qsl.net/kc8ioy (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Total: 205 guests",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Once you're here you're stuck.",
+   "source": "oocities.org/wonderfulkel/badpage.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "(let me know of expired links, please!)",
+   "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "This site is always under construction.....",
+   "source": "https://rintintin.colorado.edu/~epperson (replaced Nov 7 2026)"
   }
  ]
 }
