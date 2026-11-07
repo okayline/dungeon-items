@@ -51,7 +51,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'This site''s gone in the b
 UPDATE items SET extra = json_set(extra, '$.flavor', 'How did you find me? :') WHERE id = 88 AND source = '88x31';   -- BBS Online
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Where are you from?') WHERE id = 89 AND source = '88x31';   -- IRC
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Thanks you helped me out with my assignment!!!!') WHERE id = 114 AND source = '88x31';   -- Four Kimono Ladies Gold Leaf
-UPDATE items SET extra = json_set(extra, '$.flavor', 'See you next again ! Thank you . . . .') WHERE id = 115 AND source = '88x31';   -- Four Kimono Ladies Sakura
+UPDATE items SET extra = json_set(extra, '$.flavor', 'They look like winter''s last snow.') WHERE id = 115 AND source = '88x31';   -- Four Kimono Ladies Sakura
 UPDATE items SET extra = json_set(extra, '$.flavor', 'fantastische Bilder komme bald wieder') WHERE id = 139 AND source = '88x31';   -- Have a Nice Day Gold
 UPDATE items SET extra = json_set(extra, '$.flavor', 'I find myself hatching a new egg every 22 days or so.') WHERE id = 140 AND source = '88x31';   -- Virtual Pet Golden Egg
 UPDATE items SET extra = json_set(extra, '$.flavor', 'mine are old sketches, "in progress" work, and never-finished work.') WHERE id = 180 AND source = '88x31';   -- Kimono Lady 1 (Prototype)

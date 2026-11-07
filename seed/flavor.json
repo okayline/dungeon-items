@@ -361,8 +361,8 @@
    "id": 115,
    "name": "Four Kimono Ladies Sakura",
    "type": "guestbook",
-   "flavor": "See you next again ! Thank you . . . .",
-   "source": "https://www.ne.jp/asahi/shonan/bv/eng2.htm"
+   "flavor": "They look like winter's last snow.",
+   "source": "https://www1.gifu-u.ac.jp/~kameoka/sakura.html (1998)"
   },
   {
    "id": 139,
@@ -856,6 +856,11 @@
    "type": "guestbook",
    "flavor": "Pitching is diluted nowadays, come back from retirement!",
    "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "See you next again ! Thank you . . . .",
+   "source": "https://www.ne.jp/asahi/shonan/bv/eng2.htm (replaced Nov 7 2026)"
   }
  ]
 }
