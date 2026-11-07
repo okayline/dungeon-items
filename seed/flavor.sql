@@ -8,15 +8,15 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'I only sampled a bit of it
 UPDATE items SET extra = json_set(extra, '$.flavor', 'no time to scan it all but what I requested was interesting') WHERE id = 81 AND source = '88x31';   -- Virus Alert
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Some of these would look great on my home page.') WHERE id = 83 AND source = '88x31';   -- DOS Prompt
 UPDATE items SET extra = json_set(extra, '$.flavor', '...come back next week when the other stuff''s been recovered...') WHERE id = 85 AND source = '88x31';   -- Blue Screen
-UPDATE items SET extra = json_set(extra, '$.flavor', '-- This site under construction --') WHERE id = 91 AND source = '88x31';   -- root
-UPDATE items SET extra = json_set(extra, '$.flavor', 'it''s very much under construction, as you might notice.') WHERE id = 92 AND source = '88x31';   -- Password Cracker
+UPDATE items SET extra = json_set(extra, '$.flavor', 'We need to find a wheel to unwedge the hung tape drives.') WHERE id = 91 AND source = '88x31';   -- root
+UPDATE items SET extra = json_set(extra, '$.flavor', 'codes are good') WHERE id = 92 AND source = '88x31';   -- Password Cracker
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Authentic old software in original unopened packaging.') WHERE id = 143 AND source = '88x31';   -- The Golden Floppy
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This page last updated on September 20, 1997') WHERE id = 144 AND source = '88x31';   -- 20 GOTO 20
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Be a friend, rewind when you reach the end') WHERE id = 172 AND source = '88x31';   -- Be Kind Rewind
 UPDATE items SET extra = json_set(extra, '$.flavor', 'FOR MAXIMUM PICTURE QUALITY') WHERE id = 176 AND source = '88x31';   -- Tracking
 UPDATE items SET extra = json_set(extra, '$.flavor', 'And there is the new, also-under-construction Picture Page') WHERE id = 189 AND source = '88x31';   -- Abort, Retry, Fail?
-UPDATE items SET extra = json_set(extra, '$.flavor', 'the résumé page was updated some time in 1996.') WHERE id = 190 AND source = '88x31';   -- Ctrl+Alt+Del
-UPDATE items SET extra = json_set(extra, '$.flavor', 'This Web Page is, as always, under construction.') WHERE id = 191 AND source = '88x31';   -- Format C:
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Also called three-finger salute and Vulcan death grip.') WHERE id = 190 AND source = '88x31';   -- Ctrl+Alt+Del
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Stop! Think! Do you really want to do this?') WHERE id = 191 AND source = '88x31';   -- Format C:
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Other than that, this stuff is unchanged since November of 1994.') WHERE id = 199 AND source = '88x31';   -- Kernel Panic
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Worked every time.') WHERE id = 205 AND source = '88x31';   -- Blow on It
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Visitors since 8-30-97:') WHERE id = 53 AND source = '88x31';   -- Hit Counter
@@ -25,13 +25,13 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'The CD-ROM gives you a lot
 UPDATE items SET extra = json_set(extra, '$.flavor', 'According to WebCounter, you are visitor number!') WHERE id = 76 AND source = '88x31';   -- 1,000,000th Visitor
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Large, expensive, ultra-fast computers.') WHERE id = 78 AND source = '88x31';   -- Mainframe
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Okay. That''s where the 2600-cycle tone comes in.') WHERE id = 82 AND source = '88x31';   -- 2600 Hz
-UPDATE items SET extra = json_set(extra, '$.flavor', 'NO TRESPASSING') WHERE id = 86 AND source = '88x31';   -- Hex Dump
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Since Counter Reset 10/6/98') WHERE id = 87 AND source = '88x31';   -- Carrier Detect
-UPDATE items SET extra = json_set(extra, '$.flavor', 'When pigs fly!') WHERE id = 93 AND source = '88x31';   -- Defrag
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Short, concise answers are better than core dumps.') WHERE id = 86 AND source = '88x31';   -- Hex Dump
+UPDATE items SET extra = json_set(extra, '$.flavor', 'CONNECT 1200') WHERE id = 87 AND source = '88x31';   -- Carrier Detect
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Defrag is moving the data on the disk.') WHERE id = 93 AND source = '88x31';   -- Defrag
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This page has been accessed times since then') WHERE id = 95 AND source = '88x31';   -- Blinking 12:00
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Quad-speed and faster CD-ROM drives are now common.') WHERE id = 138 AND source = '88x31';   -- CD-ROM Rainbow
 UPDATE items SET extra = json_set(extra, '$.flavor', '...or just hit your "back" button on your web browser.') WHERE id = 174 AND source = '88x31';   -- Fast Forward
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Wednesday. More reviews. Be here!') WHERE id = 192 AND source = '88x31';   -- Insert Disk 2
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Press any key to continue') WHERE id = 192 AND source = '88x31';   -- Insert Disk 2
 UPDATE items SET extra = json_set(extra, '$.flavor', 'No frames? Too bad! Continue at your own risk.') WHERE id = 198 AND source = '88x31';   -- Disk Full
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Solid Pac for a lifetime') WHERE id = 201 AND source = '88x31';   -- Insert Coin
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Everything started working.') WHERE id = 202 AND source = '88x31';   -- Turbo
@@ -70,7 +70,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Start it out with a bang!'
 UPDATE items SET extra = json_set(extra, '$.flavor', 'The amorphous blob light was an immediate hit') WHERE id = 70 AND source = '88x31';   -- Lava Lamp
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This site is best heard with Liveupdate Crescendo..') WHERE id = 72 AND source = '88x31';   -- MIDI On
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Laurel''s Cool Page Award') WHERE id = 73 AND source = '88x31';   -- Cool Site!
-UPDATE items SET extra = json_set(extra, '$.flavor', 'It''s my honour to win this award.') WHERE id = 94 AND source = '88x31';   -- 1337
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Also used as a general positive adjective.') WHERE id = 94 AND source = '88x31';   -- 1337
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Record yourself between tracks.') WHERE id = 96 AND source = '88x31';   -- REC
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Use side A to build up') WHERE id = 97 AND source = '88x31';   -- Side A
 UPDATE items SET extra = json_set(extra, '$.flavor', 'The Modern Miracle of Living Stereo') WHERE id = 98 AND source = '88x31';   -- Hi-Fi Stereo
@@ -102,7 +102,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Home of the Pinoy Hams Web
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Go to the next site!') WHERE id = 77 AND source = '88x31';   -- Access Granted
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Go to the previous site!') WHERE id = 79 AND source = '88x31';   -- Cyberspace
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Join Today!') WHERE id = 84 AND source = '88x31';   -- Access Denied
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Want to join this ring?') WHERE id = 90 AND source = '88x31';   -- 127.0.0.1
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Home sweet home...') WHERE id = 90 AND source = '88x31';   -- 127.0.0.1
 UPDATE items SET extra = json_set(extra, '$.flavor', 'During HIGH speed dubbing, only the STOP button works.') WHERE id = 177 AND source = '88x31';   -- Hi-Speed Dubbing
 UPDATE items SET extra = json_set(extra, '$.flavor', 'LOADING NEXT LEVEL') WHERE id = 179 AND source = '88x31';   -- Press Play on Tape
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Next 5 Sites') WHERE id = 194 AND source = '88x31';   -- Ping

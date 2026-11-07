@@ -60,15 +60,15 @@
    "id": 91,
    "name": "root",
    "type": "construction",
-   "flavor": "-- This site under construction --",
-   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+   "flavor": "We need to find a wheel to unwedge the hung tape drives.",
+   "source": "https://www.tuhs.org/Usenet/alt.sources.d/1991-April/001740.html (alt.sources.d, April 29 1991)"
   },
   {
    "id": 92,
    "name": "Password Cracker",
    "type": "construction",
-   "flavor": "it's very much under construction, as you might notice.",
-   "source": "https://www.qsl.net/kr4eq"
+   "flavor": "codes are good",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
   },
   {
    "id": 143,
@@ -109,15 +109,15 @@
    "id": 190,
    "name": "Ctrl+Alt+Del",
    "type": "construction",
-   "flavor": "the résumé page was updated some time in 1996.",
-   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+   "flavor": "Also called three-finger salute and Vulcan death grip.",
+   "source": "https://www.catb.org/jargon/html/V/Vulcan-nerve-pinch.html (the Jargon File, \"Vulcan nerve pinch\")"
   },
   {
    "id": 191,
    "name": "Format C:",
    "type": "construction",
-   "flavor": "This Web Page is, as always, under construction.",
-   "source": "https://www.qsl.net/kc8ioy"
+   "flavor": "Stop! Think! Do you really want to do this?",
+   "source": "oocities.org/lacialacia/newbie/index.html"
   },
   {
    "id": 199,
@@ -179,22 +179,22 @@
    "id": 86,
    "name": "Hex Dump",
    "type": "counter",
-   "flavor": "NO TRESPASSING",
-   "source": "oocities.org/soho/cafe/7423/youarehere.html"
+   "flavor": "Short, concise answers are better than core dumps.",
+   "source": "https://lysator.liu.se/hackdict/split/core_dump.html (the Hacker's Dictionary, \"core dump\"; undated)"
   },
   {
    "id": 87,
    "name": "Carrier Detect",
    "type": "counter",
-   "flavor": "Since Counter Reset 10/6/98",
-   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+   "flavor": "CONNECT 1200",
+   "source": "https://panthema.net/2006/helppc21/HelpPC-2.10-HTML/hw-Hayes_modem_info.html (a Hayes modem's result message, HelpPC 2.10, 1991)"
   },
   {
    "id": 93,
    "name": "Defrag",
    "type": "counter",
-   "flavor": "When pigs fly!",
-   "source": "oocities.org/wonderfulkel/badpage.html"
+   "flavor": "Defrag is moving the data on the disk.",
+   "source": "https://techshelps.github.io/MSDN/KB/Source/win95x/q131648.htm (Microsoft KB Q131648, 1995)"
   },
   {
    "id": 95,
@@ -221,8 +221,8 @@
    "id": 192,
    "name": "Insert Disk 2",
    "type": "counter",
-   "flavor": "Wednesday. More reviews. Be here!",
-   "source": "Tomb of Anubis home page, 2007 (pasted by kura)"
+   "flavor": "Press any key to continue",
+   "source": "https://ftp.zx.net.nz/pub/archive/ftp.microsoft.com/MISC/KB/en-us/195/229.HTM (Windows 98 setup screen, Microsoft KB 195229, 1998)"
   },
   {
    "id": 198,
@@ -494,8 +494,8 @@
    "id": 94,
    "name": "1337",
    "type": "neon",
-   "flavor": "It's my honour to win this award.",
-   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+   "flavor": "Also used as a general positive adjective.",
+   "source": "https://www.catb.org/~esr/jargon/html/E/elite.html (the Jargon File, \"elite\")"
   },
   {
    "id": 96,
@@ -718,8 +718,8 @@
    "id": 90,
    "name": "127.0.0.1",
    "type": "webring",
-   "flavor": "Want to join this ring?",
-   "source": "oocities.org/siliconvalley/haven/2448/programs/webring/sv_support_webring.htm"
+   "flavor": "Home sweet home...",
+   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm"
   },
   {
    "id": 177,
@@ -891,11 +891,6 @@
   },
   {
    "type": "neon",
-   "flavor": "Home sweet home...",
-   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm (replaced Nov 7 2026)"
-  },
-  {
-   "type": "neon",
    "flavor": "Best Kept Secrets of The Web Award",
    "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
   },
@@ -965,11 +960,6 @@
    "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
   },
   {
-   "type": "guestbook",
-   "flavor": "codes are good",
-   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html (replaced Nov 7 2026)"
-  },
-  {
    "type": "neon",
    "flavor": "You are one of the best.....",
    "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura) (replaced Nov 7 2026)"
@@ -1018,11 +1008,6 @@
    "type": "webring",
    "flavor": "Want to join The Cool Comics Web Ring?",
    "source": "oocities.org/esberet/Webrings.html (replaced Nov 7 2026)"
-  },
-  {
-   "type": "counter",
-   "flavor": "Stop! Think! Do you really want to do this?",
-   "source": "oocities.org/lacialacia/newbie/index.html (replaced Nov 7 2026)"
   },
   {
    "type": "divider",
@@ -1118,6 +1103,56 @@
    "type": "construction",
    "flavor": "This site is always under construction.....",
    "source": "https://rintintin.colorado.edu/~epperson (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Since Counter Reset 10/6/98",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "It's my honour to win this award.",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "the résumé page was updated some time in 1996.",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Wednesday. More reviews. Be here!",
+   "source": "Tomb of Anubis home page, 2007 (pasted by kura) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "When pigs fly!",
+   "source": "oocities.org/wonderfulkel/badpage.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "-- This site under construction --",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "NO TRESPASSING",
+   "source": "oocities.org/soho/cafe/7423/youarehere.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "This Web Page is, as always, under construction.",
+   "source": "https://www.qsl.net/kc8ioy (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Want to join this ring?",
+   "source": "oocities.org/siliconvalley/haven/2448/programs/webring/sv_support_webring.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "it's very much under construction, as you might notice.",
+   "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
   }
  ]
 }
