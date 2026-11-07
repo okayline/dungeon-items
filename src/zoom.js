@@ -68,6 +68,7 @@ export function zoomClient() {
     bigFlip.append(face, mk("div", "zback"));
     for (let k = 0; k < ZEDGE; k++) { const e = mk("div", "zedge"); e.style.setProperty("--k", (k + 0.5) / ZEDGE); bigFlip.append(e); }
     box.append(bigFlip); bigCard = mk("div", "zoom" + (v.cls ? " " + v.cls : "")); bigCard.append(box); document.body.append(bigCard);
+    onScreen();
     const shape = v.gpu && GPU_3D[v.gpu.key];
     bigTilt = !!shape || !!v.tilt;
     if (shape && v.gpu.back) bigFlip.classList.add("zclear");   // a GPU with its back picture: no panel behind its model (kura, Nov 6: "make the panel
@@ -82,6 +83,15 @@ export function zoomClient() {
     }
   }
   function hideBig() { if (bigCard) bigCard.remove(); bigCard = null; bigFlip = null; bigBy = null; bigTilt = false; }
+  // it covers the part of the page the screen shows (the visual viewport), not the whole page: on a phone a page wider than the
+  // screen, or zoomed in, makes "fixed" cover more than the screen, and the big view was centred half off it (kura, Nov 7)
+  const VV = window.visualViewport;
+  function onScreen() {
+    if (!bigCard || !VV) return;
+    const s = bigCard.style;
+    s.left = VV.offsetLeft + "px"; s.top = VV.offsetTop + "px"; s.width = VV.width + "px"; s.height = VV.height + "px"; s.right = s.bottom = "auto";
+  }
+  if (VV) { VV.addEventListener("resize", onScreen); VV.addEventListener("scroll", onScreen); }
   const turnBig = (deg, tilt = 0) => {
     if (!bigFlip) return;
     tilt = bigTilt ? Math.max(-TILT_MAX, Math.min(TILT_MAX, tilt)) : 0;
