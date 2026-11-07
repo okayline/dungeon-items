@@ -74,8 +74,8 @@
    "id": 143,
    "name": "The Golden Floppy",
    "type": "construction",
-   "flavor": "More to come in the near future.......",
-   "source": "https://www.qsl.net/kr4eq"
+   "flavor": "Authentic old software in original unopened packaging.",
+   "source": "https://oldsoftware.com/floppy.html (undated; its disks are from 1988-1996)"
   },
   {
    "id": 144,
@@ -277,8 +277,8 @@
    "id": 119,
    "name": "Island Life Moonlight",
    "type": "divider",
-   "flavor": "Hope you enjoy!",
-   "source": "oocities.org/heartland/estates/8353/Bar3.html"
+   "flavor": "Sparkling lights of the city add to the beauty of this dramatic view.",
+   "source": "https://www.crummy.com/writing/postcards/1985/19850426-3.html (back of a \"Full Moon over Diamond Head\" postcard, Waikiki, April 26 1985)"
   },
   {
    "id": 142,
@@ -403,8 +403,8 @@
    "id": 183,
    "name": "Kimono Lady 4 (Prototype)",
    "type": "guestbook",
-   "flavor": "Thank you for visiting!",
-   "source": "https://sites.ualberta.ca/~sdong/default.htm"
+   "flavor": "Literally \"one colour\".",
+   "source": "https://www.irt.org/foldoc/monochrome.htm (FOLDOC entry \"monochrome\", Nov 24 1994)"
   },
   {
    "id": 193,
@@ -1043,6 +1043,21 @@
    "type": "guestbook",
    "flavor": "Immortalize yourself",
    "source": "oocities.org/paris/leftbank/1192/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "divider",
+   "flavor": "Hope you enjoy!",
+   "source": "oocities.org/heartland/estates/8353/Bar3.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "More to come in the near future.......",
+   "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Thank you for visiting!",
+   "source": "https://sites.ualberta.ca/~sdong/default.htm (replaced Nov 7 2026)"
   }
  ]
 }

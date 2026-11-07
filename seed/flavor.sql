@@ -10,7 +10,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Some of these would look g
 UPDATE items SET extra = json_set(extra, '$.flavor', '...come back next week when the other stuff''s been recovered...') WHERE id = 85 AND source = '88x31';   -- Blue Screen
 UPDATE items SET extra = json_set(extra, '$.flavor', '-- This site under construction --') WHERE id = 91 AND source = '88x31';   -- root
 UPDATE items SET extra = json_set(extra, '$.flavor', 'it''s very much under construction, as you might notice.') WHERE id = 92 AND source = '88x31';   -- Password Cracker
-UPDATE items SET extra = json_set(extra, '$.flavor', 'More to come in the near future.......') WHERE id = 143 AND source = '88x31';   -- The Golden Floppy
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Authentic old software in original unopened packaging.') WHERE id = 143 AND source = '88x31';   -- The Golden Floppy
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This page last updated on September 20, 1997') WHERE id = 144 AND source = '88x31';   -- 20 GOTO 20
 UPDATE items SET extra = json_set(extra, '$.flavor', '(let me know of expired links, please!)') WHERE id = 172 AND source = '88x31';   -- Be Kind Rewind
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This site is always under construction.....') WHERE id = 176 AND source = '88x31';   -- Tracking
@@ -39,7 +39,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Total: 205 guests') WHERE 
 UPDATE items SET extra = json_set(extra, '$.flavor', 'best viewed with Netscape Navigator Gold 2.0+') WHERE id = 54 AND source = '88x31';   -- Best Viewed 800x600
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Aloha! Welcome to my home page!') WHERE id = 59 AND source = '88x31';   -- Island Life
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Remember to place a Paragraph mark before and after the image like this:') WHERE id = 107 AND source = '88x31';   -- Rainbow
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Hope you enjoy!') WHERE id = 119 AND source = '88x31';   -- Island Life Moonlight
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Sparkling lights of the city add to the beauty of this dramatic view.') WHERE id = 119 AND source = '88x31';   -- Island Life Moonlight
 UPDATE items SET extra = json_set(extra, '$.flavor', 'It''s been counting for a couple of hundred days now... only nine to go...') WHERE id = 142 AND source = '88x31';   -- Millennium Fireworks
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Please sign my guest book.') WHERE id = 50 AND source = '88x31';   -- Sign My Guestbook
 UPDATE items SET extra = json_set(extra, '$.flavor', 'E-mail me for comments about this page!!') WHERE id = 51 AND source = '88x31';   -- Email Me!!
@@ -57,7 +57,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'I find myself hatching a n
 UPDATE items SET extra = json_set(extra, '$.flavor', 'mine are old sketches, "in progress" work, and never-finished work.') WHERE id = 180 AND source = '88x31';   -- Kimono Lady 1 (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'The plans were scanned using a 72 dpi resolution, in order to save space.') WHERE id = 181 AND source = '88x31';   -- Kimono Lady 2 (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'they will be universally honored between browsers') WHERE id = 182 AND source = '88x31';   -- Kimono Lady 3 (Prototype)
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Thank you for visiting!') WHERE id = 183 AND source = '88x31';   -- Kimono Lady 4 (Prototype)
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Literally "one colour".') WHERE id = 183 AND source = '88x31';   -- Kimono Lady 4 (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'New to internet, so you are first hit.') WHERE id = 193 AND source = '88x31';   -- Hello World
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This page allows you to sign my guestbook.') WHERE id = 195 AND source = '88x31';   -- Sysop Is In
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Glad you made it here') WHERE id = 197 AND source = '88x31';   -- Caps Lock
