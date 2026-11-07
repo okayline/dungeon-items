@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## New flavour lines for Series Beta commons and uncommons
+**Sat Nov 7, 2026 · 2:47 AM HST** (no new version: this repo has none; no migration)
+- Changed: 26 Series Beta commons and uncommons, Be Kind Rewind and Tracking get old-web lines that match their buttons; three of them come from the spare list. Removed: the 28 old lines from those buttons (kept as spares) and the three spares that were used.
+
 ## New flavour lines for the rest of Series Alpha
 **Sat Nov 7, 2026 · 2:35 AM HST** (no new version: this repo has none; no migration)
 - Changed: 15 Series Alpha commons, Island Life Moonlight, The Golden Floppy and the last Kimono Lady prototype get old-web lines that match their buttons; two of them come from the spare list. Removed: the 18 old lines from those buttons (kept as spares) and the two spares that were used.
