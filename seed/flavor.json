@@ -599,8 +599,8 @@
    "id": 185,
    "name": "Fraktal Wireframe (Prototype)",
    "type": "neon",
-   "flavor": "\"Kelly Knows Excellence\" Award",
-   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+   "flavor": "the boundary will never appear smooth irrespective of the zoom factors",
+   "source": "https://paulbourke.net/papers/interface (Interface Magazine, December 1990; part of a sentence)"
   },
   {
    "id": 186,
@@ -952,6 +952,11 @@
   {
    "type": "neon",
    "flavor": "Top 100% of All Web Sites Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "\"Kelly Knows Excellence\" Award",
    "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
   }
  ]

@@ -85,7 +85,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'tiny little barely-visible
 UPDATE items SET extra = json_set(extra, '$.flavor', 'small M with period 1280. mag 10^1539.') WHERE id = 151 AND source = '88x31';   -- Mini-Fraktal
 UPDATE items SET extra = json_set(extra, '$.flavor', 'If there were one ghetto blaster to obtain, this might be it.') WHERE id = 178 AND source = '88x31';   -- Boom Box
 UPDATE items SET extra = json_set(extra, '$.flavor', 'has a different palette') WHERE id = 184 AND source = '88x31';   -- Fraktal Neon Test (Prototype)
-UPDATE items SET extra = json_set(extra, '$.flavor', '"Kelly Knows Excellence" Award') WHERE id = 185 AND source = '88x31';   -- Fraktal Wireframe (Prototype)
+UPDATE items SET extra = json_set(extra, '$.flavor', 'the boundary will never appear smooth irrespective of the zoom factors') WHERE id = 185 AND source = '88x31';   -- Fraktal Wireframe (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'a 1024x768x256 image of 195 kbytes.') WHERE id = 186 AND source = '88x31';   -- Fraktal Low Res (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', '?SYNTAX  ERROR IN 10') WHERE id = 187 AND source = '88x31';   -- ?SYNTAX ERROR (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'all kinds of graphics for the homepage - free!!') WHERE id = 196 AND source = '88x31';   -- Shareware
