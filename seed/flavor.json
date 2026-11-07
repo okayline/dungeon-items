@@ -305,8 +305,8 @@
    "id": 57,
    "name": "Four Kimono Ladies",
    "type": "guestbook",
-   "flavor": "Immortalize yourself",
-   "source": "oocities.org/paris/leftbank/1192/"
+   "flavor": "A Beauty of the South",
+   "source": "https://amica.davidrumsey.com/amico10105059-100132.html (title of Utamaro's print, about 1793, in the AMICA library, 2000)"
   },
   {
    "id": 65,
@@ -459,8 +459,8 @@
    "id": 58,
    "name": "Synthwave",
    "type": "neon",
-   "flavor": "Absolutly mind bogglingly awesome site!",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": "A very robot-like effect.",
+   "source": "https://groups.google.com/g/rec.music.makers.synth/c/0m65lGZouNg (Chad Gould's Synthesizer FAQ part 2, rec.music.makers.synth, April 9 1997)"
   },
   {
    "id": 60,
@@ -669,8 +669,8 @@
    "id": 63,
    "name": "Aliens Welcome",
    "type": "webring",
-   "flavor": "Want to join the Amateur Radio Webring?",
-   "source": "https://www.qsl.net/kb0oxd/"
+   "flavor": "If ET Calls, Will You be Listening?",
+   "source": "https://ucolick.org/news/1999/99-05-13a.html (SETI@home press release headline, May 13 1999)"
   },
   {
    "id": 64,
@@ -1028,6 +1028,21 @@
    "type": "divider",
    "flavor": "(These look best on a yellow background).",
    "source": "oocities.org/heartland/estates/8353/Bar3.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Absolutly mind bogglingly awesome site!",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Want to join the Amateur Radio Webring?",
+   "source": "https://www.qsl.net/kb0oxd/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Immortalize yourself",
+   "source": "oocities.org/paris/leftbank/1192/ (replaced Nov 7 2026)"
   }
  ]
 }
