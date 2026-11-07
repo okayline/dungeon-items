@@ -536,8 +536,8 @@
    "id": 145,
    "name": "FRAKTAL.PIC",
    "type": "neon",
-   "flavor": "The Ultimate Homepage Award",
-   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+   "flavor": "7 weeks, 2 days, 8 hours, 15 minutes, 33.50 seconds",
+   "source": "Fractint Deepzooming page, Spanky archive (spanky.triumf.ca), 1990s; part of a sentence; from search"
   },
   {
    "id": 146,
@@ -592,8 +592,8 @@
    "id": 184,
    "name": "Fraktal Neon Test (Prototype)",
    "type": "neon",
-   "flavor": "Geocities Eureka Outstanding Page Award",
-   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+   "flavor": "has a different palette",
+   "source": "Fractint Deepzooming page, Spanky archive (spanky.triumf.ca), 1990s; part of a sentence; from search"
   },
   {
    "id": 185,
@@ -606,8 +606,8 @@
    "id": 186,
    "name": "Fraktal Low Res (Prototype)",
    "type": "neon",
-   "flavor": "Top 100% of All Web Sites Award",
-   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+   "flavor": "a 1024x768x256 image of 195 kbytes.",
+   "source": "Fractint Deepzooming page, Spanky archive (spanky.triumf.ca), 1990s; part of a sentence; from search"
   },
   {
    "id": 187,
@@ -938,6 +938,21 @@
    "type": "neon",
    "flavor": "Whata heck is an AlterMedian!?...",
    "source": "https://www.rncbc.org/old/compuserve/SignGB.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "The Ultimate Homepage Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Geocities Eureka Outstanding Page Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Top 100% of All Web Sites Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
   }
  ]
 }
