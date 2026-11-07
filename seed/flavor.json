@@ -25,8 +25,8 @@
    "id": 67,
    "name": "HTML 4 Life",
    "type": "construction",
-   "flavor": "Lurker Lounge Lizard",
-   "source": "oocities.org/elconcrete/"
+   "flavor": "Now you have a home page.",
+   "source": "http://www.columbia.edu/~fdc/sample.html (since 1992)"
   },
   {
    "id": 80,
@@ -144,15 +144,15 @@
    "id": 61,
    "name": "Y2K Ready",
    "type": "counter",
-   "flavor": "Stop! Think! Do you really want to do this?",
-   "source": "oocities.org/lacialacia/newbie/index.html"
+   "flavor": "NEW MILLENNIUM EDITION!",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
   },
   {
    "id": 69,
    "name": "CD-ROM",
    "type": "counter",
-   "flavor": "Please ask me before using these pictures",
-   "source": "oocities.org/sunsetstrip/towers/5998/Chester.htm"
+   "flavor": "The CD-ROM gives you a lot of bang for the buck",
+   "source": "https://wild-bohemian.com/haightcd.htm (1995)"
   },
   {
    "id": 76,
@@ -256,15 +256,15 @@
    "id": 54,
    "name": "Best Viewed 800x600",
    "type": "divider",
-   "flavor": "(These look best on a yellow background).",
-   "source": "oocities.org/heartland/estates/8353/Bar3.html"
+   "flavor": "best viewed with Netscape Navigator Gold 2.0+",
+   "source": "https://www.qsl.net/kr4eq (part of a sentence)"
   },
   {
    "id": 59,
    "name": "Island Life",
    "type": "divider",
-   "flavor": "Take anything you want, but beware...",
-   "source": "oocities.org/kevins_killa_gifs/index.html"
+   "flavor": "Aloha! Welcome to my home page!",
+   "source": "https://www.qsl.net/ah6hy/ (undated)"
   },
   {
    "id": 107,
@@ -319,15 +319,15 @@
    "id": 68,
    "name": "Virtual Pet",
    "type": "guestbook",
-   "flavor": "See what others have to say",
-   "source": "oocities.org/paris/leftbank/1192/"
+   "flavor": "He was very easy to care for :)",
+   "source": "https://mimitchi.com/html/tama.htm (last updated 1998)"
   },
   {
    "id": 71,
    "name": "Have a Nice Day",
    "type": "guestbook",
-   "flavor": "Wicked site one of the best I've seen! Visit my site.....",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": ":-) Read it sideways.",
+   "source": "https://cs.cmu.edu/smiley/history.html (Scott Fahlman's bulletin board post, Sept 19 1982; part of a sentence)"
   },
   {
    "id": 74,
@@ -466,22 +466,22 @@
    "id": 60,
    "name": "Mix Tape",
    "type": "neon",
-   "flavor": "Awards This Site Has Won",
-   "source": "oocities.org/Heartland/Prairie/8424/awards.html"
+   "flavor": "Start it out with a bang!",
+   "source": "https://www.kempa.com/articles/tape/ (Erik Koppin; undated)"
   },
   {
    "id": 70,
    "name": "Lava Lamp",
    "type": "neon",
-   "flavor": "Your page is spectacular....",
-   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+   "flavor": "The amorphous blob light was an immediate hit",
+   "source": "https://groups.google.com/g/alt.fan.lava.lamps/c/61HnXY7ysTw (2009; part of a sentence)"
   },
   {
    "id": 72,
    "name": "MIDI On",
    "type": "neon",
-   "flavor": "You are one of the best.....",
-   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura)"
+   "flavor": "This site is best heard with Liveupdate Crescendo..",
+   "source": "https://www.qsl.net/g6unc/midi6.htm (undated)"
   },
   {
    "id": 73,
@@ -676,15 +676,15 @@
    "id": 64,
    "name": "Cyber Cafe",
    "type": "webring",
-   "flavor": "Do not copy the code for this webring. Press the join button to get the code.",
-   "source": "oocities.org/esberet/Webrings.html"
+   "flavor": "A good time was had by all",
+   "source": "https://www.nearbycafe.com/aboutthecafe/archive/inhouse_news_7.1996.html (July 1996)"
   },
   {
    "id": 66,
    "name": "56K Modem",
    "type": "webring",
-   "flavor": "Want to join The Cool Comics Web Ring?",
-   "source": "oocities.org/esberet/Webrings.html"
+   "flavor": "fast, reliable Internet connections",
+   "source": "https://www.atlantic.net/press-releases/atlantic-net-launches-56k-internet-service-space-coast.md (July 22 1998; part of a sentence)"
   },
   {
    "id": 75,
@@ -891,18 +891,8 @@
   },
   {
    "type": "neon",
-   "flavor": "This page was created with and best viewed with Netscape Navigator Gold 2.0+",
-   "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
-  },
-  {
-   "type": "neon",
    "flavor": "Home sweet home...",
    "source": "https://www.rncbc.org/old/compuserve/SignGB.htm (replaced Nov 7 2026)"
-  },
-  {
-   "type": "neon",
-   "flavor": "NEW MILLENNIUM EDITION!",
-   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html (replaced Nov 7 2026)"
   },
   {
    "type": "neon",
@@ -978,6 +968,66 @@
    "type": "guestbook",
    "flavor": "codes are good",
    "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "You are one of the best.....",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "Lurker Lounge Lizard",
+   "source": "oocities.org/elconcrete/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Please ask me before using these pictures",
+   "source": "oocities.org/sunsetstrip/towers/5998/Chester.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "See what others have to say",
+   "source": "oocities.org/paris/leftbank/1192/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Do not copy the code for this webring. Press the join button to get the code.",
+   "source": "oocities.org/esberet/Webrings.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "divider",
+   "flavor": "Take anything you want, but beware...",
+   "source": "oocities.org/kevins_killa_gifs/index.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Awards This Site Has Won",
+   "source": "oocities.org/Heartland/Prairie/8424/awards.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Wicked site one of the best I've seen! Visit my site.....",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Your page is spectacular....",
+   "source": "Nighthawk Sports Club awards page, 1998 (pasted by kura) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Want to join The Cool Comics Web Ring?",
+   "source": "oocities.org/esberet/Webrings.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Stop! Think! Do you really want to do this?",
+   "source": "oocities.org/lacialacia/newbie/index.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "divider",
+   "flavor": "(These look best on a yellow background).",
+   "source": "oocities.org/heartland/estates/8353/Bar3.html (replaced Nov 7 2026)"
   }
  ]
 }
