@@ -32,8 +32,8 @@
    "id": 80,
    "name": "Firewall",
    "type": "construction",
-   "flavor": "I only sampled a bit of it but will return to view the rest when able.",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": "Any sanity check inserted to catch a can't happen error.",
+   "source": "https://www.catb.org/jargon/html/F/firewall-code.html (the Jargon File, \"firewall code\")"
   },
   {
    "id": 81,
@@ -200,8 +200,8 @@
    "id": 95,
    "name": "Blinking 12:00",
    "type": "counter",
-   "flavor": "This page has been accessed times since then",
-   "source": "https://rintintin.colorado.edu/~epperson"
+   "flavor": "You mean the time really isn't *blink* 12:00 *blink* 12:00?",
+   "source": "https://boards.straightdope.com/t/you-mean-the-time-really-isnt-blink-12-00-blink-12-00/95252 (thread title, Nov 26 2001)"
   },
   {
    "id": 138,
@@ -312,8 +312,8 @@
    "id": 65,
    "name": "New Mail!",
    "type": "guestbook",
-   "flavor": "Thanks for signing my Guestbook. We'll see on the net...",
-   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm"
+   "flavor": "You've got mail!",
+   "source": "https://www.npr.org/2024/11/08/nx-s1-5183836/elwood-edwards-aol-youve-got-mail-dies (AOL's greeting, recorded 1989)"
   },
   {
    "id": 68,
@@ -417,8 +417,8 @@
    "id": 195,
    "name": "Sysop Is In",
    "type": "guestbook",
-   "flavor": "This page allows you to sign my guestbook.",
-   "source": "https://www.ocf.berkeley.edu/~schough/guestbook.html"
+   "flavor": "OK, I'll ring 5 times for the operator",
+   "source": "https://mirror.cyberbits.eu/textfiles.com/bbs/CBBS/cbbshst.asc (CBBS, the first BBS, its program's messages; part of a line)"
   },
   {
    "id": 197,
@@ -697,15 +697,15 @@
    "id": 77,
    "name": "Access Granted",
    "type": "webring",
-   "flavor": "Go to the next site!",
-   "source": "oocities.org/esberet/Webrings.html"
+   "flavor": "I'd been granted full access.",
+   "source": "https://rap.mirror.cyberbits.eu/textfiles.com/bbs/cyberthr.txt (SPIN, \"CYBERThrash\", Julian Dibbell, March 1990)"
   },
   {
    "id": 79,
    "name": "Cyberspace",
    "type": "webring",
-   "flavor": "Go to the previous site!",
-   "source": "oocities.org/esberet/Webrings.html"
+   "flavor": "Oppose meatspace.",
+   "source": "https://www.catb.org/~esr/jargon/html/C/cyberspace.html (the Jargon File, \"cyberspace\")"
   },
   {
    "id": 84,
@@ -739,15 +739,15 @@
    "id": 194,
    "name": "Ping",
    "type": "webring",
-   "flavor": "Next 5 Sites",
-   "source": "https://www.qsl.net/kb0oxd/"
+   "flavor": "A quantum packet of happiness.",
+   "source": "https://jargon.dr0.ch/P/ping.html (the Jargon File, \"ping\")"
   },
   {
    "id": 200,
    "name": "Telnet",
    "type": "webring",
-   "flavor": "Join This Ring",
-   "source": "https://www.qsl.net/kb0oxd/"
+   "flavor": "Connected to castor.ucs.ed.ac.uk.",
+   "source": "https://www.aos.wisc.edu/~poker/UNIXhelp1.3/Pages/examples/telnet.html (UNIXhelp 1.3 telnet example; undated)"
   },
   {
    "id": 221,
@@ -1183,6 +1183,46 @@
    "type": "construction",
    "flavor": "And there is the new, also-under-construction Picture Page",
    "source": "https://case.edu/dms/homes/jan3/jim-y2k.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Thanks for signing my Guestbook. We'll see on the net...",
+   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "This page allows you to sign my guestbook.",
+   "source": "https://www.ocf.berkeley.edu/~schough/guestbook.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "I only sampled a bit of it but will return to view the rest when able.",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Join This Ring",
+   "source": "https://www.qsl.net/kb0oxd/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Next 5 Sites",
+   "source": "https://www.qsl.net/kb0oxd/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Go to the next site!",
+   "source": "oocities.org/esberet/Webrings.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Go to the previous site!",
+   "source": "oocities.org/esberet/Webrings.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "This page has been accessed times since then",
+   "source": "https://rintintin.colorado.edu/~epperson (replaced Nov 7 2026)"
   }
  ]
 }
