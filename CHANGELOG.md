@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## New lines for four Alpha ultras and prototypes; old lines kept as spares
+**Sat Nov 7, 2026 · 1:36 AM HST** (no new version: this repo has none; no migration)
+- Changed: new old-web lines for Four Kimono Ladies Sakura, Millennium Fireworks and Kimono Ladies 1 and 2. The eight lines replaced tonight are kept in the spare list for later. Removed: those eight lines from their buttons.
+
 ## New flavour lines for Series Alpha rares
 **Sat Nov 7, 2026 · 1:32 AM HST** (no new version: this repo has none; no migration)
 - Changed: new lines from old web pages for Rainbow, Lava Lamp Blacklight and Virtual Pet Golden Egg, a shorter line for Neon Nite, and lines and subtypes for the three new rares (Black Light Lava, Nice Day Coin, Virtual Pet Hatchling). Removed: the old lines for those four.

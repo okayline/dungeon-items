@@ -284,8 +284,8 @@
    "id": 142,
    "name": "Millennium Fireworks",
    "type": "divider",
-   "flavor": "Page last modified: 05/01/98 06:08 PM",
-   "source": "oocities.org/~celebrate/graphics-bars.html"
+   "flavor": "It's been counting for a couple of hundred days now... only nine to go...",
+   "source": "https://lists.squeakfoundation.org/pipermail/squeak-dev/1999-December/024709.html (Dec 22 1999)"
   },
   {
    "id": 50,
@@ -361,8 +361,8 @@
    "id": 115,
    "name": "Four Kimono Ladies Sakura",
    "type": "guestbook",
-   "flavor": "What about a new background?",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": "See you next again ! Thank you . . . .",
+   "source": "https://www.ne.jp/asahi/shonan/bv/eng2.htm"
   },
   {
    "id": 139,
@@ -382,15 +382,15 @@
    "id": 180,
    "name": "Kimono Lady 1 (Prototype)",
    "type": "guestbook",
-   "flavor": "Get ready for footballl baby-i will kcik you butt",
-   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+   "flavor": "mine are old sketches, \"in progress\" work, and never-finished work.",
+   "source": "https://www.mit.edu/~mer/freondream/earwaxsk/sketches.html (1995-2001)"
   },
   {
    "id": 181,
    "name": "Kimono Lady 2 (Prototype)",
    "type": "guestbook",
-   "flavor": "Pitching is diluted nowadays, come back from retirement!",
-   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+   "flavor": "The plans were scanned using a 72 dpi resolution, in order to save space.",
+   "source": "https://webhome.weizmann.ac.il/home/fndaniel/plans.html"
   },
   {
    "id": 182,
@@ -816,6 +816,46 @@
    "type": "webring",
    "flavor": "Invite Friends & Fellow Ham WebMasters",
    "source": "https://www.qsl.net/4f5aww/webring/headlines.htm"
+  },
+  {
+   "type": "neon",
+   "flavor": "Netscape 3.0 Enhanced For Your Viewing Pleasure",
+   "source": "https://rintintin.colorado.edu/~epperson (replaced Nov 7 2026)"
+  },
+  {
+   "type": "divider",
+   "flavor": "Just some dividers to help you keep things split up...",
+   "source": "oocities.org/heartland/estates/8353/Bar3.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "My teacher just about kissed the screen.",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Good Site!!!",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "divider",
+   "flavor": "Page last modified: 05/01/98 06:08 PM",
+   "source": "oocities.org/~celebrate/graphics-bars.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "What about a new background?",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Get ready for footballl baby-i will kcik you butt",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Pitching is diluted nowadays, come back from retirement!",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html (replaced Nov 7 2026)"
   }
  ]
 }
