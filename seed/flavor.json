@@ -102,8 +102,8 @@
    "id": 189,
    "name": "Abort, Retry, Fail?",
    "type": "construction",
-   "flavor": "And there is the new, also-under-construction Picture Page",
-   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+   "flavor": "(A)bort, (R)etry, (G)et a beer?",
+   "source": "https://diswww.mit.edu/tla/humor/948 (\"DOS as it should be\", Andrew A. Bennett, June 27 1995)"
   },
   {
    "id": 190,
@@ -711,8 +711,8 @@
    "id": 84,
    "name": "Access Denied",
    "type": "webring",
-   "flavor": "Join Today!",
-   "source": "oocities.org/esberet/Webrings.html"
+   "flavor": "Access denied--nah nah na nah nah!",
+   "source": "https://diswww.mit.edu/tla/humor/948 (\"DOS as it should be\", Andrew A. Bennett, June 27 1995)"
   },
   {
    "id": 90,
@@ -1173,6 +1173,16 @@
    "type": "counter",
    "flavor": "No frames? Too bad! Continue at your own risk.",
    "source": "oocities.org/Area51/Vault/2566/ (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Join Today!",
+   "source": "oocities.org/esberet/Webrings.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "And there is the new, also-under-construction Picture Page",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html (replaced Nov 7 2026)"
   }
  ]
 }

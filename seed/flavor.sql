@@ -14,7 +14,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Authentic old software in 
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This page last updated on September 20, 1997') WHERE id = 144 AND source = '88x31';   -- 20 GOTO 20
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Be a friend, rewind when you reach the end') WHERE id = 172 AND source = '88x31';   -- Be Kind Rewind
 UPDATE items SET extra = json_set(extra, '$.flavor', 'FOR MAXIMUM PICTURE QUALITY') WHERE id = 176 AND source = '88x31';   -- Tracking
-UPDATE items SET extra = json_set(extra, '$.flavor', 'And there is the new, also-under-construction Picture Page') WHERE id = 189 AND source = '88x31';   -- Abort, Retry, Fail?
+UPDATE items SET extra = json_set(extra, '$.flavor', '(A)bort, (R)etry, (G)et a beer?') WHERE id = 189 AND source = '88x31';   -- Abort, Retry, Fail?
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Also called three-finger salute and Vulcan death grip.') WHERE id = 190 AND source = '88x31';   -- Ctrl+Alt+Del
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Stop! Think! Do you really want to do this?') WHERE id = 191 AND source = '88x31';   -- Format C:
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Uncompressing Linux... Ok, booting the kernel') WHERE id = 199 AND source = '88x31';   -- Kernel Panic
@@ -101,7 +101,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'fast, reliable Internet co
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Home of the Pinoy Hams WebRing') WHERE id = 75 AND source = '88x31';   -- Webring Hub
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Go to the next site!') WHERE id = 77 AND source = '88x31';   -- Access Granted
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Go to the previous site!') WHERE id = 79 AND source = '88x31';   -- Cyberspace
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Join Today!') WHERE id = 84 AND source = '88x31';   -- Access Denied
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Access denied--nah nah na nah nah!') WHERE id = 84 AND source = '88x31';   -- Access Denied
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Home sweet home...') WHERE id = 90 AND source = '88x31';   -- 127.0.0.1
 UPDATE items SET extra = json_set(extra, '$.flavor', 'During HIGH speed dubbing, only the STOP button works.') WHERE id = 177 AND source = '88x31';   -- Hi-Speed Dubbing
 UPDATE items SET extra = json_set(extra, '$.flavor', 'LOADING NEXT LEVEL') WHERE id = 179 AND source = '88x31';   -- Press Play on Tape
