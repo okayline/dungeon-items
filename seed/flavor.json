@@ -102,8 +102,8 @@
    "id": 189,
    "name": "Abort, Retry, Fail?",
    "type": "construction",
-   "flavor": "(A)bort, (R)etry, (G)et a beer?",
-   "source": "https://diswww.mit.edu/tla/humor/948 (\"DOS as it should be\", Andrew A. Bennett, June 27 1995)"
+   "flavor": "Close the latch and press R.",
+   "source": "https://www.manualowl.com/m/Epson/Apex-200/Manual/79651?page=65 (Epson Apex 200 User Manual, page 3-13, after \"Not ready error reading drive A\"; undated)"
   },
   {
    "id": 190,
@@ -1223,6 +1223,11 @@
    "type": "counter",
    "flavor": "This page has been accessed times since then",
    "source": "https://rintintin.colorado.edu/~epperson (replaced Nov 7 2026)"
+  },
+  {
+   "type": "construction",
+   "flavor": "(A)bort, (R)etry, (G)et a beer?",
+   "source": "https://diswww.mit.edu/tla/humor/948 (\"DOS as it should be\", Andrew A. Bennett, June 27 1995) (replaced Nov 7 2026)"
   }
  ]
 }

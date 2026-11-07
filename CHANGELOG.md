@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## A new line for Abort, Retry, Fail?
+**Sat Nov 7, 2026 · 6:36 AM HST** (no new version: this repo has none; no migration)
+- Changed: Abort, Retry, Fail? gets a line from an old computer manual, "Close the latch and press R." (kura: "im rethinking the Beer line"). Removed: its old line (kept as a spare).
+
 ## Flavour lines that match their own buttons
 **Sat Nov 7, 2026 · 3:01 AM HST** (no new version: this repo has none; no migration)
 - Changed: eight buttons whose lines talked about a different kind of button (a guestbook, a webring or a hit counter) get lines about their own: New Mail!, Sysop Is In, Firewall, Telnet, Ping, Access Granted, Cyberspace and Blinking 12:00. Removed: their old lines (kept as spares).

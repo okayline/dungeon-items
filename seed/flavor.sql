@@ -14,7 +14,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Authentic old software in 
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This page last updated on September 20, 1997') WHERE id = 144 AND source = '88x31';   -- 20 GOTO 20
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Be a friend, rewind when you reach the end') WHERE id = 172 AND source = '88x31';   -- Be Kind Rewind
 UPDATE items SET extra = json_set(extra, '$.flavor', 'FOR MAXIMUM PICTURE QUALITY') WHERE id = 176 AND source = '88x31';   -- Tracking
-UPDATE items SET extra = json_set(extra, '$.flavor', '(A)bort, (R)etry, (G)et a beer?') WHERE id = 189 AND source = '88x31';   -- Abort, Retry, Fail?
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Close the latch and press R.') WHERE id = 189 AND source = '88x31';   -- Abort, Retry, Fail?
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Also called three-finger salute and Vulcan death grip.') WHERE id = 190 AND source = '88x31';   -- Ctrl+Alt+Del
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Stop! Think! Do you really want to do this?') WHERE id = 191 AND source = '88x31';   -- Format C:
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Uncompressing Linux... Ok, booting the kernel') WHERE id = 199 AND source = '88x31';   -- Kernel Panic
