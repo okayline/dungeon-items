@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## The 3D printed buttons stand 0.9 mm a level
+**Sat Nov 7, 2026 · 12:17 AM HST** (no new version: this repo has none; no migration)
+- Changed: Under Construction, Synthwave and Island Life stand 0.9 mm a level in the shared big view (kura: "i like 0.9 a lot more !"; Under Construction "a little too deep" at 1.2). Removed: their old steps (0.6 mm for Synthwave and Island Life, 1.2 mm for Under Construction).
+
 ## The RTX 5070 rebuilt like the RTX 5090
 **Fri Nov 6, 2026 · 11:32 PM HST** (no new version: this repo has none; no migration)
 - Changed: the RTX 5070's 3D model gets what the 5090 got, from kura's photos of the real card: its bracket against the card, in the card's grey, with two prongs, the 5090's ports and four vents beside them, its lip lower; the finger by the bracket gone and the far one grey with a pixel sticking out; a black board joining the fingers to the card; both ends solid, the far one one grey (kura: "yep lets do it !!"). 88x31 gives it a back picture. Removed: the silver bracket and the tab's notches, the nearest finger.
