@@ -56,7 +56,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Smile/Frown/Something Else
 UPDATE items SET extra = json_set(extra, '$.flavor', 'I find myself hatching a new egg every 22 days or so.') WHERE id = 140 AND source = '88x31';   -- Virtual Pet Golden Egg
 UPDATE items SET extra = json_set(extra, '$.flavor', 'mine are old sketches, "in progress" work, and never-finished work.') WHERE id = 180 AND source = '88x31';   -- Kimono Lady 1 (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'The plans were scanned using a 72 dpi resolution, in order to save space.') WHERE id = 181 AND source = '88x31';   -- Kimono Lady 2 (Prototype)
-UPDATE items SET extra = json_set(extra, '$.flavor', 'codes are good') WHERE id = 182 AND source = '88x31';   -- Kimono Lady 3 (Prototype)
+UPDATE items SET extra = json_set(extra, '$.flavor', 'they will be universally honored between browsers') WHERE id = 182 AND source = '88x31';   -- Kimono Lady 3 (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Thank you for visiting!') WHERE id = 183 AND source = '88x31';   -- Kimono Lady 4 (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'New to internet, so you are first hit.') WHERE id = 193 AND source = '88x31';   -- Hello World
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This page allows you to sign my guestbook.') WHERE id = 195 AND source = '88x31';   -- Sysop Is In

@@ -396,8 +396,8 @@
    "id": 182,
    "name": "Kimono Lady 3 (Prototype)",
    "type": "guestbook",
-   "flavor": "codes are good",
-   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html"
+   "flavor": "they will be universally honored between browsers",
+   "source": "Lynda Weinman, \"Browser Safe Specs\" (NETDisc June 1997, discmaster.textfiles.com; part of a sentence)"
   },
   {
    "id": 183,
@@ -973,6 +973,11 @@
    "type": "guestbook",
    "flavor": "fantastische Bilder komme bald wieder",
    "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "codes are good",
+   "source": "https://www.ocf.berkeley.edu/~schough/oldguestbook.html (replaced Nov 7 2026)"
   }
  ]
 }
