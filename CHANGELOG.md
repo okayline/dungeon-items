@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## The panel back behind graphics cards without a back
+**Fri Nov 6, 2026 · 10:36 PM HST** (no new version: this repo has none; no migration)
+- Changed: a graphics card with no back picture yet has its panel behind it again in the shared big view, as before tonight; only the ones with a back (the RTX 5090 and 5080) are see-through behind the model (kura: "for the gpus that don't have back models yet, can we have the background panels be black or blue like they were before please"). Removed: nothing.
+
 ## The RTX 5080 is the RTX 5090's model
 **Fri Nov 6, 2026 · 10:32 PM HST** (no new version: this repo has none; no migration)
 - Changed: the RTX 5080 in the shared big view uses the RTX 5090's 3D model, with everything it got today; the real cards are the same design, and the 5080 only looks different by its pictures (kura: "let's just take the 5090 one and color the framing silver"). Removed: the 5080's own model.
