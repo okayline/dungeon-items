@@ -10,7 +10,7 @@
 //                   min(86vw, 440px)); cls, classes for the .zoom wrapper (the game styles its edge and back with them);
 //                   gpu, a GPU to show in 3D: { key, image, frames, art, spin, back } (its GPU_3D name, its still 88 x 31 picture, its
 //                   fans' 24 frames or none, the element in face where its picture is, whether the fans turn, and back, its back's 88 x 31
-//                   picture as seen from behind or none, painted on the back of the model's parts, the panel behind it then see-through). Pictures from
+//                   picture as seen from behind or none, painted on the back of the model's parts, the panel behind it then glass). Pictures from
 //                   another site need to allow it (Access-Control-Allow-Origin), since the sides are painted from their pixels.
 //                   relief, a button that may have been 3D printed: { image, art, id } or { image, art, source, key } (its picture,
 //                   the picture's element in face, and its item id, or its source and key at home, e.g. "88x31" and the design id):
@@ -43,7 +43,7 @@ export function zoomClient() {
     ":where(.zflip > .zface){transform:translateZ(calc(var(--zd) / 2));display:flex;align-items:center;justify-content:center}",
     ":where(.zedge){position:absolute;inset:0;background:#000048;transform:translateZ(calc((var(--k) - .5) * var(--zd)))}",
     ":where(.zback){transform:rotateY(180deg) translateZ(calc(var(--zd) / 2));background:repeating-linear-gradient(45deg,#000080 0 8px,#000060 8px 16px)}",
-    ":where(.zflip.zclear > .zback){background:none}:where(.zflip.zclear > .zedge){display:none}",   // a GPU with a back: no panel or edge behind the model
+    ":where(.zflip.zclear > .zback){background:rgba(110,150,210,.14);box-shadow:inset 0 0 0 2px rgba(190,215,245,.55);backface-visibility:visible;-webkit-backface-visibility:visible}:where(.zflip.zclear > .zedge){background:rgba(170,200,235,.06)}",   // a GPU with a back: a glass panel behind the model, seen through from both sides (kura, Nov 7: "like a glass panel")
     ":where(.gpu3d){position:absolute;left:0;top:0;width:calc(88 * var(--u));height:calc(31 * var(--u));transform-style:preserve-3d;pointer-events:none}",
     ":where(.gpu3d .f){position:absolute;left:0;top:0;transform-origin:0 0;image-rendering:pixelated}",
   ].join("\n");

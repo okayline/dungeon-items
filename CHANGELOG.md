@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## A glass panel behind graphics cards
+**Sat Nov 7, 2026 · 1:25 AM HST** (no new version: this repo has none; no migration)
+- Changed: in the big view, a graphics card with a painted back sits in front of a faint blue glass panel with a light rim, seen through from both sides, so its back still shows. Removed: the empty space behind it.
+
 ## A zoomed button stays put under the mouse
 **Sat Nov 7, 2026 · 1:15 AM HST** (no new version: this repo has none; no migration)
 - Changed: while a button is open big from the mouse, drifting onto another button no longer swaps the big view to it; move away to close it first. Removed: the swap.
