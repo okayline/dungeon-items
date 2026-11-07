@@ -207,8 +207,8 @@
    "id": 138,
    "name": "CD-ROM Rainbow",
    "type": "counter",
-   "flavor": "Coming Soon (some of the diagram links don't work...be patient)",
-   "source": "oocities.org/televisioncity/3539/servo.html"
+   "flavor": "Quad-speed and faster CD-ROM drives are now common.",
+   "source": "https://www2.iath.virginia.edu/elab/hfl0132.html (The Electronic Labyrinth, 1995 update note)"
   },
   {
    "id": 174,
@@ -354,8 +354,8 @@
    "id": 114,
    "name": "Four Kimono Ladies Gold Leaf",
    "type": "guestbook",
-   "flavor": "Thanks you helped me out with my assignment!!!!",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": "glimmering gold-leaf surfaces",
+   "source": "https://www.metmuseum.org/essays/interiors-imagined-folding-screens-garments-and-clothing-stands (2009; part of a sentence)"
   },
   {
    "id": 115,
@@ -368,8 +368,8 @@
    "id": 139,
    "name": "Have a Nice Day Gold",
    "type": "guestbook",
-   "flavor": "fantastische Bilder komme bald wieder",
-   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000)"
+   "flavor": "Smile/Frown/Something Else?",
+   "source": "https://www.coin-operated.com/?p=4048 (a GIF title, \"1995, Artist Unknown\"; page 2010)"
   },
   {
    "id": 140,
@@ -958,6 +958,21 @@
    "type": "neon",
    "flavor": "\"Kelly Knows Excellence\" Award",
    "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "counter",
+   "flavor": "Coming Soon (some of the diagram links don't work...be patient)",
+   "source": "oocities.org/televisioncity/3539/servo.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "Thanks you helped me out with my assignment!!!!",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
+  },
+  {
+   "type": "guestbook",
+   "flavor": "fantastische Bilder komme bald wieder",
+   "source": "oocities.org/capecanaveral/lab/8803/geobook.html (De Havilland Comet guestbook, 1998-2000) (replaced Nov 7 2026)"
   }
  ]
 }

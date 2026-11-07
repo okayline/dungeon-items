@@ -29,7 +29,7 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'NO TRESPASSING') WHERE id 
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Since Counter Reset 10/6/98') WHERE id = 87 AND source = '88x31';   -- Carrier Detect
 UPDATE items SET extra = json_set(extra, '$.flavor', 'When pigs fly!') WHERE id = 93 AND source = '88x31';   -- Defrag
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This page has been accessed times since then') WHERE id = 95 AND source = '88x31';   -- Blinking 12:00
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Coming Soon (some of the diagram links don''t work...be patient)') WHERE id = 138 AND source = '88x31';   -- CD-ROM Rainbow
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Quad-speed and faster CD-ROM drives are now common.') WHERE id = 138 AND source = '88x31';   -- CD-ROM Rainbow
 UPDATE items SET extra = json_set(extra, '$.flavor', '...or just hit your "back" button on your web browser.') WHERE id = 174 AND source = '88x31';   -- Fast Forward
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Wednesday. More reviews. Be here!') WHERE id = 192 AND source = '88x31';   -- Insert Disk 2
 UPDATE items SET extra = json_set(extra, '$.flavor', 'No frames? Too bad! Continue at your own risk.') WHERE id = 198 AND source = '88x31';   -- Disk Full
@@ -50,9 +50,9 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Wicked site one of the bes
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This site''s gone in the bookmarks :-)') WHERE id = 74 AND source = '88x31';   -- Ink Pen
 UPDATE items SET extra = json_set(extra, '$.flavor', 'How did you find me? :') WHERE id = 88 AND source = '88x31';   -- BBS Online
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Where are you from?') WHERE id = 89 AND source = '88x31';   -- IRC
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Thanks you helped me out with my assignment!!!!') WHERE id = 114 AND source = '88x31';   -- Four Kimono Ladies Gold Leaf
+UPDATE items SET extra = json_set(extra, '$.flavor', 'glimmering gold-leaf surfaces') WHERE id = 114 AND source = '88x31';   -- Four Kimono Ladies Gold Leaf
 UPDATE items SET extra = json_set(extra, '$.flavor', 'They look like winter''s last snow.') WHERE id = 115 AND source = '88x31';   -- Four Kimono Ladies Sakura
-UPDATE items SET extra = json_set(extra, '$.flavor', 'fantastische Bilder komme bald wieder') WHERE id = 139 AND source = '88x31';   -- Have a Nice Day Gold
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Smile/Frown/Something Else?') WHERE id = 139 AND source = '88x31';   -- Have a Nice Day Gold
 UPDATE items SET extra = json_set(extra, '$.flavor', 'I find myself hatching a new egg every 22 days or so.') WHERE id = 140 AND source = '88x31';   -- Virtual Pet Golden Egg
 UPDATE items SET extra = json_set(extra, '$.flavor', 'mine are old sketches, "in progress" work, and never-finished work.') WHERE id = 180 AND source = '88x31';   -- Kimono Lady 1 (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'The plans were scanned using a 72 dpi resolution, in order to save space.') WHERE id = 181 AND source = '88x31';   -- Kimono Lady 2 (Prototype)
