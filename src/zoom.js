@@ -8,8 +8,9 @@
 //     open(el)      what to show for it: { face, w, h, width?, cls?, gpu? }: face, the front (the game's own frame, filling the box);
 //                   w and h, the box in --u (88 x 31 for a bare button, 108 x 150 for a card); width, its CSS width (default
 //                   min(86vw, 440px)); cls, classes for the .zoom wrapper (the game styles its edge and back with them);
-//                   gpu, a GPU to show in 3D: { key, image, frames, art, spin } (its GPU_3D name, its still 88 x 31 picture, its
-//                   fans' 24 frames or none, the element in face where its picture is, whether the fans turn). Pictures from
+//                   gpu, a GPU to show in 3D: { key, image, frames, art, spin, back } (its GPU_3D name, its still 88 x 31 picture, its
+//                   fans' 24 frames or none, the element in face where its picture is, whether the fans turn, and back, its back's 88 x 31
+//                   picture as seen from behind or none, painted on the back of the model's parts; the panel behind it is see-through). Pictures from
 //                   another site need to allow it (Access-Control-Allow-Origin), since the sides are painted from their pixels.
 //                   relief, a button that may have been 3D printed: { image, art, id } or { image, art, source, key } (its picture,
 //                   the picture's element in face, and its item id, or its source and key at home, e.g. "88x31" and the design id):
@@ -30,6 +31,7 @@ export function zoomClient() {
   const HOLD_MS = 450, HOVER_MS = 1000, HOVER_PAD = 16, TURN_OFF = 180;
   const ZEDGE = 8;   // layers that make its edge (its thickness, .zedge)
   const FINGER_DEG_PX = 0.75;   // degrees per pixel a finger moves: 240px turns it to its back
+  const LAP = .06;   // how far (in px of the picture) each face of a 3D GPU reaches past its edges
   const TILT_MAX = 90;   // a GPU tilts up to edge-on (kura, 88x31 v0.49.6; Rob's Game had 80)
   const MOUSE_HALF = 112;   // a half turn for every MOUSE_HALF px of mouse (Rob's Game's hand card on a computer; kura, 88x31 v0.49.4)
   const css = document.createElement("style");
@@ -41,6 +43,7 @@ export function zoomClient() {
     ":where(.zflip > .zface){transform:translateZ(calc(var(--zd) / 2));display:flex;align-items:center;justify-content:center}",
     ":where(.zedge){position:absolute;inset:0;background:#000048;transform:translateZ(calc((var(--k) - .5) * var(--zd)))}",
     ":where(.zback){transform:rotateY(180deg) translateZ(calc(var(--zd) / 2));background:repeating-linear-gradient(45deg,#000080 0 8px,#000060 8px 16px)}",
+    ":where(.zflip.zclear > .zback){background:none}:where(.zflip.zclear > .zedge){display:none}",   // a GPU: no panel or edge behind the model
     ":where(.gpu3d){position:absolute;left:0;top:0;width:calc(88 * var(--u));height:calc(31 * var(--u));transform-style:preserve-3d;pointer-events:none}",
     ":where(.gpu3d .f){position:absolute;left:0;top:0;transform-origin:0 0;image-rendering:pixelated}",
   ].join("\n");
@@ -67,6 +70,7 @@ export function zoomClient() {
     box.append(bigFlip); bigCard = mk("div", "zoom" + (v.cls ? " " + v.cls : "")); bigCard.append(box); document.body.append(bigCard);
     const shape = v.gpu && GPU_3D[v.gpu.key];
     bigTilt = !!shape || !!v.tilt;
+    if (shape) bigFlip.classList.add("zclear");   // a GPU: no panel behind its model (kura, Nov 6: "make the panel transparent. so i can see what's actually on the back of the model")
     if (shape) gpu3d(v.gpu, shape, v);
     else if (v.relief) {
       const mine = bigCard, rel = v.relief;
@@ -161,11 +165,10 @@ export function zoomClient() {
   // outermost pixel in that column (out: the shroud's top and bottom rows), its frame, not what's inside it (kura, Nov 5: the 5090's
   // far corners showed a dark row)
   const ROUND = (d, slices, box, end = true) => {
-    const x0 = Math.min(...slices.map((s) => s[0])), y0 = Math.min(...slices.map((s) => s[1]));
-    const x1 = Math.max(...slices.map((s) => s[0] + s[2])), y1 = Math.max(...slices.map((s) => s[1] + s[3]));
+    const y0 = Math.min(...slices.map((s) => s[1])), y1 = Math.max(...slices.map((s) => s[1] + s[3]));
     const span = (s) => s && [s[0], s[0] + s[2] - 1];   // the columns a neighbouring slice covers: there a slice's top or bottom is hidden
     return slices.flatMap(([x, y, w, h], i) => (end ? [{ ...box, x, y, w: w - 1, h }, { ...box, x: x + w - 1, y, w: 1, h, z: [1, d - 1] }] : [{ ...box, x, y, w, h }])
-      .map((b, k) => ({ ...b, out: [y0, y1], inT: span(slices[i - 1]), inB: span(slices[i + 1]), ...(i || k ? {} : { clear: [x0, y0, x1 - x0, y1 - y0] }) })));
+      .map((b, k) => ({ ...b, out: [y0, y1], inT: span(slices[i - 1]), inB: span(slices[i + 1]) })));
   };
   // the RX 9070's top, from AMD's slide (kura, Nov 5): along x in the picture, z up from the card (11 deep, 0 on the card): the back row
   // dark; the mesh panel's frame from x 11 to 81, z 1 to 9; its mesh inside it; the dark band by the bracket (to x 34) with "RADEON" lit in it; the
@@ -196,19 +199,28 @@ export function zoomClient() {
     // the card (a real board is 1.6 mm; 1 px is about 4 mm, the least that shows)
     "rtx-5090": { groups: [
       { d: 10, boxes: [
-        ...ROUND(10, [[13, 1, 70, 1], [12, 2, 73, 1], [11, 3, 74, 1], [10, 4, 76, 18], [11, 22, 75, 1], [12, 23, 73, 1], [13, 24, 72, 1], [14, 25, 69, 1]], { sides: "tbr",
+        ...ROUND(10, [[13, 1, 70, 1], [12, 2, 73, 1], [11, 3, 74, 1], [10, 4, 76, 18], [11, 22, 75, 1], [12, 23, 73, 1], [13, 24, 72, 1], [14, 25, 69, 1]], { sides: "tblr",   // its end by the bracket too (kura, Nov 6: the bracket no longer hides it)
+          right: [[0, 30, 0, 10, "#26262a"]],   // its far end one grey, no dark lines (kura, Nov 6)
           top: [[35, 59, 1, 8, "#18181a"], [36, 37, 2, 7, "#040405"], [58, 59, 2, 7, "#040405"], [39, 50, 3, 6, "#464850"], [39, 50, 4, 5, "#f4f6ff"],
                 [46, 46, 4, 5, "#5a5c64"], [52, 56, 2, 7, "#0a0a0b"], [53, 55, 3, 6, "#1e1e20", "#303032"]],
           bottom: [[37, 58, 1, 8, "#131315"], [43, 52, 3, 6, "#040405"]] }),
         { x: 14, y: 0, w: 21, h: 1, sides: "tlr" }, { x: 60, y: 0, w: 22, h: 1, sides: "tlr" },   // the frame's top bars (the middle is 1 px lower)
         { x: 60, y: 26, w: 22, h: 1, sides: "blr" },                                             // the right frame's bottom bar
-        { x: 6, y: 6, w: 2, h: 22, sides: "tblr", left: PORTS },                                 // the bracket, as wide as the two slots,
-        ...[[1, 3], [4, 6], [7, 9]].map((z) => ({ x: 6, y: 28, w: 2, h: 5, sides: "blr", z })),   // and its three legs (kura, Nov 5: "RTX 5090 is three prong")
-        { x: 3, y: 6, w: 3, h: 2, sides: "tbl", top: [[4, 4, 2, 2, "#040405"], [4, 4, 7, 7, "#040405"]] },   // its screw tab, a notch per slot
+        // the bracket, its legs and its tab stand 2 px right of where the picture has them, against the card, in the card's grey, 1 px
+        // in from the card's front and back, the ports 2 px toward its back (kura, Nov 6, on a photo of the real one)
+        // its ports darker, 3 rows tall (the HDMI 4) and higher up (kura, Nov 6)
+        { x: 8, y: 6, w: 2, h: 20, sides: "tblr", z: [1, 9], fill: "#37373c",                   // the bracket,
+          left: [[7, 9, 2, 3, "dp", .45], [11, 13, 2, 3, "dp", .45], [15, 17, 2, 3, "dp", .45], [19, 22, 2, 3, "hdmi", .45],   // 2 px thin
+            [19, 19, 3, 3, "#1c1c1f"], [21, 21, 3, 3, "#1c1c1f"], [22, 22, 2, 3, "#252528"]] },   // the HDMI's shape: by its nub the DisplayPorts' lip grey,
+                                                                                                    // below it the bracket's grey (kura, Nov 6)
+        ...[[1, 4], [6, 9]].map((z) => ({ x: 8, y: 26, w: 2, h: 4, sides: "blr", z, fill: "#37373c" })),   // and its two legs (kura, Nov 6, on a photo of the real one), 3 px shorter, the gap 2 px higher
+        { x: 5, y: 6, w: 3, h: 2, sides: "tbl", z: [1, 9], fill: "#37373c" },                    // its screw tab
       ] },
-      { d: 1, boxes: [   // the fingers, split at the picture's gaps (x 19, 22) and the key notch (x 42)
-        { x: 17, y: 27, w: 2, h: 2, sides: "tblr" }, { x: 20, y: 27, w: 2, h: 4, sides: "tblr" },
-        { x: 23, y: 27, w: 19, h: 4, sides: "tblr" }, { x: 43, y: 27, w: 3, h: 2, sides: "tblr" },
+      { d: 1, boxes: [   // the fingers, split at the picture's gap (x 22) and the key notch (x 42); the long ones 3 px; none by the bracket, and the
+        // far one all grey with a pixel sticking out past its bottom, as on the real card (kura, Nov 6)
+        { x: 20, y: 27, w: 2, h: 3, sides: "tblr" }, { x: 23, y: 27, w: 19, h: 3, sides: "tblr" },
+        { x: 43, y: 27, w: 3, h: 2, sides: "tbl", fill: "#1c1b1e" }, { x: 46, y: 28, w: 1, h: 1, sides: "tbr", fill: "#1c1b1e" },
+        { x: 16, y: 26, w: 30, h: 1, sides: "lbr", fill: "#0c0c0e" },   // the black board joining them to the card, along the shroud's bottom (kura, Nov 6)
       ] },
     ] },
     // RTX 5080 Founders Edition: the 5090's size and design (304 x 137 mm, two slots, so 10 px). Top, from kura's photos (Nov 5): the
@@ -401,8 +413,10 @@ export function zoomClient() {
       ] },
     ] },
   };
-  // a port's shading (the 5080 mockup's, kura, Nov 5): i is how far along it from a0, z how far up from b0; null: the bracket's metal
-  const portPaint = ([a0, a1, b0, , kind], along, z) => {
+  // a port's shading (the 5080 mockup's, kura, Nov 5): i is how far along it from a0, z how far up from b0; null: the bracket's metal.
+  // A sixth number darkens it (the RTX 5090's, on its grey bracket)
+  const portPaint = (m, along, z) => { const k = portShade(m, along, z); return k && m[5] ? k.map((v) => Math.round(v * m[5])) : k; };
+  const portShade = ([a0, a1, b0, , kind], along, z) => {
     const q = z - b0, mid = q === 1, hdmi = kind === "hdmi" || kind === "hdmi-back";
     if (hdmi && q === (kind === "hdmi" ? 2 : 0) && (along === a0 || along === a1)) return null;
     if (along === a0) return mid ? [6, 6, 7] : [18, 18, 20];
@@ -418,21 +432,30 @@ export function zoomClient() {
     const cv0 = mk("canvas"); cv0.width = 88; cv0.height = 31; const ctx0 = cv0.getContext("2d"); ctx0.drawImage(im, 0, 0, 88, 31, 0, 0, 88, 31);
     const px = ctx0.getImageData(0, 0, 88, 31).data;
     const P = (x, y) => { x = Math.max(0, Math.min(87, x)); y = Math.max(0, Math.min(30, y)); const i = (y * 88 + x) * 4; return [px[i], px[i + 1], px[i + 2]]; };
+    const A = (x, y) => x >= 0 && x < 88 && y >= 0 && y < 31 && px[(y * 88 + x) * 4 + 3] > 0;   // is the picture solid there
+    const near = (x, y, b) => {   // the picture's colour there, or where it's see-through the nearest solid pixel's in the part (along the row first)
+      if (A(x, y)) return P(x, y);
+      for (let k = 1; k < 88; k++) for (const [xx, yy] of [[x - k, y], [x + k, y], [x, y - k], [x, y + k]])
+        if (xx >= b.x && xx < b.x + b.w && yy >= b.y && yy < b.y + b.h && A(xx, yy)) return P(xx, yy);
+      return [0, 0, 0];
+    };
     const lum = (k) => .3 * k[0] + .59 * k[1] + .11 * k[2];
     const best = (pts) => pts.reduce((a, b) => (lum(b) > lum(a) ? b : a));
     const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
     const u = (n) => `calc(${n} * var(--u))`;
-    // the flat picture, with the standing parts painted black so none of it peeks out
-    ctx0.fillStyle = "#000"; ctx0.globalCompositeOperation = "source-atop";   // only on the picture: where it's see-through (round corners, gaps) it stays see-through
-    for (const g of shape.groups) for (const b of g.boxes) ctx0.fillRect(...(b.clear ?? [b.x, b.y, b.w, b.h]));
-    ctx0.globalCompositeOperation = "source-over";
+    // the flat picture becomes only black under the standing parts, so the hairlines between the model's faces stay dark; the rest of the
+    // picture (its parts with nothing standing on them, like its old higher bracket) is see-through (kura, Nov 6)
+    ctx0.clearRect(0, 0, 88, 31);
+    ctx0.fillStyle = "#000";
+    for (const g of shape.groups) for (const b of g.boxes) if (!b.fill) ctx0.fillRect(b.x, b.y, b.w, b.h);   // a part with its own colour (fill) has nothing under it
     cv0.style.cssText = "display:block;width:calc(88 * var(--u));height:calc(31 * var(--u));image-rendering:pixelated";
     pic.art.replaceChildren(cv0);
     const fronts = [];   // the fronts that spin
     const groups = shape.groups.map(({ d, boxes }) => {
       const g = mk("div", "gpu3d");
+      // each face reaches LAP past its edges, so faces that meet overlap instead of leaving a see-through hairline (kura, Nov 6)
       const facet = (cv, w, h, t) => {
-        const f = mk("div", "f"); f.style.width = u(w); f.style.height = u(h); f.style.transform = t;
+        const f = mk("div", "f"); f.style.width = u(w + 2 * LAP); f.style.height = u(h + 2 * LAP); f.style.transform = `${t} translate(${u(-LAP)}, ${u(-LAP)})`;
         cv.style.width = cv.style.height = "100%"; cv.style.display = "block"; cv.style.imageRendering = "pixelated"; f.append(cv); g.append(f);
       };
       const tex = (w, h, fill) => {
@@ -453,11 +476,12 @@ export function zoomClient() {
       const r = (a, n) => Array.from({ length: n }, (_, i) => a + i);
       for (const b of boxes) {
         const { x, y, w, h } = b, s = b.sides ?? "tblr", [z0, z1] = b.z ?? [0, d], t = z1 - z0, zb = u(z0 - d);
-        const outer = (xx, from, to) => { for (let yy = from; yy !== to; yy += Math.sign(to - from)) if (lum(P(xx, yy)) >= 20) return P(xx, yy); return null; };
+        const Pb = b.fill ? () => hex(b.fill) : P;   // fill: one colour of its own on every side instead of the picture's
+        const outer = (xx, from, to) => { for (let yy = from; yy !== to; yy += Math.sign(to - from)) if (lum(Pb(xx, yy)) >= 20) return Pb(xx, yy); return null; };
         const open = (rg, xx) => !rg || xx < rg[0] || xx > rg[1];
-        const topC = (xx) => (b.out && open(b.inT, xx) && outer(xx, b.out[0] - 1, y + 1)) || edge(P(xx, y), r(y, 4).map((yy) => P(xx, yy)));
-        const botC = (xx) => (b.out && open(b.inB, xx) && outer(xx, b.out[1], y + h - 2)) || edge(P(xx, y + h - 1), r(y + h - 4, 4).map((yy) => P(xx, yy)));
-        const leftC = (yy) => edge(P(x, yy), r(x, 4).map((xx) => P(xx, yy))), rightC = (yy) => edge(P(x + w - 1, yy), r(x + w - 4, 4).map((xx) => P(xx, yy)));
+        const topC = (xx) => (b.out && open(b.inT, xx) && outer(xx, b.out[0] - 1, y + 1)) || edge(Pb(xx, y), r(y, 4).map((yy) => Pb(xx, yy)));
+        const botC = (xx) => (b.out && open(b.inB, xx) && outer(xx, b.out[1], y + h - 2)) || edge(Pb(xx, y + h - 1), r(y + h - 4, 4).map((yy) => Pb(xx, yy)));
+        const leftC = (yy) => edge(Pb(x, yy), r(x, 4).map((xx) => Pb(xx, yy))), rightC = (yy) => edge(Pb(x + w - 1, yy), r(x + w - 4, 4).map((xx) => Pb(xx, yy)));
         if (s.includes("t")) facet(tex(w, t, (i, j) => b.out && !open(b.inT, x + i) ? null : paint(b.top, topC(x + i), .95, x + i, z0 + j)), w, t, `translate3d(${u(x)}, ${u(y)}, ${zb}) rotateX(90deg)`);
         if (s.includes("b")) facet(tex(w, t, (i, j) => b.out && !open(b.inB, x + i) ? null : paint(b.bottom, botC(x + i), .62, x + i, z0 + j)), w, t, `translate3d(${u(x)}, ${u(y + h)}, ${zb}) rotateX(90deg)`);
         if (s.includes("l")) facet(tex(t, h, (i, j) => paint(b.left, leftC(y + j), .78, y + j, z0 + i)), t, h, `translate3d(${u(x)}, ${u(y)}, ${zb}) rotateY(-90deg)`);
@@ -465,13 +489,46 @@ export function zoomClient() {
       }
       for (const b of boxes) {   // the fronts last: the picture's own pixels there (a part that stops short of the front: its metal)
         const z1 = (b.z ?? [0, d])[1];
-        const cv = z1 === d ? mk("canvas") : tex(b.w, b.h, (i, j) => paint(null, P(b.x + i, b.y + j), .9, 0, 1));
-        if (z1 === d) { cv.width = b.w; cv.height = b.h; cv.getContext("2d").drawImage(im, b.x, b.y, b.w, b.h, 0, 0, b.w, b.h); if (pic.spin) fronts.push({ cv, b }); }
+        const cv = b.fill ? tex(b.w, b.h, () => hex(b.fill)) : z1 === d ? mk("canvas") : tex(b.w, b.h, (i, j) => paint(null, P(b.x + i, b.y + j), .9, 0, 1));
+        if (z1 === d && !b.fill) { cv.width = b.w; cv.height = b.h; cv.getContext("2d").drawImage(im, b.x, b.y, b.w, b.h, 0, 0, b.w, b.h); if (pic.spin) fronts.push({ cv, b }); }
+        // where the picture is see-through on a part's front, a backing just behind it in the nearest pixel's colour, so the front is solid (kura, Nov 6)
+        if (z1 === d && !b.fill && r(b.y, b.h).some((yy) => r(b.x, b.w).some((xx) => !A(xx, yy))))
+          facet(tex(b.w, b.h, (i, j) => near(b.x + i, b.y + j, b)), b.w, b.h, `translate3d(${u(b.x)}, ${u(b.y)}, ${u(z1 - d - .02)})`);
         facet(cv, b.w, b.h, `translate3d(${u(b.x)}, ${u(b.y)}, ${u(z1 - d)})`);
       }
       bigFlip.append(g);
       return { g, d };
     });
+    // its back (pic.back, kura, Nov 6: "make the entire back panel of the GPU card transparent"): no panel; each standing part gets a back
+    // face at its bottom, facing away, painted from the back picture (seen from behind, so column 87 - x), or where that picture is
+    // see-through (the bracket and its legs), the part's own metal. Where there's no part, you see through. The flat picture's black is
+    // hidden from behind. Hidden from the front.
+    if (pic.back) {
+      cv0.style.backfaceVisibility = cv0.style.webkitBackfaceVisibility = "hidden"; cv0.style.transform = "translateZ(0)";
+      const bk = img(pic.back);
+      const draw = () => {
+        if (!groups[0].g.isConnected || !bk.naturalWidth) return;
+        const c = mk("canvas"); c.width = 88; c.height = 31; const cx = c.getContext("2d"); cx.drawImage(bk, 0, 0, 88, 31);
+        const bp = cx.getImageData(0, 0, 88, 31).data;
+        shape.groups.forEach(({ boxes }, gi) => {
+          const { g, d } = groups[gi];
+          for (const b of boxes) {
+            const z0 = (b.z ?? [0, d])[0];
+            const cv = mk("canvas"); cv.width = b.w; cv.height = b.h; const ctx = cv.getContext("2d"), id = ctx.createImageData(b.w, b.h);
+            for (let j = 0; j < b.h; j++) for (let i = 0; i < b.w; i++) {
+              const x = b.x + b.w - 1 - i, y = b.y + j, k = (y * 88 + (87 - x)) * 4;
+              const m = b.fill ? hex(b.fill) : bp[k + 3] ? [bp[k], bp[k + 1], bp[k + 2]] : P(x, y).map((q) => Math.min(255, Math.round(q * .8)));
+              id.data.set([m[0], m[1], m[2], 255], (j * b.w + i) * 4);
+            }
+            ctx.putImageData(id, 0, 0);
+            cv.style.cssText = "display:block;width:100%;height:100%;image-rendering:pixelated";
+            const f = mk("div", "f"); f.style.width = u(b.w + 2 * LAP); f.style.height = u(b.h + 2 * LAP); f.style.backfaceVisibility = f.style.webkitBackfaceVisibility = "hidden";
+            f.style.transform = `translate3d(${u(b.x + b.w)}, ${u(b.y)}, ${u(z0 - d - .05)}) rotateY(180deg) translate(${u(-LAP)}, ${u(-LAP)})`; f.append(cv); g.append(f);
+          }
+        });
+      };
+      if (bk.complete && bk.naturalWidth) draw(); else bk.addEventListener("load", draw, { once: true });
+    }
     // where it sits: on the flat picture's place on the face. Built with its front on the face, then scaled toward your eye (the
     // perspective point, the middle of the big view) until its back is on the face: face on it covers the flat picture exactly, and it
     // stands d px off it

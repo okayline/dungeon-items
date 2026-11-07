@@ -4,6 +4,14 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## A graphics card's back on its 3D model, and a solid RTX 5090
+**Fri Nov 6, 2026 · 10:06 PM HST** (no new version: this repo has none; no migration)
+- Changed: no graphics card in the shared big view has a panel or edge behind it any more, so you see the model itself from behind (kura: "make the panel transparent. so i can see what's actually on the back of the model"). The flat front picture under the model is now only black under its parts, and see-through everywhere else, so nothing of it shows beside the model. Removed: the panel and edge behind graphics cards, and the flat picture's own pixels.
+- Added: a game can give a card's back picture (`gpu.back`), painted on the back of each part of the model; 88x31's RTX 5090 uses it.
+- Changed: the RTX 5090's model, from kura's photos of the real card: the bracket stands against the card, in the card's grey, 1 px in from its front and back, with two prongs and darker, thinner ports set higher and toward its back; a black board strip joins the fingers to the card; the fingers by the bracket are gone, the long ones 1 px shorter, and the far one grey with a pixel sticking out at its bottom. Removed: the silver bracket and its three prongs, the screw tab's notches, the nearest finger.
+- Fixed: see-through slits where the model's faces meet (each face now reaches a hair past its edges), see-through spots where a front picture has missing pixels (a solid backing behind them), and the RTX 5090's open end by the bracket, which the old bracket used to hide. The 5090's far end is one grey. Removed: the slits and holes, and the far end's dark lines.
+- A part can have a colour of its own (`fill`), and a port a darkness (a sixth number). These changes reach every game that shows the graphics cards in the shared big view.
+
 ## See-through graphics card pictures stay see-through in 3D
 **Fri Nov 6, 2026 · 8:40 PM HST** (no new version: this repo has none; no migration)
 - Fixed: the shared big view painted black over the whole area under a graphics card's standing parts, so a picture with see-through corners still showed black ones in 3D (kura, on 88x31's RTX 5090). Now it paints only where the picture is. Removed: the black in see-through parts.
