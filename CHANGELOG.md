@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## Flavour lines that match their own buttons
+**Sat Nov 7, 2026 · 3:01 AM HST** (no new version: this repo has none; no migration)
+- Changed: eight buttons whose lines talked about a different kind of button (a guestbook, a webring or a hit counter) get lines about their own: New Mail!, Sysop Is In, Firewall, Telnet, Ping, Access Granted, Cyberspace and Blinking 12:00. Removed: their old lines (kept as spares).
+
 ## The big view stays on a phone's screen
 **Sat Nov 7, 2026 · 2:52 AM HST** (no new version: this repo has none; no migration)
 - Changed: holding a card or button on a phone opens the big view over the part of the page the screen shows, so on a page wider than the screen (or zoomed in) it no longer opens half off the screen. Removed: its placement over the whole page while open.
