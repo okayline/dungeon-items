@@ -423,8 +423,9 @@ export function zoomClient() {
     const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
     const u = (n) => `calc(${n} * var(--u))`;
     // the flat picture, with the standing parts painted black so none of it peeks out
-    ctx0.fillStyle = "#000";
+    ctx0.fillStyle = "#000"; ctx0.globalCompositeOperation = "source-atop";   // only on the picture: where it's see-through (round corners, gaps) it stays see-through
     for (const g of shape.groups) for (const b of g.boxes) ctx0.fillRect(...(b.clear ?? [b.x, b.y, b.w, b.h]));
+    ctx0.globalCompositeOperation = "source-over";
     cv0.style.cssText = "display:block;width:calc(88 * var(--u));height:calc(31 * var(--u));image-rendering:pixelated";
     pic.art.replaceChildren(cv0);
     const fronts = [];   // the fronts that spin
