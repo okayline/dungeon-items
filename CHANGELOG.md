@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## A flat card can tilt in the big view
+**Fri Nov 6, 2026 · 7:20 PM HST** (no new version: this repo has none; no migration)
+- Added: a game can ask the shared big view to let any card tilt up and down (`tilt: true`), not only the graphics cards and 3D printed buttons; 88x31 asks for it on every button (kura: "could we add the up/down view action to all the buttons please"). Other games are unchanged. Removed: nothing.
+
 ## Every button its own subtype
 **Fri Nov 6, 2026 · 6:40 PM HST** (no new version: this repo has none; a data change in `items-db`, no migration)
 - Added: each 88x31 button's subtype (the word after the dash on its card, like "Construction — Zone") is kept here next to its flavour line, the same one UN/TAP already shows, and for the GPUs their chip generation, as in Rob's Game (`seed/subtype.sql`), and 88x31 can read every button's card lines privately to print them under its big view. Removed: nothing.

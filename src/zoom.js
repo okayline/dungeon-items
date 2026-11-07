@@ -14,6 +14,7 @@
 //                   relief, a button that may have been 3D printed: { image, art, id } or { image, art, source, key } (its picture,
 //                   the picture's element in face, and its item id, or its source and key at home, e.g. "88x31" and the design id):
 //                   if /api/reliefs has its height map, it stands up from the face in layers at the print's heights and tilts too
+//                   tilt, true: it tilts up and down too, like a GPU, even when it's flat (88x31's buttons, kura, Nov 6)
 //     holdOff(el)   true where a long press means something else there (picking a button up): a finger doesn't open it
 //     hoverOff(el)  true while the mouse mustn't open it (a fight playing)
 //   })
@@ -65,7 +66,7 @@ export function zoomClient() {
     for (let k = 0; k < ZEDGE; k++) { const e = mk("div", "zedge"); e.style.setProperty("--k", (k + 0.5) / ZEDGE); bigFlip.append(e); }
     box.append(bigFlip); bigCard = mk("div", "zoom" + (v.cls ? " " + v.cls : "")); bigCard.append(box); document.body.append(bigCard);
     const shape = v.gpu && GPU_3D[v.gpu.key];
-    bigTilt = !!shape;
+    bigTilt = !!shape || !!v.tilt;
     if (shape) gpu3d(v.gpu, shape, v);
     else if (v.relief) {
       const mine = bigCard, rel = v.relief;
