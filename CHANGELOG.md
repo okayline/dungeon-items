@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## The RTX 5080 is the RTX 5090's model
+**Fri Nov 6, 2026 · 10:32 PM HST** (no new version: this repo has none; no migration)
+- Changed: the RTX 5080 in the shared big view uses the RTX 5090's 3D model, with everything it got today; the real cards are the same design, and the 5080 only looks different by its pictures (kura: "let's just take the 5090 one and color the framing silver"). Removed: the 5080's own model.
+
 ## A graphics card's back on its 3D model, and a solid RTX 5090
 **Fri Nov 6, 2026 · 10:06 PM HST** (no new version: this repo has none; no migration)
 - Changed: no graphics card in the shared big view has a panel or edge behind it any more, so you see the model itself from behind (kura: "make the panel transparent. so i can see what's actually on the back of the model"). The flat front picture under the model is now only black under its parts, and see-through everywhere else, so nothing of it shows beside the model. Removed: the panel and edge behind graphics cards, and the flat picture's own pixels.

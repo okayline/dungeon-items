@@ -223,28 +223,6 @@ export function zoomClient() {
         { x: 16, y: 26, w: 30, h: 1, sides: "lbr", fill: "#0c0c0e" },   // the black board joining them to the card, along the shroud's bottom (kura, Nov 6)
       ] },
     ] },
-    // RTX 5080 Founders Edition: the 5090's size and design (304 x 137 mm, two slots, so 10 px). Top, from kura's photos (Nov 5): the
-    // black middle section has one long vent along the fan side and the 12V-2x6 socket's recess at its far end, and the lit GeForce RTX
-    // logo is on the metal just past it, toward the far end. Underneath: two small vents (LanOC). The far end is solid metal with two
-    // screws for a support bracket. Bracket: the ports from kura's photo. Its picture sits 1 px further right than the 5090's
-    "rtx-5080": { groups: [
-      { d: 10, boxes: [
-        ...ROUND(10, [[15, 1, 69, 1], [14, 2, 71, 1], [13, 3, 73, 1], [12, 4, 75, 1], [11, 5, 76, 17], [12, 22, 75, 1], [13, 23, 73, 1], [14, 24, 71, 1], [15, 25, 69, 1]], { sides: "tbr",
-          top: [[37, 60, 1, 8, "#18181a"], [38, 54, 6, 7, "#040405"], [55, 59, 1, 8, "#0a0a0b"], [56, 58, 2, 7, "#1e1e20", "#303032"]],
-          bottom: [[37, 59, 1, 8, "#131315"], [42, 46, 3, 6, "#040405"], [51, 55, 3, 6, "#040405"]],
-          right: [[7, 8, 4, 5, "#3a3a3e"], [18, 19, 4, 5, "#3a3a3e"]] }),
-        { x: 61, y: 0, w: 22, h: 1, sides: "tlr",      // the right frame's top bar (the rest of the top is 1 px lower), with the logo
-          top: [[62, 77, 3, 6, "#55575c"], [63, 76, 4, 5, "#f4f6ff"], [70, 70, 4, 5, "#8a8c94"]] },
-        { x: 63, y: 26, w: 20, h: 1, sides: "blr" },   // the right frame's bottom bar
-        { x: 6, y: 6, w: 2, h: 22, sides: "tblr", left: PORTS },
-        { x: 6, y: 28, w: 2, h: 5, sides: "blr", z: [1, 4] }, { x: 6, y: 28, w: 2, h: 5, sides: "blr", z: [6, 9] },
-        { x: 2, y: 6, w: 4, h: 2, sides: "tbl", top: [[4, 4, 2, 2, "#040405"], [4, 4, 7, 7, "#040405"]] },
-      ] },
-      { d: 1, boxes: [   // the fingers, split at the picture's gaps (x 20, 23) and the key notch (x 42)
-        { x: 18, y: 28, w: 2, h: 1, sides: "tblr" }, { x: 21, y: 28, w: 2, h: 3, sides: "tblr" },
-        { x: 24, y: 28, w: 18, h: 3, sides: "tblr" }, { x: 43, y: 28, w: 2, h: 1, sides: "tblr" },
-      ] },
-    ] },
     // RTX 5070 Founders Edition: 242 x 112 mm, two slots (40 mm); its picture is as long as the others' (78 px), so the real card's
     // thickness at its scale is 13 px. Top, from kura's photos (Nov 5): the black middle section has two long vents side by side and
     // the 12V-2x6 socket's recess at its far end, and "GeForce RTX" is etched (not lit) on the metal over the far fan. Underneath: two
@@ -413,6 +391,9 @@ export function zoomClient() {
       ] },
     ] },
   };
+  // the RTX 5080 Founders Edition is the 5090's design (kura, Nov 6: "let's just take the 5090 one and color the framing silver"): the same
+  // model; its own pictures have the silver frame
+  GPU_3D["rtx-5080"] = GPU_3D["rtx-5090"];
   // a port's shading (the 5080 mockup's, kura, Nov 5): i is how far along it from a0, z how far up from b0; null: the bracket's metal.
   // A sixth number darkens it (the RTX 5090's, on its grey bracket)
   const portPaint = (m, along, z) => { const k = portShade(m, along, z); return k && m[5] ? k.map((v) => Math.round(v * m[5])) : k; };
