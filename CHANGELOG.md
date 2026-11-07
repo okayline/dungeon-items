@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## The big view stays on a phone's screen
+**Sat Nov 7, 2026 · 2:52 AM HST** (no new version: this repo has none; no migration)
+- Changed: holding a card or button on a phone opens the big view over the part of the page the screen shows, so on a page wider than the screen (or zoomed in) it no longer opens half off the screen. Removed: its placement over the whole page while open.
+
 ## New flavour lines for Series Beta commons and uncommons
 **Sat Nov 7, 2026 · 2:47 AM HST** (no new version: this repo has none; no migration)
 - Changed: 26 Series Beta commons and uncommons, Be Kind Rewind and Tracking get old-web lines that match their buttons; three of them come from the spare list. Removed: the 28 old lines from those buttons (kept as spares) and the three spares that were used.
