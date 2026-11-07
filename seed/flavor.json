@@ -543,50 +543,50 @@
    "id": 146,
    "name": "Fraktal",
    "type": "neon",
-   "flavor": "a great page for Windows 95 users..(I need it)",
-   "source": "https://www.qsl.net/kr4eq"
+   "flavor": "So how does this thing work?",
+   "source": "https://chaos.math.wichita.edu/programming/efractal"
   },
   {
    "id": 147,
    "name": "Seahorse Valley",
    "type": "neon",
-   "flavor": "Learn about your Body!!",
-   "source": "https://www.qsl.net/kr4eq"
+   "flavor": "his explorations in a seahorse valley of the Mset",
+   "source": "Fractint Deepzooming page, Spanky archive (spanky.triumf.ca), 1990s; part of a sentence; from search"
   },
   {
    "id": 148,
    "name": "Elephant Valley",
    "type": "neon",
-   "flavor": "Welcome to my corner of the WWW!",
-   "source": "https://sites.ualberta.ca/~sdong/default.htm"
+   "flavor": "Here's a region I call Bird Of Paridise.",
+   "source": "https://superliminal.com/fractals/mbrot/mbrot.htm (from search)"
   },
   {
    "id": 149,
    "name": "Tendrils",
    "type": "neon",
-   "flavor": "Hope you enjoy the new scans.",
-   "source": "https://sites.ualberta.ca/~sdong/default.htm"
+   "flavor": "a theme of very long twisted fingers",
+   "source": "https://hpdz.net/Animations/MetaphaseVar1.htm (2008; part of a sentence)"
   },
   {
    "id": 150,
    "name": "Spiral",
    "type": "neon",
-   "flavor": "This page was created with and best viewed with Netscape Navigator Gold 2.0+",
-   "source": "https://www.qsl.net/kr4eq"
+   "flavor": "tiny little barely-visible spirals",
+   "source": "https://www.hpdz.net/StillImages/MandelbrotSet.htm (2002-2008; part of a sentence)"
   },
   {
    "id": 151,
    "name": "Mini-Fraktal",
    "type": "neon",
-   "flavor": "Home sweet home...",
-   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm"
+   "flavor": "small M with period 1280. mag 10^1539.",
+   "source": "Fractint Deepzooming page, Spanky archive, 1990s; part of a line; from search"
   },
   {
    "id": 178,
    "name": "Boom Box",
    "type": "neon",
-   "flavor": "NEW MILLENNIUM EDITION!",
-   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html"
+   "flavor": "If there were one ghetto blaster to obtain, this might be it.",
+   "source": "https://pocketcalculatorshow.com/boombox/page/18 (2002)"
   },
   {
    "id": 184,
@@ -634,29 +634,29 @@
    "id": 207,
    "name": "Plasma",
    "type": "neon",
-   "flavor": "Best Kept Secrets of The Web Award",
-   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+   "flavor": "A shifting display of colors.",
+   "source": "Trixter, Demos Explained (oldskool.org, archived 2000 at scheib.net)"
   },
   {
    "id": 208,
    "name": "Copper Bars",
    "type": "neon",
-   "flavor": "The Award Ward Award",
-   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+   "flavor": "AS IS ALWAYS THE CASE WITH GREETZ!!",
+   "source": "https://scrolltexts.com/c64_release/Aussi_X_Mas (Battery, C64, 1990)"
   },
   {
    "id": 209,
    "name": "Vector Cube",
    "type": "neon",
-   "flavor": "Member of Joe's Garage Award",
-   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+   "flavor": "The cornerstone of many demos",
+   "source": "Trixter, Demos Explained (archived 2000); part of a sentence"
   },
   {
    "id": 210,
    "name": "Rotozoom",
    "type": "neon",
-   "flavor": "UPDATE 7/16/00: I've added one new award today.",
-   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html"
+   "flavor": "A picture (bitmap) that rotates on the screen.",
+   "source": "Trixter, Demos Explained (archived 2000)"
   },
   {
    "id": 52,
@@ -725,15 +725,15 @@
    "id": 177,
    "name": "Hi-Speed Dubbing",
    "type": "webring",
-   "flavor": "Is A Caring Member Of RAOK!",
-   "source": "oocities.org/kittysnick/webrings.html"
+   "flavor": "During HIGH speed dubbing, only the STOP button works.",
+   "source": "TEAC W-860R dual cassette deck manual (manualsonline.com)"
   },
   {
    "id": 179,
    "name": "Press Play on Tape",
    "type": "webring",
-   "flavor": "The easy way to tour Amateur Radio Sites on the web!",
-   "source": "https://www.qsl.net/kb0oxd/"
+   "flavor": "LOADING NEXT LEVEL",
+   "source": "scrolltexts.com, International Ninja Rabbits+ by F4CG&NEI (C64, 1991); from search"
   },
   {
    "id": 194,
@@ -769,6 +769,13 @@
    "type": "guestbook",
    "flavor": "I hatched my first Mimitchi on my lunch hour on September 1st.",
    "source": "https://mimitchi.com/html/tama.htm (1997)"
+  },
+  {
+   "id": 224,
+   "name": "Boomin' Nite",
+   "type": "neon",
+   "flavor": "sling your blaster on a guitar strap",
+   "source": "https://pocketcalculatorshow.com/boombox/page/18 (2002; part of a sentence)"
   }
  ],
  "spare": [
@@ -861,6 +868,71 @@
    "type": "guestbook",
    "flavor": "See you next again ! Thank you . . . .",
    "source": "https://www.ne.jp/asahi/shonan/bv/eng2.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "a great page for Windows 95 users..(I need it)",
+   "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Learn about your Body!!",
+   "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Welcome to my corner of the WWW!",
+   "source": "https://sites.ualberta.ca/~sdong/default.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Hope you enjoy the new scans.",
+   "source": "https://sites.ualberta.ca/~sdong/default.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "This page was created with and best viewed with Netscape Navigator Gold 2.0+",
+   "source": "https://www.qsl.net/kr4eq (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Home sweet home...",
+   "source": "https://www.rncbc.org/old/compuserve/SignGB.htm (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "NEW MILLENNIUM EDITION!",
+   "source": "https://case.edu/dms/homes/jan3/jim-y2k.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Best Kept Secrets of The Web Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "The Award Ward Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "Member of Joe's Garage Award",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "neon",
+   "flavor": "UPDATE 7/16/00: I've added one new award today.",
+   "source": "https://www.ocf.berkeley.edu/~schough/trophyroom.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "Is A Caring Member Of RAOK!",
+   "source": "oocities.org/kittysnick/webrings.html (replaced Nov 7 2026)"
+  },
+  {
+   "type": "webring",
+   "flavor": "The easy way to tour Amateur Radio Sites on the web!",
+   "source": "https://www.qsl.net/kb0oxd/ (replaced Nov 7 2026)"
   }
  ]
 }

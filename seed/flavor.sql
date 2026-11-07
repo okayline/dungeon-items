@@ -77,23 +77,23 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Your site has been awarded
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Enhanced For Your Viewing Pleasure') WHERE id = 99 AND source = '88x31';   -- Neon Nite
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Within an hour or so I had my lava lamp happily blurbing away.') WHERE id = 137 AND source = '88x31';   -- Lava Lamp Blacklight
 UPDATE items SET extra = json_set(extra, '$.flavor', 'The Ultimate Homepage Award') WHERE id = 145 AND source = '88x31';   -- FRAKTAL.PIC
-UPDATE items SET extra = json_set(extra, '$.flavor', 'a great page for Windows 95 users..(I need it)') WHERE id = 146 AND source = '88x31';   -- Fraktal
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Learn about your Body!!') WHERE id = 147 AND source = '88x31';   -- Seahorse Valley
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Welcome to my corner of the WWW!') WHERE id = 148 AND source = '88x31';   -- Elephant Valley
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Hope you enjoy the new scans.') WHERE id = 149 AND source = '88x31';   -- Tendrils
-UPDATE items SET extra = json_set(extra, '$.flavor', 'This page was created with and best viewed with Netscape Navigator Gold 2.0+') WHERE id = 150 AND source = '88x31';   -- Spiral
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Home sweet home...') WHERE id = 151 AND source = '88x31';   -- Mini-Fraktal
-UPDATE items SET extra = json_set(extra, '$.flavor', 'NEW MILLENNIUM EDITION!') WHERE id = 178 AND source = '88x31';   -- Boom Box
+UPDATE items SET extra = json_set(extra, '$.flavor', 'So how does this thing work?') WHERE id = 146 AND source = '88x31';   -- Fraktal
+UPDATE items SET extra = json_set(extra, '$.flavor', 'his explorations in a seahorse valley of the Mset') WHERE id = 147 AND source = '88x31';   -- Seahorse Valley
+UPDATE items SET extra = json_set(extra, '$.flavor', 'Here''s a region I call Bird Of Paridise.') WHERE id = 148 AND source = '88x31';   -- Elephant Valley
+UPDATE items SET extra = json_set(extra, '$.flavor', 'a theme of very long twisted fingers') WHERE id = 149 AND source = '88x31';   -- Tendrils
+UPDATE items SET extra = json_set(extra, '$.flavor', 'tiny little barely-visible spirals') WHERE id = 150 AND source = '88x31';   -- Spiral
+UPDATE items SET extra = json_set(extra, '$.flavor', 'small M with period 1280. mag 10^1539.') WHERE id = 151 AND source = '88x31';   -- Mini-Fraktal
+UPDATE items SET extra = json_set(extra, '$.flavor', 'If there were one ghetto blaster to obtain, this might be it.') WHERE id = 178 AND source = '88x31';   -- Boom Box
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Geocities Eureka Outstanding Page Award') WHERE id = 184 AND source = '88x31';   -- Fraktal Neon Test (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', '"Kelly Knows Excellence" Award') WHERE id = 185 AND source = '88x31';   -- Fraktal Wireframe (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Top 100% of All Web Sites Award') WHERE id = 186 AND source = '88x31';   -- Fraktal Low Res (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Whata heck is an AlterMedian!?...') WHERE id = 187 AND source = '88x31';   -- ?SYNTAX ERROR (Prototype)
 UPDATE items SET extra = json_set(extra, '$.flavor', 'all kinds of graphics for the homepage - free!!') WHERE id = 196 AND source = '88x31';   -- Shareware
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Welcome to my very own little world!') WHERE id = 203 AND source = '88x31';   -- Starfield
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Best Kept Secrets of The Web Award') WHERE id = 207 AND source = '88x31';   -- Plasma
-UPDATE items SET extra = json_set(extra, '$.flavor', 'The Award Ward Award') WHERE id = 208 AND source = '88x31';   -- Copper Bars
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Member of Joe''s Garage Award') WHERE id = 209 AND source = '88x31';   -- Vector Cube
-UPDATE items SET extra = json_set(extra, '$.flavor', 'UPDATE 7/16/00: I''ve added one new award today.') WHERE id = 210 AND source = '88x31';   -- Rotozoom
+UPDATE items SET extra = json_set(extra, '$.flavor', 'A shifting display of colors.') WHERE id = 207 AND source = '88x31';   -- Plasma
+UPDATE items SET extra = json_set(extra, '$.flavor', 'AS IS ALWAYS THE CASE WITH GREETZ!!') WHERE id = 208 AND source = '88x31';   -- Copper Bars
+UPDATE items SET extra = json_set(extra, '$.flavor', 'The cornerstone of many demos') WHERE id = 209 AND source = '88x31';   -- Vector Cube
+UPDATE items SET extra = json_set(extra, '$.flavor', 'A picture (bitmap) that rotates on the screen.') WHERE id = 210 AND source = '88x31';   -- Rotozoom
 UPDATE items SET extra = json_set(extra, '$.flavor', 'This site is a member of WebRing.') WHERE id = 52 AND source = '88x31';   -- Webring Member
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Want to join the Amateur Radio Webring?') WHERE id = 63 AND source = '88x31';   -- Aliens Welcome
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Do not copy the code for this webring. Press the join button to get the code.') WHERE id = 64 AND source = '88x31';   -- Cyber Cafe
@@ -103,10 +103,11 @@ UPDATE items SET extra = json_set(extra, '$.flavor', 'Go to the next site!') WHE
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Go to the previous site!') WHERE id = 79 AND source = '88x31';   -- Cyberspace
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Join Today!') WHERE id = 84 AND source = '88x31';   -- Access Denied
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Want to join this ring?') WHERE id = 90 AND source = '88x31';   -- 127.0.0.1
-UPDATE items SET extra = json_set(extra, '$.flavor', 'Is A Caring Member Of RAOK!') WHERE id = 177 AND source = '88x31';   -- Hi-Speed Dubbing
-UPDATE items SET extra = json_set(extra, '$.flavor', 'The easy way to tour Amateur Radio Sites on the web!') WHERE id = 179 AND source = '88x31';   -- Press Play on Tape
+UPDATE items SET extra = json_set(extra, '$.flavor', 'During HIGH speed dubbing, only the STOP button works.') WHERE id = 177 AND source = '88x31';   -- Hi-Speed Dubbing
+UPDATE items SET extra = json_set(extra, '$.flavor', 'LOADING NEXT LEVEL') WHERE id = 179 AND source = '88x31';   -- Press Play on Tape
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Next 5 Sites') WHERE id = 194 AND source = '88x31';   -- Ping
 UPDATE items SET extra = json_set(extra, '$.flavor', 'Join This Ring') WHERE id = 200 AND source = '88x31';   -- Telnet
 UPDATE items SET extra = json_set(extra, '$.flavor', 'I have my SGI indy-cam trained on my workmate''s lava lamp') WHERE id = 221 AND source = '88x31';   -- Black Light Lava
 UPDATE items SET extra = json_set(extra, '$.flavor', 'have a quish day') WHERE id = 222 AND source = '88x31';   -- Nice Day Coin
 UPDATE items SET extra = json_set(extra, '$.flavor', 'I hatched my first Mimitchi on my lunch hour on September 1st.') WHERE id = 223 AND source = '88x31';   -- Virtual Pet Hatchling
+UPDATE items SET extra = json_set(extra, '$.flavor', 'sling your blaster on a guitar strap') WHERE id = 224 AND source = '88x31';   -- Boomin' Nite

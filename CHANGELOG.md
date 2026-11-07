@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## New flavour lines for Series Beta rares
+**Sat Nov 7, 2026 · 1:56 AM HST** (no new version: this repo has none; no migration)
+- Changed: new, shorter lines from old fractal pages, demo-scene pages and tape-era sources for 13 Series Beta rares, and a line and subtype for the new Boomin' Nite. The replaced lines are kept in the spare list. Removed: those 13 lines from their buttons.
+
 ## New lines for four Alpha ultras and prototypes; old lines kept as spares
 **Sat Nov 7, 2026 · 1:36 AM HST** (no new version: this repo has none; no migration)
 - Changed: new old-web lines for Four Kimono Ladies Sakura, Millennium Fireworks and Kimono Ladies 1 and 2. The eight lines replaced tonight are kept in the spare list for later. Removed: those eight lines from their buttons.
