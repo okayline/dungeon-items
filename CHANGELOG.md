@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## The mark words, for a game's own page
+**Sun Nov 8, 2026 · 8:55 PM HST** (no new version: this repo has none; no migration)
+- Added: the words the ledger page uses for a copy's marks ("was found under a full moon") are also served as a small script, so a game can show them on its own page. Removed: nothing.
+
 ## A new line for Abort, Retry, Fail?
 **Sat Nov 7, 2026 · 6:36 AM HST** (no new version: this repo has none; no migration)
 - Changed: Abort, Retry, Fail? gets a line from an old computer manual, "Close the latch and press R." (kura: "im rethinking the Beer line"). Removed: its old line (kept as a spare).

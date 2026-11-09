@@ -51,3 +51,7 @@ export function markWords(r) {
 export const WORDS_SCRIPT = [["PHASE", PHASE], ["OCC", OCC], ["WORLD", WORLD], ["DEED", DEED], ["EFFECT", EFFECT], ["MOON", MOON]]
   .map(([k, v]) => "const " + k + " = " + JSON.stringify(v) + ";").join("\n")
   + "\nconst title = " + title + ";\nconst an = " + an + ";\n" + finishWords + "\n" + markWords;
+// (Nov 8) the same words served as /mark-words.js, for a game's page that shows a copy's marks (88x31's button page, kura:
+// "i'd rather run a script on one page, than read/write or change the registry"). Wrapped so its names stay inside:
+// the page gets window.DDMarkWords.markWords({ kind, value }) -> words or null.
+export const MARK_WORDS_JS = "window.DDMarkWords = (function () {\n" + WORDS_SCRIPT + "\nreturn { markWords: markWords };\n})();\n";
