@@ -4,6 +4,10 @@ Newest first. Times are Hawaii time (HST).
 
 ---
 
+## The name words, one list for every game
+**Sun Nov 8, 2026 · 10:02 PM HST** (no new version: this repo has none; no migration)
+- Added: one master list of the words player names are made from (40 adjectives, 40 nouns, "Neon Modem"), which every game copies. Removed: nothing here (the games drop their old words).
+
 ## The mark words, for a game's own page
 **Sun Nov 8, 2026 · 8:55 PM HST** (no new version: this repo has none; no migration)
 - Added: the words the ledger page uses for a copy's marks ("was found under a full moon") are also served as a small script, so a game can show them on its own page. Removed: nothing.
